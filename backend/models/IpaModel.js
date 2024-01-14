@@ -4,6 +4,10 @@ import db from "../config/Database.js";
 const NilaiIpaModel = db.define(
   "nilai_ipa",
   {
+    semester: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -67,10 +71,6 @@ const NilaiIpaModel = db.define(
       allowNull: false,
     },
     BING_T: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    SEMS: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
