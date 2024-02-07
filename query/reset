@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS srjk_adrian;
+CREATE DATABASE srjk_adrian;

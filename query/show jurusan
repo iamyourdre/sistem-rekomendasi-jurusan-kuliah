@@ -1,0 +1,2 @@
+USE srjk_adrian;
+SELECT * FROM jurusan;

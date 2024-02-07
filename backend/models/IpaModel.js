@@ -102,14 +102,10 @@ const SiswaIpaModel = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    fklts: {
-      type: DataTypes.STRING,
+    jurusan_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    jrsn: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+    }
   },
   {
     freezeTableName: true,
@@ -117,13 +113,12 @@ const SiswaIpaModel = db.define(
   }
 );
 
-
 SiswaIpaModel.hasMany(NilaiIpaModel, {
   foreignKey: {
     name: "siswa_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
     allowNull: false,
   },
-  as: 'nilai_ipa_s', // Ganti alias dengan 'nilai_ipa'
+  as: 'nilai_ipa_s',
   onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di NilaiIpaModel
 });
 
@@ -132,8 +127,10 @@ NilaiIpaModel.belongsTo(SiswaIpaModel, {
     name: "siswa_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
     allowNull: false,
   },
-  as: 'nilai_ipa', // Ganti alias dengan 'nilai_ipa'
+  as: 'nilai_ipa',
 });
+
+
 
 (async () => {
   // Sinkronisasi database

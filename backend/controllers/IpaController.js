@@ -1,4 +1,5 @@
 import { SiswaIpaModel, NilaiIpaModel } from "../models/IpaModel.js";
+import JurusanModel from "../models/JurusanModel.js";
 import readXlsxFile from "read-excel-file/node";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -14,18 +15,15 @@ export const upload = async (req, res) => {
 
     // Membaca file Excel
     readXlsxFile(uploadDir + req.file.filename).then(async (rows) => {
-
-      // Mengambil baris header untuk menemukan indeks kolom
-      const headerRow = rows.shift();
         
       let dataset = [];
+      const headerRow = rows.shift();
 
       // Mengisi dataset dengan data dari file Excel
       rows.forEach((row, rowIndex) => {
         if (rows[(rowIndex + 3)] && rows[(rowIndex + 3)][1] !== undefined) {
           let datas = {
             NAMA: rows[(rowIndex + 3)][1],
-            TAHUN: 0, // Tambahkan semester sesuai kebutuhan, contoh: TAHUN: [0, 0, 0, 0, 0]
             SEMESTER_1: {
               PABP: rows[(rowIndex + 3)][2],
               PPKN: rows[(rowIndex + 3)][3],
@@ -108,6 +106,10 @@ export const upload = async (req, res) => {
               KIM: rows[(rowIndex + 3)][14+58],
               EKO: rows[(rowIndex + 3)][15+58],
             },
+            TAHUN: rows[(rowIndex + 3)][74],
+            UNIV: rows[(rowIndex + 3)][75],
+            JRSN: rows[(rowIndex + 3)][76],
+            RUMPUN: rows[(rowIndex + 3)][77],
           };
           dataset.push(datas);
         }
@@ -115,16 +117,31 @@ export const upload = async (req, res) => {
 
 
       try {
-        
+
+
         // Membuat data siswa dan data nilai untuk setiap siswa
         const nilaiPromises = dataset.map(async (data) => {
+          let jurusan_id = 0; // Inisialisasi jurusan_id default = jurusan kosong
+          
+          if (data.JRSN != null && !await JurusanModel.findOne({ // Cari apakah data.JRSN ada di tabel jurusan
+            where: {
+              jurusan: data.JRSN
+            }
+          })) {
+            // Jika jurusan belum ada, buat jurusan baru
+            const createdJurusan = await JurusanModel.create({
+              jurusan: data.JRSN,
+              rumpun: data.RUMPUN,
+              fakultas: '-'
+            });
+            jurusan_id = createdJurusan.id;
+          }
           
           const createdSiswa = await SiswaIpaModel.create({
             nama: data.NAMA,
             akt_thn: data.TAHUN,
-            univ: "-",
-            fklts: "-",
-            jrsn: "-",
+            univ: data.UNIV,
+            jurusan_id: jurusan_id
           });
         
           // Buat loop untuk setiap semester
@@ -161,7 +178,7 @@ export const upload = async (req, res) => {
             await NilaiIpaModel.create(nilaiData);
           }
         });
-
+        
         await Promise.all(nilaiPromises);
       
         res.status(200).send({
@@ -182,33 +199,47 @@ export const upload = async (req, res) => {
     });
   }
 };
-// IpaController.js
-
 export const getAllIpa = async (req, res) => {
   try {
     const siswaData = await SiswaIpaModel.findAll({
       include: [
         {
           model: NilaiIpaModel,
-          as: 'nilai_ipa_s', // Gunakan alias yang sesuai dengan yang Anda definisikan di model
+          as: 'nilai_ipa_s',
         },
       ],
     });
 
+    // Mendapatkan data jurusan berdasarkan jurusan_id dari masing-masing siswa
+    const jurusanDataPromises = siswaData.map(async (siswa) => {
+      const jurusan = await JurusanModel.findOne({
+        where: { id: siswa.jurusan_id }
+      });
+      return jurusan ? jurusan.toJSON() : null;
+    });
+
+    const jurusanData = await Promise.all(jurusanDataPromises);
+
+    // Menambahkan data jurusan ke masing-masing objek siswa dalam hasil query
+    siswaData.forEach((siswa, index) => {
+      siswa.dataValues.jurusan = jurusanData[index];
+    });
+
     res.status(200).json({
-      message: "Berhasil mendapatkan data siswa beserta nilai IPA",
+      message: "Berhasil mendapatkan data siswa beserta nilai IPA dan jurusan",
       data: siswaData,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Gagal mendapatkan data siswa beserta nilai IPA",
+      message: "Gagal mendapatkan data siswa beserta nilai IPA dan jurusan",
       error: error.message,
     });
   }
 };
 
 
-export const deleteAllData = async (req, res) => {
+
+export const deleteAllIpa = async (req, res) => {
   try {
     // Hapus semua data dalam tabel NilaiIpaModel
     await NilaiIpaModel.destroy({ where: {} });
