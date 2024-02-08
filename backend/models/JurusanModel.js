@@ -15,10 +15,6 @@ const JurusanModel = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    fakultas: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     rumpun: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -34,15 +30,10 @@ const JurusanModel = db.define(
   // Sinkronisasi database
   await db.sync();
 
-  // Cek apakah sudah ada data dengan id=1 di JurusanModel
-  const existingJurusan = await JurusanModel.findOne({ where: { id: 0 } });
-
-  // Jika tidak ada, buat data baru dengan id=1 dan nilai sisanya "-"
-  if (!existingJurusan) {
+  if (!await JurusanModel.findOne({ where: { id: 1 } })) {
     await JurusanModel.create({
-      id: 0,
+      id: 1,
       jurusan: "-",
-      fakultas: "-",
       rumpun: "-"
     });
   }

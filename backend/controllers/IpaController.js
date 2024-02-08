@@ -1,8 +1,9 @@
 import { SiswaIpaModel, NilaiIpaModel } from "../models/IpaModel.js";
-import JurusanModel from "../models/JurusanModel.js";
 import readXlsxFile from "read-excel-file/node";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createJurusan } from "./JurusanController.js";
+import JurusanModel from "../models/JurusanModel.js";
 
 export const upload = async (req, res) => {
   try {
@@ -121,26 +122,25 @@ export const upload = async (req, res) => {
 
         // Membuat data siswa dan data nilai untuk setiap siswa
         const nilaiPromises = dataset.map(async (data) => {
-          let jurusan_id = 0; // Inisialisasi jurusan_id default = jurusan kosong
+          let jurusan_id = await createJurusan(data);
           
-          if (data.JRSN != null && !await JurusanModel.findOne({ // Cari apakah data.JRSN ada di tabel jurusan
-            where: {
-              jurusan: data.JRSN
-            }
-          })) {
-            // Jika jurusan belum ada, buat jurusan baru
-            const createdJurusan = await JurusanModel.create({
-              jurusan: data.JRSN,
-              rumpun: data.RUMPUN,
-              fakultas: '-'
-            });
-            jurusan_id = createdJurusan.id;
-          }
+          // if (data.JRSN != null && !await JurusanModel.findOne({ // Cari apakah data.JRSN ada di tabel jurusan
+          //   where: {
+          //     jurusan: data.JRSN
+          //   }
+          // })) {
+          //   // Jika jurusan belum ada, buat jurusan baru
+          //   const createdJurusan = await JurusanModel.create({
+          //     jurusan: data.JRSN,
+          //     rumpun: data.RUMPUN,
+          //   });
+          //   jurusan_id = createdJurusan.id;
+          // }
           
           const createdSiswa = await SiswaIpaModel.create({
-            nama: data.NAMA,
-            akt_thn: data.TAHUN,
-            univ: data.UNIV,
+            nama: data.NAMA || "-",
+            akt_thn: data.TAHUN  || 0,
+            univ: data.UNIV  || "-",
             jurusan_id: jurusan_id
           });
         
@@ -152,28 +152,24 @@ export const upload = async (req, res) => {
             const nilaiData = {
               siswa_id: createdSiswa.id,
               semester: i, // Ganti dengan semester yang sesuai
-              PABP: nilaiSemester.PABP,
-              PPKN: nilaiSemester.PPKN,
-              B_IND: nilaiSemester.B_IND,
-              MTK_W: nilaiSemester.MTK_W,
-              S_IND: nilaiSemester.S_IND,
-              BING_W: nilaiSemester.BING_W,
-              S_BUD: nilaiSemester.S_BUD,
-              PJOK: nilaiSemester.PJOK,
-              PKWU: nilaiSemester.PKWU,
-              MTK_T: nilaiSemester.MTK_T,
-              BIO: nilaiSemester.BIO,
-              FIS: nilaiSemester.FIS,
-              KIM: nilaiSemester.KIM,
-              EKO: nilaiSemester.EKO,
+              PABP: nilaiSemester.PABP || 0,
+              PPKN: nilaiSemester.PPKN || 0,
+              B_IND: nilaiSemester.B_IND || 0,
+              MTK_W: nilaiSemester.MTK_W || 0,
+              S_IND: nilaiSemester.S_IND || 0,
+              BING_W: nilaiSemester.BING_W || 0,
+              S_BUD: nilaiSemester.S_BUD || 0,
+              PJOK: nilaiSemester.PJOK || 0,
+              PKWU: nilaiSemester.PKWU || 0,
+              MTK_T: nilaiSemester.MTK_T || 0,
+              BIO: nilaiSemester.BIO || 0,
+              FIS: nilaiSemester.FIS || 0,
+              KIM: nilaiSemester.KIM || 0,
+              EKO: nilaiSemester.EKO || 0,
             };
 
             // Tambahkan BING_T jika ada di semester 1 atau 2
-            if (i === 1 || i === 2) {
-              nilaiData.BING_T = nilaiSemester.BING_T;
-            } else {
-              nilaiData.BING_T = 0;
-            }
+            nilaiData.BING_T = (i === 1 || i === 2 ? nilaiSemester.BING_T : 0)
 
             await NilaiIpaModel.create(nilaiData);
           }
