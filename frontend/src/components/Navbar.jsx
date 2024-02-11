@@ -1,31 +1,13 @@
 import React, { useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { FiShoppingCart } from 'react-icons/fi';
-import { BsChatLeft } from 'react-icons/bs';
-import { RiNotification3Line } from 'react-icons/ri';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
 import avatar from '../data/avatar.jpg';
 import { UserProfile } from '.';
 import { useStateContext } from '../contexts/ContextProvider';
 
-const NavButton = ({ customFunc, icon, color, dotColor }) => (
-  <button
-    type="button"
-    onClick={() => customFunc()}
-    style={{ color }}
-    className="relative text-xl rounded-full p-3 hover:bg-light-gray"
-  >
-    <span
-      style={{ background: dotColor }}
-      className="absolute inline-flex rounded-full h-2 w-2 right-2 top-2"
-    />
-    {icon}
-  </button>
-);
-
 const Navbar = () => {
-  const { currentColor, activeMenu, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize } = useStateContext();
+  const { activeMenu, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize } = useStateContext();
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -48,12 +30,18 @@ const Navbar = () => {
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
 
   return (
-    <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative">
+    <div className="flex justify-between p-4 md:px-8 md:py-4 relative ">
 
-      <NavButton title="Menu" customFunc={handleActiveMenu} color={currentColor} icon={<AiOutlineMenu />} />
+  <button
+    type="button"
+    onClick={() => handleActiveMenu()}
+    className="relative text-xl rounded-lg p-3 bg-t-light text-s-dark"
+  >
+    <AiOutlineMenu/>
+  </button>
       <div className="flex">
         <div
-          className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
+          className="flex items-center gap-2 cursor-pointer py-1 px-2 hover:bg-t-light rounded-lg"
           onClick={() => handleClick('userProfile')}
         >
           <img
@@ -62,12 +50,12 @@ const Navbar = () => {
             alt="user-profile"
           />
           <p>
-            <span className="text-gray-400 text-14">Hi,</span>{' '}
-            <span className="text-gray-400 font-bold ml-1 text-14">
-              Michael
+            <span className="text-t-dark text-14">Hi,</span>
+            <span className="text-t-dark font-bold ml-1 text-14">
+              Adrian
             </span>
           </p>
-          <MdKeyboardArrowDown className="text-gray-400 text-14" />
+          <MdKeyboardArrowDown className="text-t-dark opacity-50 text-14" />
         </div>
 
         {isClicked.userProfile && (<UserProfile />)}

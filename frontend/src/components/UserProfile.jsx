@@ -1,57 +1,45 @@
 import React from 'react';
-import { MdOutlineCancel } from 'react-icons/md';
-
-import { Button } from '.';
-import { userProfileData } from '../data/dummy';
-import { useStateContext } from '../contexts/ContextProvider';
+import { IoMdExit } from "react-icons/io";
+import { FaUserCog } from "react-icons/fa";
 import avatar from '../data/avatar.jpg';
 
 const UserProfile = () => {
-  const { currentColor } = useStateContext();
 
   return (
-    <div className="nav-item absolute right-1 top-16 bg-white p-8 rounded-lg w-96">
+    <div className="nav-item absolute right-4 top-16 bg-p-light shadow-sm p-6 rounded-lg w-80 text-s-dark">
       <div className="flex justify-between items-center">
-        <p className="font-semibold text-lg">User Profile</p>
+        <p className="font-semibold text-md">Profil Saya</p>
       </div>
-      <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">
+      <div className="flex gap-5 items-center mt-4 border-color border-b-1 pb-4">
         <img
-          className="rounded-full h-24 w-24"
+          className="rounded-full h-16 w-16"
           src={avatar}
           alt="user-profile"
         />
         <div>
-          <p className="font-semibold text-xl"> Michael Roberts </p>
-          <p className="text-gray-500 text-sm">  Administrator   </p>
-          <p className="text-gray-500 text-sm font-semibold"> info@shop.com </p>
+          <p className="font-semibold text-lg"> Michael Roberts </p>
+          <p className="text-t-dark opacity-75 text-xs">  Administrator   </p>
+          <p className="text-t-dark opacity-75 text-xs font-semibold"> info@shop.com </p>
         </div>
       </div>
-      <div>
-        {userProfileData.map((item, index) => (
-          <div key={index} className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  ">
-            <button
-              type="button"
-              style={{ color: item.iconColor, backgroundColor: item.iconBg }}
-              className=" text-xl rounded-lg p-3 hover:bg-light-gray"
-            >
-              {item.icon}
-            </button>
-
-            <div>
-              <p className="font-semibold ">{item.title}</p>
-              <p className="text-gray-500 text-sm"> {item.desc} </p>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-5">
-        <Button
-          color="white"
-          bgColor={currentColor}
-          text="Logout"
-          borderRadius="10px"
-          width="full"
-        />
+      <div className="mt-5 flex">
+        <div className="flex-auto w-5/6 pr-2">
+          <button
+            type="button"
+            className="relative text-sm rounded-lg p-2 bg-blue-500 text-p-light w-full inline-block align-bottom"
+          >
+            <FaUserCog className='inline text-lg'/> Atur Akun
+          </button>
+        </div>
+        <div className="flex-auto w-1/6">
+          <button
+            type="button"
+            className="relative text-md rounded-lg p-2 bg-red-500 text-p-light w-full inline-block align-bottom"
+          >
+            <IoMdExit className='inline text-sm
+            '/>
+          </button>
+        </div>
       </div>
     </div>
 

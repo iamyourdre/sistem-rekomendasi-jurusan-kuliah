@@ -7,15 +7,16 @@ module.exports = {
       body: ['Open Sans', 'sans-serif'],
     },
     extend: {
+      colors: {
+        'p-light': 'rgb(245 245 245)',
+        's-light': 'rgb(229 229 229)',
+        't-light': 'rgb(212 212 212)',
+        'p-dark': 'rgb(10 10 10)',
+        's-dark': 'rgb(23 23 23)',
+        't-dark': 'rgb(38 38 38)',
+      },
       fontSize: {
         14: '14px',
-      },
-      backgroundColor: {
-        'main-bg': '#FAFBFB',
-        'main-dark-bg': '#20232A',
-        'secondary-dark-bg': '#33373E',
-        'light-gray': '#F7F7F7',
-        'half-transparent': 'rgba(0, 0, 0, 0.5)',
       },
       borderWidth: {
         1: '1px',
