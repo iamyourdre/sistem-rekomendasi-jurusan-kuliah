@@ -1,0 +1,5 @@
+USE srjk_adrian;
+SELECT 
+    *
+FROM 
+    siswa_ipa

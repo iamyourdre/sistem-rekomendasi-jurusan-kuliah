@@ -2,11 +2,15 @@ import { SiswaIpaModel, NilaiIpaModel } from "../models/IpaModel.js";
 import readXlsxFile from "read-excel-file/node";
 import path from "path";
 import { fileURLToPath } from "url";
-import { createJurusan } from "./JurusanController.js";
+import { findOrCreateJurusan } from "./JurusanController.js";
 import JurusanModel from "../models/JurusanModel.js";
 
 export const upload = async (req, res) => {
   try {
+
+    req.body.reset === "y" ? await deleteAllIpa() : undefined;
+    // req.reset ? y (reset) : false (no reset)
+
     if (req.file === undefined) {
       return res.status(400).send("Silakan unggah file Excel!");
     }
@@ -121,64 +125,47 @@ export const upload = async (req, res) => {
 
 
         // Membuat data siswa dan data nilai untuk setiap siswa
-        const nilaiPromises = dataset.map(async (data) => {
-          let jurusan_id = await createJurusan(data);
+        for (const data of dataset) {
           
-          // if (data.JRSN != null && !await JurusanModel.findOne({ // Cari apakah data.JRSN ada di tabel jurusan
-          //   where: {
-          //     jurusan: data.JRSN
-          //   }
-          // })) {
-          //   // Jika jurusan belum ada, buat jurusan baru
-          //   const createdJurusan = await JurusanModel.create({
-          //     jurusan: data.JRSN,
-          //     rumpun: data.RUMPUN,
-          //   });
-          //   jurusan_id = createdJurusan.id;
-          // }
+          const jurusan = await findOrCreateJurusan(data.JRSN, data.RUMPUN);
+          const isDupli = await isDuplication(data, jurusan);
           
-          const createdSiswa = await SiswaIpaModel.create({
-            nama: data.NAMA || "-",
-            akt_thn: data.TAHUN  || 0,
-            univ: data.UNIV  || "-",
-            jurusan_id: jurusan_id
-          });
-        
-          // Buat loop untuk setiap semester
-          for (let i = 1; i <= 5; i++) {
-            const nilaiSemester = data[`SEMESTER_${i}`]; // Ambil data nilai untuk semester tertentu
-
-            // Buat data nilai untuk setiap semester
-            const nilaiData = {
-              siswa_id: createdSiswa.id,
-              semester: i, // Ganti dengan semester yang sesuai
-              PABP: nilaiSemester.PABP || 0,
-              PPKN: nilaiSemester.PPKN || 0,
-              B_IND: nilaiSemester.B_IND || 0,
-              MTK_W: nilaiSemester.MTK_W || 0,
-              S_IND: nilaiSemester.S_IND || 0,
-              BING_W: nilaiSemester.BING_W || 0,
-              S_BUD: nilaiSemester.S_BUD || 0,
-              PJOK: nilaiSemester.PJOK || 0,
-              PKWU: nilaiSemester.PKWU || 0,
-              MTK_T: nilaiSemester.MTK_T || 0,
-              BIO: nilaiSemester.BIO || 0,
-              FIS: nilaiSemester.FIS || 0,
-              KIM: nilaiSemester.KIM || 0,
-              EKO: nilaiSemester.EKO || 0,
-            };
-
-            // Tambahkan BING_T jika ada di semester 1 atau 2
-            nilaiData.BING_T = (i === 1 || i === 2 ? nilaiSemester.BING_T : 0)
-
-            await NilaiIpaModel.create(nilaiData);
+          if (!isDupli) {
+            const createdSiswa = await SiswaIpaModel.create({
+              nama: data.NAMA || "-",
+              akt_thn: data.TAHUN || 0,
+              univ: data.UNIV || "-",
+              jurusan_id: jurusan
+            });
+      
+            for (let i = 1; i <= 5; i++) {
+              const nilaiSemester = data[`SEMESTER_${i}`];
+              const nilaiData = {
+                siswa_id: createdSiswa.id,
+                semester: i,
+                PABP: nilaiSemester.PABP || 0,
+                PPKN: nilaiSemester.PPKN || 0,
+                B_IND: nilaiSemester.B_IND || 0,
+                MTK_W: nilaiSemester.MTK_W || 0,
+                S_IND: nilaiSemester.S_IND || 0,
+                BING_W: nilaiSemester.BING_W || 0,
+                S_BUD: nilaiSemester.S_BUD || 0,
+                PJOK: nilaiSemester.PJOK || 0,
+                PKWU: nilaiSemester.PKWU || 0,
+                MTK_T: nilaiSemester.MTK_T || 0,
+                BIO: nilaiSemester.BIO || 0,
+                FIS: nilaiSemester.FIS || 0,
+                KIM: nilaiSemester.KIM || 0,
+                EKO: nilaiSemester.EKO || 0,
+                BING_T: (i === 1 || i === 2 ? nilaiSemester.BING_T : 0)
+              };
+              await NilaiIpaModel.create(nilaiData);
+            }
           }
-        });
-        
-        await Promise.all(nilaiPromises);
+        }
       
         res.status(200).send({
-          message: "Berhasil mengunggah file: " + req.file.originalname,
+          message: "Berhasil mengunggah dataset: " + req.file.originalname,
         });
 
       } catch (error) {
@@ -191,10 +178,11 @@ export const upload = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send({
-      message: "Tidak dapat mengunggah file: " + req.file.originalname,
+      message: "Tidak dapat mengunggah dataset: " + req.file.originalname,
     });
   }
 };
+
 export const getAllIpa = async (req, res) => {
   try {
     const siswaData = await SiswaIpaModel.findAll({
@@ -211,7 +199,7 @@ export const getAllIpa = async (req, res) => {
       const jurusan = await JurusanModel.findOne({
         where: { id: siswa.jurusan_id }
       });
-      return jurusan ? jurusan.toJSON() : null;
+      return jurusan ? jurusan.toJSON() : "-";
     });
 
     const jurusanData = await Promise.all(jurusanDataPromises);
@@ -222,20 +210,66 @@ export const getAllIpa = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Berhasil mendapatkan data siswa beserta nilai IPA dan jurusan",
+      message: "Berhasil mendapatkan data siswa IPA!",
       data: siswaData,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Gagal mendapatkan data siswa beserta nilai IPA dan jurusan",
+      message: "Gagal mendapatkan data siswa IPA!",
       error: error.message,
     });
   }
 };
 
+export const isDuplication = async (data, j_id) => {
+  try {
+    // Cari data siswa berdasarkan nama, dan sertakan relasinya dengan nilai ipa
+    const siswa = await SiswaIpaModel.findOne({
+      where: { 
+        nama: data.NAMA,
+        univ: data.UNIV || "-",
+        jurusan_id: j_id || "-"
+      },
+      include: [{ model: NilaiIpaModel, as: 'nilai_ipa_s' }]
+    });
 
+    // Jika siswa ditemukan
+    if (siswa) {
 
-export const deleteAllIpa = async (req, res) => {
+      // Buat loop untuk mengecek kesamaan nilai setiap semester
+      for (let i = 1; i <= 5; i++) {
+
+        const nilaiSemester = data[`SEMESTER_${i}`]; // Ambil data nilai untuk semester tertentu
+
+        if(nilaiSemester.PABP !== siswa.nilai_ipa_s[i].dataValues.PABP ||
+        nilaiSemester.PPKN !== siswa.nilai_ipa_s[i].dataValues.PPKN ||
+        nilaiSemester.B_IND !== siswa.nilai_ipa_s[i].dataValues.B_IND ||
+        nilaiSemester.MTK_W !== siswa.nilai_ipa_s[i].dataValues.MTK_W ||
+        nilaiSemester.S_IND !== siswa.nilai_ipa_s[i].dataValues.S_IND ||
+        nilaiSemester.BING_W !== siswa.nilai_ipa_s[i].dataValues.BING_W ||
+        nilaiSemester.S_BUD !== siswa.nilai_ipa_s[i].dataValues.S_BUD ||
+        nilaiSemester.PJOK !== siswa.nilai_ipa_s[i].dataValues.PJOK ||
+        nilaiSemester.PKWU !== siswa.nilai_ipa_s[i].dataValues.PKWU ||
+        nilaiSemester.MTK_T !== siswa.nilai_ipa_s[i].dataValues.MTK_T ||
+        nilaiSemester.BIO !== siswa.nilai_ipa_s[i].dataValues.BIO ||
+        nilaiSemester.FIS !== siswa.nilai_ipa_s[i].dataValues.FIS ||
+        nilaiSemester.KIM !== siswa.nilai_ipa_s[i].dataValues.KIM ||
+        nilaiSemester.EKO !== siswa.nilai_ipa_s[i].dataValues.EKO) return true;
+
+        // // Tambahkan BING_T jika ada di semester 1 atau 2
+        // nilaiData.BING_T = (i === 1 || i === 2 ? nilaiSemester.BING_T : 0)
+      }
+    }
+
+    // Jika tidak ada siswa atau tidak ada data nilai ipa yang terkait, return false
+    return false;
+  } catch (error) {
+    console.error('Error:', error);
+    throw new Error("Gagal memeriksa data duplikat: " + error.message);
+  }
+};
+
+export const deleteAllIpa = async () => {
   try {
     // Hapus semua data dalam tabel NilaiIpaModel
     await NilaiIpaModel.destroy({ where: {} });
@@ -243,13 +277,15 @@ export const deleteAllIpa = async (req, res) => {
     // Hapus semua data dalam tabel SiswaIpaModel
     await SiswaIpaModel.destroy({ where: {} });
 
-    res.status(200).json({
-      message: "Berhasil menghapus semua data dalam tabel",
-    });
+    return {
+      success: true,
+      message: "Berhasil menghapus semua data dalam tabel!",
+    };
   } catch (error) {
-    res.status(500).json({
-      message: "Gagal menghapus semua data dalam tabel",
+    return {
+      success: false,
+      message: "Gagal menghapus semua data dalam tabel!",
       error: error.message,
-    });
+    };
   }
 };

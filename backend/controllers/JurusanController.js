@@ -1,20 +1,23 @@
 import JurusanModel from "../models/JurusanModel.js"
 
-export const createJurusan = async (data) => {
-  let jurusan_id = 0;
+export const findOrCreateJurusan = async (jrsn, rmpn) => {
 
-  if (data.JRSN != null && !await JurusanModel.findOne({ // Cari apakah data.JRSN ada di tabel jurusan
-    where: {
-      jurusan: data.JRSN
-    }
-  })) {
-    // Jika jurusan belum ada, buat jurusan baru
-    const createdJurusan = await JurusanModel.create({
-      jurusan: data.JRSN,
-      rumpun: data.RUMPUN,
+  // Cari apakah data.JRSN ada di tabel jurusan
+  if (jrsn !== null){ // Hanya memproses data yang tidak null
+    const jurusan = await JurusanModel.findOne({
+      where: {
+        jurusan: jrsn
+      }
     });
-    jurusan_id = createdJurusan.id;
+    if(!jurusan) { // Jika jurusan unik, maka buat data jurusan baru
+      const createdJurusan = await JurusanModel.create({
+        jurusan: jrsn,
+        rumpun: rmpn || "-",
+      });
+      return createdJurusan.id;
+    } else {
+      return jurusan.id;
+    }
   }
-
-  return jurusan_id;
+  return 1;
 };
