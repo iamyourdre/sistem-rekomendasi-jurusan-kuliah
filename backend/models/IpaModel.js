@@ -1,6 +1,5 @@
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
-import JurusanModel from "./JurusanModel.js";
 
 const NilaiIpaModel = db.define(
   "nilai_ipa",
@@ -125,23 +124,6 @@ NilaiIpaModel.belongsTo(SiswaIpaModel, {
     allowNull: false,
   },
   as: 'nilai_ipa',
-});
-
-JurusanModel.hasMany(SiswaIpaModel, {
-  foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
-    allowNull: false,
-  },
-  as: 'jurusan_ipa_s',
-  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di NilaiIpaModel
-});
-
-SiswaIpaModel.belongsTo(JurusanModel, {
-  foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
-    allowNull: false,
-  },
-  as: 'jurusan_ipa_s',
 });
 
 (async () => {

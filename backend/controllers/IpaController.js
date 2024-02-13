@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { findOrCreateJurusan } from "./JurusanController.js";
 import JurusanModel from "../models/JurusanModel.js";
+import { Op } from "sequelize";
 
 export const upload = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ export const upload = async (req, res) => {
     // req.reset ? y (reset) : false (no reset)
 
     if (req.file === undefined) {
-      return res.status(400).send("Silakan unggah file Excel!");
+      return res.status(400).send("Silakan unggah file .xlsx!");
     }
 
     // Direktori untuk menyimpan file upload
@@ -64,20 +65,20 @@ export const upload = async (req, res) => {
               BING_T: rows[(rowIndex + 3)][16+15],
             },
             SEMESTER_3: {
-              PABP: rows[(rowIndex + 3)][2+32],
-              PPKN: rows[(rowIndex + 3)][3+32],
-              B_IND: rows[(rowIndex + 3)][4+32],
-              MTK_W: rows[(rowIndex + 3)][5+32],
-              S_IND: rows[(rowIndex + 3)][6+32],
-              BING_W: rows[(rowIndex + 3)][7+32],
-              S_BUD: rows[(rowIndex + 3)][8+32],
-              PJOK: rows[(rowIndex + 3)][9+32],
-              PKWU: rows[(rowIndex + 3)][10+32],
-              MTK_T: rows[(rowIndex + 3)][11+32],
-              BIO: rows[(rowIndex + 3)][12+32],
-              FIS: rows[(rowIndex + 3)][13+32],
-              KIM: rows[(rowIndex + 3)][14+32],
-              EKO: rows[(rowIndex + 3)][15+32],
+              PABP: rows[(rowIndex + 3)][2+30],
+              PPKN: rows[(rowIndex + 3)][3+30],
+              B_IND: rows[(rowIndex + 3)][4+30],
+              MTK_W: rows[(rowIndex + 3)][5+30],
+              S_IND: rows[(rowIndex + 3)][6+30],
+              BING_W: rows[(rowIndex + 3)][7+30],
+              S_BUD: rows[(rowIndex + 3)][8+30],
+              PJOK: rows[(rowIndex + 3)][9+30],
+              PKWU: rows[(rowIndex + 3)][10+30],
+              MTK_T: rows[(rowIndex + 3)][11+30],
+              BIO: rows[(rowIndex + 3)][12+30],
+              FIS: rows[(rowIndex + 3)][13+30],
+              KIM: rows[(rowIndex + 3)][14+30],
+              EKO: rows[(rowIndex + 3)][15+30],
             },
             SEMESTER_4: {
               PABP: rows[(rowIndex + 3)][2+44],
@@ -165,7 +166,7 @@ export const upload = async (req, res) => {
         }
       
         res.status(200).send({
-          message: "Berhasil mengunggah dataset: " + req.file.originalname,
+          message: "Dataset " + req.file.originalname +" berhasil diimpor!",
         });
 
       } catch (error) {
@@ -178,7 +179,7 @@ export const upload = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send({
-      message: "Tidak dapat mengunggah dataset: " + req.file.originalname,
+      message: "Dataset " + req.file.originalname +" gagal diimpor!",
     });
   }
 };
@@ -197,29 +198,11 @@ export const getAllIpa = async (req, res) => {
         },
       ],
     });
-
-    // // Mendapatkan data jurusan berdasarkan jurusan_id dari masing-masing siswa
-    // const jurusanDataPromises = siswaData.map(async (siswa) => {
-    //   const jurusan = await JurusanModel.findOne({
-    //     where: { id: siswa.jurusan_id }
-    //   });
-    //   return jurusan ? jurusan.toJSON() : "-";
-    // });
-
-    // const jurusanData = await Promise.all(jurusanDataPromises);
-
-    // // Menambahkan data jurusan ke masing-masing objek siswa dalam hasil query
-    // siswaData.forEach((siswa, index) => {
-    //   siswa.dataValues.jurusan = jurusanData[index];
-    // });
-
     res.status(200).json({
-      message: "Berhasil mendapatkan data siswa IPA!",
       data: siswaData,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Gagal mendapatkan data siswa IPA!",
       error: error.message,
     });
   }
@@ -228,45 +211,39 @@ export const getAllIpa = async (req, res) => {
 export const isDuplication = async (data, j_id) => {
   try {
     // Cari data siswa berdasarkan nama, dan sertakan relasinya dengan nilai ipa
-    const siswa = await SiswaIpaModel.findOne({
+    if(await SiswaIpaModel.findOne({
       where: { 
         nama: data.NAMA,
         univ: data.UNIV || "-",
-        jurusan_id: j_id || "-"
+        jurusan_id: j_id || "-",
       },
-      include: [{ model: NilaiIpaModel, as: 'nilai_ipa_s' }]
-    });
+      include: [{ 
+        model: NilaiIpaModel,
+        where: {
+          semester: 1,
+          PABP: data['SEMESTER_1']['PABP'],
+          PPKN: data['SEMESTER_1']['PPKN'],
+          B_IND: data['SEMESTER_1']['B_IND'],
+          MTK_W: data['SEMESTER_1']['MTK_W'],
+          S_IND: data['SEMESTER_1']['S_IND'],
+          BING_W: data['SEMESTER_1']['BING_W'],
+          S_BUD: data['SEMESTER_1']['S_BUD'],
+          PJOK: data['SEMESTER_1']['PJOK'],
+          PKWU: data['SEMESTER_1']['PKWU'],
+          MTK_T: data['SEMESTER_1']['MTK_T'],
+          BIO: data['SEMESTER_1']['BIO'],
+          FIS: data['SEMESTER_1']['FIS'],
+          KIM: data['SEMESTER_1']['KIM'],
+          EKO: data['SEMESTER_1']['EKO'],
+          BING_T: data['SEMESTER_1']['BING_T'],
+        },
+        as: 'nilai_ipa_s' 
+      }],
+      raw: true,
+    })) return true
 
-    // Jika siswa ditemukan
-    if (siswa) {
-
-      // Buat loop untuk mengecek kesamaan nilai setiap semester
-      for (let i = 1; i <= 5; i++) {
-
-        const nilaiSemester = data[`SEMESTER_${i}`]; // Ambil data nilai untuk semester tertentu
-
-        if(nilaiSemester.PABP !== siswa.nilai_ipa_s[i].dataValues.PABP ||
-        nilaiSemester.PPKN !== siswa.nilai_ipa_s[i].dataValues.PPKN ||
-        nilaiSemester.B_IND !== siswa.nilai_ipa_s[i].dataValues.B_IND ||
-        nilaiSemester.MTK_W !== siswa.nilai_ipa_s[i].dataValues.MTK_W ||
-        nilaiSemester.S_IND !== siswa.nilai_ipa_s[i].dataValues.S_IND ||
-        nilaiSemester.BING_W !== siswa.nilai_ipa_s[i].dataValues.BING_W ||
-        nilaiSemester.S_BUD !== siswa.nilai_ipa_s[i].dataValues.S_BUD ||
-        nilaiSemester.PJOK !== siswa.nilai_ipa_s[i].dataValues.PJOK ||
-        nilaiSemester.PKWU !== siswa.nilai_ipa_s[i].dataValues.PKWU ||
-        nilaiSemester.MTK_T !== siswa.nilai_ipa_s[i].dataValues.MTK_T ||
-        nilaiSemester.BIO !== siswa.nilai_ipa_s[i].dataValues.BIO ||
-        nilaiSemester.FIS !== siswa.nilai_ipa_s[i].dataValues.FIS ||
-        nilaiSemester.KIM !== siswa.nilai_ipa_s[i].dataValues.KIM ||
-        nilaiSemester.EKO !== siswa.nilai_ipa_s[i].dataValues.EKO) return true;
-
-        // // Tambahkan BING_T jika ada di semester 1 atau 2
-        // nilaiData.BING_T = (i === 1 || i === 2 ? nilaiSemester.BING_T : 0)
-      }
-    }
-
-    // Jika tidak ada siswa atau tidak ada data nilai ipa yang terkait, return false
     return false;
+
   } catch (error) {
     console.error('Error:', error);
     throw new Error("Gagal memeriksa data duplikat: " + error.message);
