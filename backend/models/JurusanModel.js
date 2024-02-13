@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from "sequelize";
 import db from "../config/Database.js";
+import { SiswaIpaModel } from "./IpaModel.js";
 
 const JurusanModel = db.define(
   "jurusan",

@@ -188,26 +188,30 @@ export const getAllIpa = async (req, res) => {
     const siswaData = await SiswaIpaModel.findAll({
       include: [
         {
+          model: JurusanModel,
+          as: 'jurusan_ipa_s',
+        },
+        {
           model: NilaiIpaModel,
           as: 'nilai_ipa_s',
         },
       ],
     });
 
-    // Mendapatkan data jurusan berdasarkan jurusan_id dari masing-masing siswa
-    const jurusanDataPromises = siswaData.map(async (siswa) => {
-      const jurusan = await JurusanModel.findOne({
-        where: { id: siswa.jurusan_id }
-      });
-      return jurusan ? jurusan.toJSON() : "-";
-    });
+    // // Mendapatkan data jurusan berdasarkan jurusan_id dari masing-masing siswa
+    // const jurusanDataPromises = siswaData.map(async (siswa) => {
+    //   const jurusan = await JurusanModel.findOne({
+    //     where: { id: siswa.jurusan_id }
+    //   });
+    //   return jurusan ? jurusan.toJSON() : "-";
+    // });
 
-    const jurusanData = await Promise.all(jurusanDataPromises);
+    // const jurusanData = await Promise.all(jurusanDataPromises);
 
-    // Menambahkan data jurusan ke masing-masing objek siswa dalam hasil query
-    siswaData.forEach((siswa, index) => {
-      siswa.dataValues.jurusan = jurusanData[index];
-    });
+    // // Menambahkan data jurusan ke masing-masing objek siswa dalam hasil query
+    // siswaData.forEach((siswa, index) => {
+    //   siswa.dataValues.jurusan = jurusanData[index];
+    // });
 
     res.status(200).json({
       message: "Berhasil mendapatkan data siswa IPA!",
