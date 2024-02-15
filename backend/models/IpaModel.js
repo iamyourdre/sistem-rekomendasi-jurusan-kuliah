@@ -97,11 +97,7 @@ const SiswaIpaModel = db.define(
     akt_thn: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    univ: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+    }
   },
   {
     freezeTableName: true,

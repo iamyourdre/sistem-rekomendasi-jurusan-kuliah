@@ -27,6 +27,27 @@ const JurusanModel = db.define(
   }
 );
 
+const UnivModel = db.define(
+  "universitas",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    universitas: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+  },
+  {
+    freezeTableName: true,
+    timestamps: false,
+  }
+);
+
 JurusanModel.hasMany(SiswaIpaModel, {
   foreignKey: {
     name: "jurusan_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
@@ -44,6 +65,23 @@ SiswaIpaModel.belongsTo(JurusanModel, {
   as: 'jurusan_ipa_s',
 });
 
+UnivModel.hasMany(SiswaIpaModel, {
+  foreignKey: {
+    name: "univ_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
+    allowNull: false,
+  },
+  as: 'univ_ipa_s',
+  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di UnivModel
+});
+
+SiswaIpaModel.belongsTo(UnivModel, {
+  foreignKey: {
+    name: "univ_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
+    allowNull: false,
+  },
+  as: 'univ_ipa_s',
+});
+
 (async () => {
   // Sinkronisasi database
   await db.sync();
@@ -55,7 +93,14 @@ SiswaIpaModel.belongsTo(JurusanModel, {
       rumpun: "-"
     });
   }
+  
+  if (!await UnivModel.findOne({ where: { id: 1 } })) {
+    await UnivModel.create({
+      id: 1,
+      universitas: "-"
+    });
+  }
 
 })();
 
-export default JurusanModel;
+export {JurusanModel, UnivModel};

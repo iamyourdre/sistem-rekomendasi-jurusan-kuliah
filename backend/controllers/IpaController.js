@@ -2,9 +2,8 @@ import { SiswaIpaModel, NilaiIpaModel } from "../models/IpaModel.js";
 import readXlsxFile from "read-excel-file/node";
 import path from "path";
 import { fileURLToPath } from "url";
-import { findOrCreateJurusan } from "./JurusanController.js";
-import JurusanModel from "../models/JurusanModel.js";
-import { Op } from "sequelize";
+import { findOrCreateCollege } from "./CollegeController.js";
+import {JurusanModel, UnivModel} from "../models/CollegeModel.js";
 
 export const upload = async (req, res) => {
   try {
@@ -128,15 +127,15 @@ export const upload = async (req, res) => {
         // Membuat data siswa dan data nilai untuk setiap siswa
         for (const data of dataset) {
           
-          const jurusan = await findOrCreateJurusan(data.JRSN, data.RUMPUN);
-          const isDupli = await isDuplication(data, jurusan);
+          const college = await findOrCreateCollege(data.UNIV, data.JRSN, data.RUMPUN);
+          const isDupli = await isDuplication(data, college.univ_id, college.jurusan_id);
           
           if (!isDupli) {
             const createdSiswa = await SiswaIpaModel.create({
               nama: data.NAMA || "-",
               akt_thn: data.TAHUN || 0,
-              univ: data.UNIV || "-",
-              jurusan_id: jurusan
+              univ_id: college.univ_id,
+              jurusan_id: college.jurusan_id
             });
       
             for (let i = 1; i <= 5; i++) {
@@ -193,6 +192,10 @@ export const getAllIpa = async (req, res) => {
           as: 'jurusan_ipa_s',
         },
         {
+          model: UnivModel,
+          as: 'univ_ipa_s',
+        },
+        {
           model: NilaiIpaModel,
           as: 'nilai_ipa_s',
         },
@@ -208,14 +211,14 @@ export const getAllIpa = async (req, res) => {
   }
 };
 
-export const isDuplication = async (data, j_id) => {
+export const isDuplication = async (data, u_id, j_id) => {
   try {
     // Cari data siswa berdasarkan nama, dan sertakan relasinya dengan nilai ipa
     if(await SiswaIpaModel.findOne({
       where: { 
         nama: data.NAMA,
-        univ: data.UNIV || "-",
-        jurusan_id: j_id || "-",
+        univ_id: u_id || 1,
+        jurusan_id: j_id || 1,
       },
       include: [{ 
         model: NilaiIpaModel,

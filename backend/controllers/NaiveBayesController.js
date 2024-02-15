@@ -5,7 +5,7 @@ import { erf } from 'mathjs';
 export const createTrainingData = async (req, res) => {
   try {
     
-    await calcGenre();
+    await calcJurusan();
     await calcMean();
     await calcStdev();
       
