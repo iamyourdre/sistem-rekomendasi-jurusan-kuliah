@@ -1,9 +1,11 @@
 import express from "express";
 const app = express();
-import initRoutes from "./routes/IpaRoute.js";
+import datasetRoutes from "./routes/IpaRoute.js";
+import NBv1router from "./routes/NaiveBayesV1Route.js";
 
 
 app.use(express.urlencoded({ extended: true }));
-initRoutes(app);
+datasetRoutes(app);
+NBv1router(app);
 
 app.listen(5000, () => console.log('Server up and running...'));

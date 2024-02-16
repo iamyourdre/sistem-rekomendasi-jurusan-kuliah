@@ -50,33 +50,33 @@ const UnivModel = db.define(
 
 JurusanModel.hasMany(SiswaIpaModel, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
+    name: "jurusan_id", // Nama kolom foreign key SiswaIpaModel yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'jurusan_ipa_s',
-  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di NilaiIpaModel
+  as: 'jurusan_ipa_key',
+  onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di SiswaIpaModel
 });
 
 SiswaIpaModel.belongsTo(JurusanModel, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
+    name: "jurusan_id", // Nama kolom foreign key yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'jurusan_ipa_s',
+  as: 'jurusan_ipa_key',
 });
 
 UnivModel.hasMany(SiswaIpaModel, {
   foreignKey: {
-    name: "univ_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
+    name: "univ_id", // Nama kolom foreign key SiswaIpaModel yang terhubung ke UnivModel
     allowNull: false,
   },
   as: 'univ_ipa_s',
-  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di UnivModel
+  onDelete: "CASCADE", // Jika data UnivModel dihapus, hapus juga semua data terkait di SiswaIpaModel
 });
 
 SiswaIpaModel.belongsTo(UnivModel, {
   foreignKey: {
-    name: "univ_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
+    name: "univ_id", // Nama kolom foreign key yang terhubung ke UnivModel
     allowNull: false,
   },
   as: 'univ_ipa_s',

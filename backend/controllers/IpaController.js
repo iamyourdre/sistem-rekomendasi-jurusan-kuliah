@@ -189,7 +189,7 @@ export const getAllIpa = async (req, res) => {
       include: [
         {
           model: JurusanModel,
-          as: 'jurusan_ipa_s',
+          as: 'jurusan_ipa_key',
         },
         {
           model: UnivModel,

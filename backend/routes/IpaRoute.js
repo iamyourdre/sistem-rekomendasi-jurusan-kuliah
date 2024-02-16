@@ -8,11 +8,11 @@ import {
 
 const router = express.Router();
 
-let routes = (app) => {
+let datasetRoutes = (app) => {
   router.post("/upload", uploadFile.single("file"), upload);
-  router.get("/dataset", getAllIpa);
+  router.get("/get", getAllIpa);
   router.delete("/reset", deleteAllIpa); // Menambah rute untuk menghapus semua data
-  app.use("/api/excel", router);
+  app.use("/api/dataset", router);
 };
 
-export default routes;
+export default datasetRoutes;

@@ -145,21 +145,21 @@ const NbIpaV1Model = db.define(
   }
 );
 
-JurusanModel.has(NbIpaV1Model, {
+JurusanModel.hasOne(NbIpaV1Model, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key yang terhubung ke JurusanModel
+    name: "jurusan_id", // Nama kolom foreign key NbIpaV1Model yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'nb_ipa_v1_dataset_s',
+  as: 'nb_ipa_v1_dataset_key',
   onDelete: "CASCADE", // Jika data jurusan dihapus, hapus juga semua data terkait di NbIpaV1Model
 });
 
 NbIpaV1Model.belongsTo(JurusanModel, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key yang terhubung ke JurusanModel
+    name: "jurusan_id", // Nama kolom foreign key NbIpaV1Model yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'nb_ipa_v1_dataset_s',
+  as: 'nb_ipa_v1_dataset_key',
 });
 
 export default NbIpaV1Model;
