@@ -1,7 +1,6 @@
 import express from "express";
 const app = express();
-import datasetRoutes from "./routes/IpaRoute.js";
-import NBv1router from "./routes/NaiveBayesV1Route.js";
+import {datasetRoutes, NBv1router} from "./routes/MainRoute.js";
 
 
 app.use(express.urlencoded({ extended: true }));

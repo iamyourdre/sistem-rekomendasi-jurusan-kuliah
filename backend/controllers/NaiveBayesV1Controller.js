@@ -1,18 +1,20 @@
 import { Sequelize } from "sequelize";
 import { erf } from 'mathjs';
-import { JurusanModel } from "../models/CollegeModel.js";
 import { SiswaIpaModel } from "../models/IpaModel.js";
-import db from "../config/Database.js";
+import NbIpaV1Model from "../models/NaiveBayesV1Model.js";
 
 export const createTrainingData = async (req, res) => {
   try {
     
-    await countProbability();
-    await countMean();
-    await countStdev();
+    await NbIpaV1Model.destroy({ where: {} });
+
+    const probability = await countProbability();
+    // await countMean();
+    // await countStdev();
       
     res.status(200).send({
       message: "Selesai membuat data latih!",
+      data: probability
     });
 
   } catch (error) {
@@ -25,6 +27,7 @@ export const createTrainingData = async (req, res) => {
 
 export const countProbability = async (req, res) => {
   try {
+
     // Menghitung jumlah kemunculan masing-masing jurusan_id
     const countedJurusan = await SiswaIpaModel.findAll({
       attributes: ['jurusan_id', [Sequelize.fn('COUNT', Sequelize.col('jurusan_id')), 'quantity']],
@@ -32,28 +35,25 @@ export const countProbability = async (req, res) => {
     });
 
     // Membuat array untuk menyimpan pasangan jurusan_id dan quantity
-    const jurusanCountArray = [];
+    const jurusanCountTemp = [];
     const totalData = await SiswaIpaModel.count();
 
     // Memasukkan hasil perhitungan ke dalam array
     countedJurusan.forEach((item) => {
-      jurusanCountArray.push({
+      jurusanCountTemp.push({
         jurusan_id: item.jurusan_id,
         quantity: item.dataValues.quantity
       });
     });
     
-    for (let i = 0; i < jurusanCountArray.length; i++) {
-      jurusanCountArray[i].probability = jurusanCountArray[i].quantity / totalData;
+    for (let i = 0; i < jurusanCountTemp.length; i++) {
+      jurusanCountTemp[i].probability = jurusanCountTemp[i].quantity / totalData;
     }
+    
+    return await NbIpaV1Model.bulkCreate(jurusanCountTemp)
 
-    // Mengembalikan respons JSON
-    res.status(200).json({
-      success: true,
-      data: jurusanCountArray
-    });
   } catch (error) {
-    console.error("Error counting jurusan:", error);
+    console.error("Gagal:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error"

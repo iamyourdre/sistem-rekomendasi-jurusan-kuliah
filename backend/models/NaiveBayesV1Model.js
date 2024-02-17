@@ -1,7 +1,7 @@
 // Import dependensi yang diperlukan
 import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
-import JurusanModel from "./JurusanModel.js";
+import { JurusanModel } from "./CollegeModel.js";
 
 const NbIpaV1Model = db.define(
   "nb_ipa_v1_dataset",
@@ -9,6 +9,8 @@ const NbIpaV1Model = db.define(
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
     },
     quantity: {
       type: DataTypes.INTEGER,
@@ -151,7 +153,7 @@ JurusanModel.hasOne(NbIpaV1Model, {
     allowNull: false,
   },
   as: 'nb_ipa_v1_dataset_key',
-  onDelete: "CASCADE", // Jika data jurusan dihapus, hapus juga semua data terkait di NbIpaV1Model
+  onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di NbIpaV1Model
 });
 
 NbIpaV1Model.belongsTo(JurusanModel, {

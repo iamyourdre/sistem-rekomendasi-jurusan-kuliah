@@ -1,4 +1,5 @@
 import  { JurusanModel, UnivModel } from "../models/CollegeModel.js"
+import NbIpaV1Model from "../models/NaiveBayesV1Model.js";
 
 export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
 
@@ -32,4 +33,25 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
 
   return { jurusan_id, univ_id };
 
+};
+
+
+export const getAllCollege = async (req, res) => {
+  try {
+    const jurusanData = await JurusanModel.findAll({
+      include: [
+        {
+          model: NbIpaV1Model,
+          as: 'nb_ipa_v1_dataset_key',
+        },
+      ],
+    });
+    res.status(200).json({
+      data: jurusanData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
 };
