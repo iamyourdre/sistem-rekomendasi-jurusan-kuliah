@@ -81,6 +81,86 @@ const NilaiIpaModel = db.define(
   }
 );
 
+const SummaryIpaModel = db.define(
+  "summary_ipa",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    total: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_PABP: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_PPKN: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_B_IND: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_MTK_W: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_S_IND: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_BING_W: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_S_BUD: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_PJOK: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_PKWU: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_MTK_T: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_BIO: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_FIS: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_KIM: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_EKO: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    mean_BING_T: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+  },
+  {
+    freezeTableName: true,
+    timestamps: false,
+  }
+);
+
 const SiswaIpaModel = db.define(
   "siswa_ipa",
   {
@@ -122,9 +202,26 @@ NilaiIpaModel.belongsTo(SiswaIpaModel, {
   as: 'nilai_ipa',
 });
 
+SiswaIpaModel.hasMany(SummaryIpaModel, {
+  foreignKey: {
+    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SummaryIpaModel
+    allowNull: false,
+  },
+  as: 'summary_ipa_s',
+  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di NilaiIpaModel
+});
+
+SummaryIpaModel.belongsTo(SiswaIpaModel, {
+  foreignKey: {
+    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SummaryIpaModel
+    allowNull: false,
+  },
+  as: 'summary_ipa_s',
+});
+
 (async () => {
   // Sinkronisasi database
   await db.sync();
 })();
 
-export { SiswaIpaModel, NilaiIpaModel };
+export { SiswaIpaModel, SummaryIpaModel, NilaiIpaModel };

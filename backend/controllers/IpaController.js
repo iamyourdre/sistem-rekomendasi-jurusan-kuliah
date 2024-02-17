@@ -1,4 +1,4 @@
-import { SiswaIpaModel, NilaiIpaModel } from "../models/IpaModel.js";
+import { SiswaIpaModel, NilaiIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
 import readXlsxFile from "read-excel-file/node";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -137,9 +137,32 @@ export const upload = async (req, res) => {
               univ_id: college.univ_id,
               jurusan_id: college.jurusan_id
             });
+
+            let summaryNilai = {
+              siswa_id: createdSiswa.id,
+              total: 0,
+              mean_PABP: 0,
+              mean_PPKN: 0,
+              mean_B_IND: 0,
+              mean_MTK_W: 0,
+              mean_S_IND: 0,
+              mean_BING_W: 0,
+              mean_S_BUD: 0,
+              mean_PJOK: 0,
+              mean_PKWU: 0,
+              mean_MTK_T: 0,
+              mean_BIO: 0,
+              mean_FIS: 0,
+              mean_KIM: 0,
+              mean_EKO: 0,
+              mean_BING_T: 0
+            };
       
             for (let i = 1; i <= 5; i++) {
+
               const nilaiSemester = data[`SEMESTER_${i}`];
+
+              // Memasukkan nilai mapel per semester ke database
               const nilaiData = {
                 siswa_id: createdSiswa.id,
                 semester: i,
@@ -160,7 +183,39 @@ export const upload = async (req, res) => {
                 BING_T: (i === 1 || i === 2 ? nilaiSemester.BING_T : 0)
               };
               await NilaiIpaModel.create(nilaiData);
+
+              // Menghitung total nilai tiap mapel
+              summaryNilai.mean_PABP += nilaiSemester.PABP || 0;
+              summaryNilai.mean_PPKN += nilaiSemester.PPKN || 0;
+              summaryNilai.mean_B_IND += nilaiSemester.B_IND || 0;
+              summaryNilai.mean_MTK_W += nilaiSemester.MTK_W || 0;
+              summaryNilai.mean_S_IND += nilaiSemester.S_IND || 0;
+              summaryNilai.mean_BING_W += nilaiSemester.BING_W || 0;
+              summaryNilai.mean_S_BUD += nilaiSemester.S_BUD || 0;
+              summaryNilai.mean_PJOK += nilaiSemester.PJOK || 0;
+              summaryNilai.mean_PKWU += nilaiSemester.PKWU || 0;
+              summaryNilai.mean_MTK_T += nilaiSemester.MTK_T || 0;
+              summaryNilai.mean_BIO += nilaiSemester.BIO || 0;
+              summaryNilai.mean_FIS += nilaiSemester.FIS || 0;
+              summaryNilai.mean_KIM += nilaiSemester.KIM || 0;
+              summaryNilai.mean_EKO += nilaiSemester.EKO || 0;
+              summaryNilai.mean_BING_T += (i === 1 || i === 2 ? nilaiSemester.BING_T : 0);
+
             }
+            
+            // Menghitung rata-rata nilai mapel
+            let totalNilai = 0;
+            for (let i = 2; i <= 15; i++) {
+              totalNilai += summaryNilai[Object.keys(summaryNilai)[i]]; // Mengakses nilai mapel berdasarkan nama atribut
+              summaryNilai[Object.keys(summaryNilai)[i]] /= 5; // Menghitung rata-rata nilai mapel
+            }
+            totalNilai += summaryNilai[Object.keys(summaryNilai)[16]];
+            summaryNilai[Object.keys(summaryNilai)[16]] /= 2; // Menghitung rata-rata nilai BING_T
+            summaryNilai.total = totalNilai; // Menyimpan total nilai ke dalam properti total
+
+            
+            await SummaryIpaModel.create(summaryNilai);
+
           }
         }
       
@@ -194,6 +249,10 @@ export const getAllIpa = async (req, res) => {
         {
           model: UnivModel,
           as: 'univ_ipa_s',
+        },
+        {
+          model: SummaryIpaModel,
+          as: 'summary_ipa_s',
         },
         {
           model: NilaiIpaModel,
@@ -255,11 +314,15 @@ export const isDuplication = async (data, u_id, j_id) => {
 
 export const deleteAllIpa = async () => {
   try {
+
     // Hapus semua data dalam tabel NilaiIpaModel
     await NilaiIpaModel.destroy({ where: {} });
 
     // Hapus semua data dalam tabel SiswaIpaModel
     await SiswaIpaModel.destroy({ where: {} });
+    
+    // Hapus semua data dalam tabel SummaryIpaModel
+    await SummaryIpaModel.destroy({ where: {} });
 
     return {
       success: true,

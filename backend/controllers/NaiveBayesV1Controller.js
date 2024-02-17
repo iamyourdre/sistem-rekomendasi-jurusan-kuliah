@@ -33,6 +33,7 @@ export const countProbability = async (req, res) => {
 
     // Membuat array untuk menyimpan pasangan jurusan_id dan quantity
     const jurusanCountArray = [];
+    const totalData = await SiswaIpaModel.count();
 
     // Memasukkan hasil perhitungan ke dalam array
     countedJurusan.forEach((item) => {
@@ -41,6 +42,10 @@ export const countProbability = async (req, res) => {
         quantity: item.dataValues.quantity
       });
     });
+    
+    for (let i = 0; i < jurusanCountArray.length; i++) {
+      jurusanCountArray[i].probability = jurusanCountArray[i].quantity / totalData;
+    }
 
     // Mengembalikan respons JSON
     res.status(200).json({
