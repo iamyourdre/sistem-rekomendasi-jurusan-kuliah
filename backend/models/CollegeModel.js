@@ -70,7 +70,7 @@ UnivModel.hasMany(SiswaIpaModel, {
     name: "univ_id", // Nama kolom foreign key SiswaIpaModel yang terhubung ke UnivModel
     allowNull: false,
   },
-  as: 'univ_ipa_s',
+  as: 'univ_ipa_key',
   onDelete: "CASCADE", // Jika data UnivModel dihapus, hapus juga semua data terkait di SiswaIpaModel
 });
 
@@ -79,7 +79,7 @@ SiswaIpaModel.belongsTo(UnivModel, {
     name: "univ_id", // Nama kolom foreign key yang terhubung ke UnivModel
     allowNull: false,
   },
-  as: 'univ_ipa_s',
+  as: 'univ_ipa_key',
 });
 
 (async () => {

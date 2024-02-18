@@ -1,31 +1,32 @@
 import { Sequelize } from "sequelize";
 import { erf } from 'mathjs';
-import { SiswaIpaModel } from "../models/IpaModel.js";
+import { SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
 import NbIpaV1Model from "../models/NaiveBayesV1Model.js";
+import { JurusanModel } from "../models/CollegeModel.js";
 
 export const createTrainingData = async (req, res) => {
   try {
     
     await NbIpaV1Model.destroy({ where: {} });
 
-    const probability = await countProbability();
-    // await countMean();
+    const probability = await setProbability();
+    await setMean();
     // await countStdev();
       
-    res.status(200).send({
+    res.status(200).json({
       message: "Selesai membuat data latih!",
-      data: probability
+      data: await NbIpaV1Model.findAll()
     });
 
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Gagal membuat data latih!",
       error: error.message,
     });
   }
 };
 
-export const countProbability = async (req, res) => {
+export const setProbability = async (req, res) => {
   try {
 
     // Menghitung jumlah kemunculan masing-masing jurusan_id
@@ -50,74 +51,120 @@ export const countProbability = async (req, res) => {
       jurusanCountTemp[i].probability = jurusanCountTemp[i].quantity / totalData;
     }
     
-    return await NbIpaV1Model.bulkCreate(jurusanCountTemp)
-
   } catch (error) {
-    return {
-      success: false,
+    res.status(500).json({
       message: "Gagal melakukan operasi countProbability!",
       error: error.message,
-    };
+    });
   }
 };
 
 
-export const countMean = async (res) => {
+export const setMean = async (req, res) => {
   try {
     
     const dataset = await NbIpaV1Model.findAll();
+    let sumNilai;
 
-    const sumNilai = await SummaryIpaModel.findAll({
-      where: {
-        jurusan_id: d.genre,
-      },
-      raw: true,
-    });
+    for (const d of dataset) {
+      // Ambil semua summary nilai
+      sumNilai = await SummaryIpaModel.findAll({
+        include: [
+          {
+            model: SiswaIpaModel,
+            as: 'summary_ipa_key',
+            where: {
+              jurusan_id: d.jurusan_id,
+            },
+          },
+        ],
+        
+        raw: true,
+      });
 
-    // for (const d of dataClass) {
-    //   // Ambil semua summary nilai
-    //   const samples = await SummaryIpaModel.findAll({
-    //     where: {
-    //       jurusan_id: d.genre,
-    //     },
-    //     raw: true,
-    //   });
-
-    //   if (samples.length > 0) {
-    //     // Hitung rata-rata kolom-kolom "x1", "x2", "x3", dan "x4"
-    //     const total_x1 = samples.reduce((acc, sample) => acc + sample.x1, 0);
-    //     const total_x2 = samples.reduce((acc, sample) => acc + sample.x2, 0);
-    //     const total_x3 = samples.reduce((acc, sample) => acc + sample.x3, 0);
-    //     const total_x4 = samples.reduce((acc, sample) => acc + sample.x4, 0);
-
-    //     const average_x1 = total_x1 / samples.length;
-    //     const average_x2 = total_x2 / samples.length;
-    //     const average_x3 = total_x3 / samples.length;
-    //     const average_x4 = total_x4 / samples.length;
-
-    //     // Update Mean
-    //     await NB_dataclass.update(
-    //       {
-    //         mean_x1: average_x1,
-    //         mean_x2: average_x2,
-    //         mean_x3: average_x3,
-    //         mean_x4: average_x4,
-    //       },
-    //       {
-    //         where: { genre: d.genre },
-    //       }
-    //     );
-    //   }
-    // }
+      if (sumNilai) {
+        
+        let totalMeanPABP = 0;
+        let totalMeanPPKN = 0;
+        let totalMeanBIND = 0;
+        let totalMeanMTKW = 0;
+        let totalMeanSIND = 0;
+        let totalMeanBINGW = 0;
+        let totalMeanSBUD = 0;
+        let totalMeanPJOK = 0;
+        let totalMeanPKWU = 0;
+        let totalMeanMTKT = 0;
+        let totalMeanBIO = 0;
+        let totalMeanFIS = 0;
+        let totalMeanKIM = 0;
+        let totalMeanEKO = 0;
+        let totalMeanBINGT = 0;
     
-    
-    return {
-      success: true,
-      message: "Berhasil menghapus semua data dalam tabel!",
-    };
+        // Menjumlahkan "x1", "x2", "x3", dst...
+        sumNilai.forEach(sum => {
+            totalMeanPABP += sum.mean_PABP;
+            totalMeanPPKN += sum.mean_PPKN;
+            totalMeanBIND += sum.mean_B_IND;
+            totalMeanMTKW += sum.mean_MTK_W;
+            totalMeanSIND += sum.mean_S_IND;
+            totalMeanBINGW += sum.mean_BING_W;
+            totalMeanSBUD += sum.mean_S_BUD;
+            totalMeanPJOK += sum.mean_PJOK;
+            totalMeanPKWU += sum.mean_PKWU;
+            totalMeanMTKT += sum.mean_MTK_T;
+            totalMeanBIO += sum.mean_BIO;
+            totalMeanFIS += sum.mean_FIS;
+            totalMeanKIM += sum.mean_KIM;
+            totalMeanEKO += sum.mean_EKO;
+            totalMeanBINGT += sum.mean_BING_T;
+        });
+
+        // Menghitung mean "x1", "x2", "x3", dst...
+        const mean_x1 = totalMeanPABP / sumNilai.length;
+        const mean_x2 = totalMeanPPKN / sumNilai.length;
+        const mean_x3 = totalMeanBIND / sumNilai.length;
+        const mean_x4 = totalMeanMTKW / sumNilai.length;
+        const mean_x5 = totalMeanSIND / sumNilai.length;
+        const mean_x6 = totalMeanBINGW / sumNilai.length;
+        const mean_x7 = totalMeanSBUD / sumNilai.length;
+        const mean_x8 = totalMeanPJOK / sumNilai.length;
+        const mean_x9 = totalMeanPKWU / sumNilai.length;
+        const mean_x10 = totalMeanMTKT / sumNilai.length;
+        const mean_x11 = totalMeanBIO / sumNilai.length;
+        const mean_x12 = totalMeanFIS / sumNilai.length;
+        const mean_x13 = totalMeanKIM / sumNilai.length;
+        const mean_x14 = totalMeanEKO / sumNilai.length;
+        const mean_x15 = totalMeanBINGT / sumNilai.length;
+
+        await NbIpaV1Model.update(
+          {
+              mean_x1: mean_x1,
+              mean_x2: mean_x2,
+              mean_x3: mean_x3,
+              mean_x4: mean_x4,
+              mean_x5: mean_x5,
+              mean_x6: mean_x6,
+              mean_x7: mean_x7,
+              mean_x8: mean_x8,
+              mean_x9: mean_x9,
+              mean_x10: mean_x10,
+              mean_x11: mean_x11,
+              mean_x12: mean_x12,
+              mean_x13: mean_x13,
+              mean_x14: mean_x14,
+              mean_x15: mean_x15
+          },
+          {
+            where: { jurusan_id: d.jurusan_id },
+          }
+        );
+      }
+
+    }
+
   } catch (error) {
     res.status(500).json({
-      message: "Gagal mengambil dataset!",
+      message: "Gagal melakukan operasi countMean!",
       error: error.message,
     });
   }

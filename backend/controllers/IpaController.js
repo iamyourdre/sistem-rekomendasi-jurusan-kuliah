@@ -219,12 +219,12 @@ export const upload = async (req, res) => {
           }
         }
       
-        res.status(200).send({
+        res.status(200).json({
           message: "Dataset " + req.file.originalname +" berhasil diimpor!",
         });
 
       } catch (error) {
-        res.status(500).send({
+        res.status(500).json({
           message: "Gagal mengimpor dataset ke database!",
           error: error.message,
         });
@@ -232,7 +232,7 @@ export const upload = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({
+    res.status(500).json({
       message: "Dataset " + req.file.originalname +" gagal diimpor!",
       error: error.message,
     });
@@ -249,15 +249,15 @@ export const getAllIpa = async (req, res) => {
         },
         {
           model: UnivModel,
-          as: 'univ_ipa_s',
+          as: 'univ_ipa_key',
         },
         {
           model: SummaryIpaModel,
-          as: 'summary_ipa_s',
+          as: 'summary_ipa_key',
         },
         {
           model: NilaiIpaModel,
-          as: 'nilai_ipa_s',
+          as: 'nilai_ipa_key',
         },
       ],
     });
@@ -301,7 +301,7 @@ export const isDuplication = async (data, u_id, j_id, res) => {
           EKO: data['SEMESTER_1']['EKO'],
           BING_T: data['SEMESTER_1']['BING_T'],
         },
-        as: 'nilai_ipa_s' 
+        as: 'nilai_ipa_key' 
       }],
       raw: true,
     })) return true

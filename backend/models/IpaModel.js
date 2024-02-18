@@ -190,7 +190,7 @@ SiswaIpaModel.hasMany(NilaiIpaModel, {
     name: "siswa_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
     allowNull: false,
   },
-  as: 'nilai_ipa_s',
+  as: 'nilai_ipa_key',
   onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di NilaiIpaModel
 });
 
@@ -199,7 +199,7 @@ NilaiIpaModel.belongsTo(SiswaIpaModel, {
     name: "siswa_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
     allowNull: false,
   },
-  as: 'nilai_ipa',
+  as: 'nilai_ipa_key',
 });
 
 SiswaIpaModel.hasMany(SummaryIpaModel, {
@@ -207,7 +207,7 @@ SiswaIpaModel.hasMany(SummaryIpaModel, {
     name: "siswa_id", // Nama kolom foreign key yang terhubung ke SummaryIpaModel
     allowNull: false,
   },
-  as: 'summary_ipa_s',
+  as: 'summary_ipa_key',
   onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di NilaiIpaModel
 });
 
@@ -216,7 +216,7 @@ SummaryIpaModel.belongsTo(SiswaIpaModel, {
     name: "siswa_id", // Nama kolom foreign key yang terhubung ke SummaryIpaModel
     allowNull: false,
   },
-  as: 'summary_ipa_s',
+  as: 'summary_ipa_key',
 });
 
 (async () => {
