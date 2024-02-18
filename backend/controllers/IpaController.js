@@ -225,7 +225,7 @@ export const upload = async (req, res) => {
 
       } catch (error) {
         res.status(500).send({
-          message: "Gagal mengimpor data ke database!",
+          message: "Gagal mengimpor dataset ke database!",
           error: error.message,
         });
       }
@@ -234,6 +234,7 @@ export const upload = async (req, res) => {
     console.log(error);
     res.status(500).send({
       message: "Dataset " + req.file.originalname +" gagal diimpor!",
+      error: error.message,
     });
   }
 };
@@ -265,12 +266,13 @@ export const getAllIpa = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      message: "Gagal mengambil dataset!",
       error: error.message,
     });
   }
 };
 
-export const isDuplication = async (data, u_id, j_id) => {
+export const isDuplication = async (data, u_id, j_id, res) => {
   try {
     // Cari data siswa berdasarkan nama, dan sertakan relasinya dengan nilai ipa
     if(await SiswaIpaModel.findOne({
@@ -307,12 +309,14 @@ export const isDuplication = async (data, u_id, j_id) => {
     return false;
 
   } catch (error) {
-    console.error('Error:', error);
-    throw new Error("Gagal memeriksa data duplikat: " + error.message);
+    res.status(500).json({
+      message: "Gagal melakukan operasi pengecekan duplikasi!",
+      error: error.message,
+    });
   }
 };
 
-export const deleteAllIpa = async () => {
+export const deleteAllIpa = async (res) => {
   try {
 
     // Hapus semua data dalam tabel NilaiIpaModel
@@ -326,12 +330,11 @@ export const deleteAllIpa = async () => {
 
     return {
       success: true,
-      message: "Berhasil menghapus semua data dalam tabel!",
+      message: "Berhasil menghapus semua dataset!",
     };
   } catch (error) {
     return {
-      success: false,
-      message: "Gagal menghapus semua data dalam tabel!",
+      message: "Gagal menghapus semua dataset!",
       error: error.message,
     };
   }

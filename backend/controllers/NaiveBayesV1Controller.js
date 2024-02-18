@@ -19,7 +19,7 @@ export const createTrainingData = async (req, res) => {
 
   } catch (error) {
     res.status(500).send({
-      message: "Gagal mengimpor data ke database!",
+      message: "Gagal membuat data latih!",
       error: error.message,
     });
   }
@@ -53,10 +53,72 @@ export const countProbability = async (req, res) => {
     return await NbIpaV1Model.bulkCreate(jurusanCountTemp)
 
   } catch (error) {
-    console.error("Gagal:", error);
-    res.status(500).json({
+    return {
       success: false,
-      message: "Internal server error"
+      message: "Gagal melakukan operasi countProbability!",
+      error: error.message,
+    };
+  }
+};
+
+
+export const countMean = async (res) => {
+  try {
+    
+    const dataset = await NbIpaV1Model.findAll();
+
+    const sumNilai = await SummaryIpaModel.findAll({
+      where: {
+        jurusan_id: d.genre,
+      },
+      raw: true,
+    });
+
+    // for (const d of dataClass) {
+    //   // Ambil semua summary nilai
+    //   const samples = await SummaryIpaModel.findAll({
+    //     where: {
+    //       jurusan_id: d.genre,
+    //     },
+    //     raw: true,
+    //   });
+
+    //   if (samples.length > 0) {
+    //     // Hitung rata-rata kolom-kolom "x1", "x2", "x3", dan "x4"
+    //     const total_x1 = samples.reduce((acc, sample) => acc + sample.x1, 0);
+    //     const total_x2 = samples.reduce((acc, sample) => acc + sample.x2, 0);
+    //     const total_x3 = samples.reduce((acc, sample) => acc + sample.x3, 0);
+    //     const total_x4 = samples.reduce((acc, sample) => acc + sample.x4, 0);
+
+    //     const average_x1 = total_x1 / samples.length;
+    //     const average_x2 = total_x2 / samples.length;
+    //     const average_x3 = total_x3 / samples.length;
+    //     const average_x4 = total_x4 / samples.length;
+
+    //     // Update Mean
+    //     await NB_dataclass.update(
+    //       {
+    //         mean_x1: average_x1,
+    //         mean_x2: average_x2,
+    //         mean_x3: average_x3,
+    //         mean_x4: average_x4,
+    //       },
+    //       {
+    //         where: { genre: d.genre },
+    //       }
+    //     );
+    //   }
+    // }
+    
+    
+    return {
+      success: true,
+      message: "Berhasil menghapus semua data dalam tabel!",
+    };
+  } catch (error) {
+    res.status(500).json({
+      message: "Gagal mengambil dataset!",
+      error: error.message,
     });
   }
 };
