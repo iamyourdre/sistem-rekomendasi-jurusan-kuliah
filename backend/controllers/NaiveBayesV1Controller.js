@@ -13,8 +13,7 @@ export const naiveBayesClassifier = async (req, res) => {
 
     res.status(201).json({
         msg: "Calculation Completed! Your input is classified as:",
-        result: result,
-        // probData: probData
+        result: result
     });
   } catch (error) {
       console.log(error.message);
