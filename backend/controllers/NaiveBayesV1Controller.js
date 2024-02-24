@@ -276,45 +276,53 @@ export const calcNormDist = async (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11,
 
     // Iterasi melalui setiap data dalam dataset
     for (const d of dataset) {
-      // Menghitung distribusi normal untuk setiap atribut
-      const nd_x1 = 0.5 * (1 + erf((x1 - d.mean_x1) / (d.std_x1 * Math.sqrt(2))));
-      const nd_x2 = 0.5 * (1 + erf((x2 - d.mean_x2) / (d.std_x2 * Math.sqrt(2))));
-      const nd_x3 = 0.5 * (1 + erf((x3 - d.mean_x3) / (d.std_x3 * Math.sqrt(2))));
-      const nd_x4 = 0.5 * (1 + erf((x4 - d.mean_x4) / (d.std_x4 * Math.sqrt(2))));
-      const nd_x5 = 0.5 * (1 + erf((x5 - d.mean_x5) / (d.std_x5 * Math.sqrt(2))));
-      const nd_x6 = 0.5 * (1 + erf((x6 - d.mean_x6) / (d.std_x6 * Math.sqrt(2))));
-      const nd_x7 = 0.5 * (1 + erf((x7 - d.mean_x7) / (d.std_x7 * Math.sqrt(2))));
-      const nd_x8 = 0.5 * (1 + erf((x8 - d.mean_x8) / (d.std_x8 * Math.sqrt(2))));
-      const nd_x9 = 0.5 * (1 + erf((x9 - d.mean_x9) / (d.std_x9 * Math.sqrt(2))));
-      const nd_x10 = 0.5 * (1 + erf((x10 - d.mean_x10) / (d.std_x10 * Math.sqrt(2))));
-      const nd_x11 = 0.5 * (1 + erf((x11 - d.mean_x11) / (d.std_x11 * Math.sqrt(2))));
-      const nd_x12 = 0.5 * (1 + erf((x12 - d.mean_x12) / (d.std_x12 * Math.sqrt(2))));
-      const nd_x13 = 0.5 * (1 + erf((x13 - d.mean_x13) / (d.std_x13 * Math.sqrt(2))));
-      const nd_x14 = 0.5 * (1 + erf((x14 - d.mean_x14) / (d.std_x14 * Math.sqrt(2))));
-      const nd_x15 = 0.5 * (1 + erf((x15 - d.mean_x15) / (d.std_x15 * Math.sqrt(2))));
 
       // Menambahkan data distribusi normal ke dalam array
       normDistData.push({
-          nd_x1,
-          nd_x2,
-          nd_x3,
-          nd_x4,
-          nd_x5,
-          nd_x6,
-          nd_x7,
-          nd_x8,
-          nd_x9,
-          nd_x10,
-          nd_x11,
-          nd_x12,
-          nd_x13,
-          nd_x14,
-          nd_x15
+          nd_x1: 0.5 * (1 + erf((x1 - d.mean_x1) / (d.std_x1 * Math.sqrt(2)))),
+          nd_x2: 0.5 * (1 + erf((x2 - d.mean_x2) / (d.std_x2 * Math.sqrt(2)))),
+          nd_x3: 0.5 * (1 + erf((x3 - d.mean_x3) / (d.std_x3 * Math.sqrt(2)))),
+          nd_x4: 0.5 * (1 + erf((x4 - d.mean_x4) / (d.std_x4 * Math.sqrt(2)))),
+          nd_x5: 0.5 * (1 + erf((x5 - d.mean_x5) / (d.std_x5 * Math.sqrt(2)))),
+          nd_x6: 0.5 * (1 + erf((x6 - d.mean_x6) / (d.std_x6 * Math.sqrt(2)))),
+          nd_x7: 0.5 * (1 + erf((x7 - d.mean_x7) / (d.std_x7 * Math.sqrt(2)))),
+          nd_x8: 0.5 * (1 + erf((x8 - d.mean_x8) / (d.std_x8 * Math.sqrt(2)))),
+          nd_x9: 0.5 * (1 + erf((x9 - d.mean_x9) / (d.std_x9 * Math.sqrt(2)))),
+          nd_x10: 0.5 * (1 + erf((x10 - d.mean_x10) / (d.std_x10 * Math.sqrt(2)))),
+          nd_x11: 0.5 * (1 + erf((x11 - d.mean_x11) / (d.std_x11 * Math.sqrt(2)))),
+          nd_x12: 0.5 * (1 + erf((x12 - d.mean_x12) / (d.std_x12 * Math.sqrt(2)))),
+          nd_x13: 0.5 * (1 + erf((x13 - d.mean_x13) / (d.std_x13 * Math.sqrt(2)))),
+          nd_x14: 0.5 * (1 + erf((x14 - d.mean_x14) / (d.std_x14 * Math.sqrt(2)))),
+          nd_x15: 0.5 * (1 + erf((x15 - d.mean_x15) / (d.std_x15 * Math.sqrt(2))))
       });
     }
     
     return normDistData;
   } catch (error) {
     throw new Error(error.message);
+  }
+};
+
+export const calcProbability = async (normDistData) => {
+  try {
+    
+    // Mendapatkan semua data dari model NbIpaV1Model
+    const dataset = await NbIpaV1Model.findAll();
+    
+    const probData = [];
+
+    for (let i = 0; i < normDistData.length; i++) {
+      probData.push({
+          genre: normDistData[i].genre,
+          probability: dataClass[i].probability*normDistData[i].nd_x1*normDistData[i].nd_x2*normDistData[i].nd_x3*normDistData[i].nd_x4
+      });
+    }
+
+    console.log("calcProbability Done!");
+    
+    return probData;
+  } catch (error) {
+    console.log(error.message);
+    throw error;
   }
 };
