@@ -279,6 +279,7 @@ export const calcNormDist = async (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11,
 
       // Menambahkan data distribusi normal ke dalam array
       normDistData.push({
+          jurusan_id: d.jurusan_id,
           nd_x1: 0.5 * (1 + erf((x1 - d.mean_x1) / (d.std_x1 * Math.sqrt(2)))),
           nd_x2: 0.5 * (1 + erf((x2 - d.mean_x2) / (d.std_x2 * Math.sqrt(2)))),
           nd_x3: 0.5 * (1 + erf((x3 - d.mean_x3) / (d.std_x3 * Math.sqrt(2)))),
