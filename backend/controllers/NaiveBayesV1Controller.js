@@ -313,17 +313,21 @@ export const calcProbability = async (normDistData) => {
     const probData = [];
 
     for (let i = 0; i < normDistData.length; i++) {
+      let probability = dataClass[i].probability;
+
+      // Menghitung probability dengan mengalikan dengan setiap nd_x
+      for (let j = 1; j <= 15; j++) {
+        probability *= normDistData[i][`nd_x${j}`];
+      }
+
       probData.push({
-          genre: normDistData[i].genre,
-          probability: dataClass[i].probability*normDistData[i].nd_x1*normDistData[i].nd_x2*normDistData[i].nd_x3*normDistData[i].nd_x4
+        jurusan_id: normDistData[i].jurusan_id,
+        probability: probability
       });
     }
-
-    console.log("calcProbability Done!");
     
     return probData;
   } catch (error) {
-    console.log(error.message);
-    throw error;
+    throw new Error(error.message);
   }
 };
