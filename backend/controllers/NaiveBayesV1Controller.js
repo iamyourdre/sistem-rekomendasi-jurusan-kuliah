@@ -331,3 +331,30 @@ export const calcProbability = async (normDistData) => {
     throw new Error(error.message);
   }
 };
+
+export const calcResult = async (probData) => {
+  try {
+
+    const result = [];
+    
+    let jurusanWithMaxProbability = "";
+    let maxProbability = -Infinity;
+
+    for (let i = 0; i < probData.length; i++) {
+      const { jurusan_id, probability } = probData[i];
+      if (probability > maxProbability) {
+        jurusanWithMaxProbability = jurusan_id;
+        maxProbability = probability;
+      }
+    }
+    
+    result.push({
+      jurusanIs: jurusanWithMaxProbability,
+      probability: maxProbability
+    });
+    
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
