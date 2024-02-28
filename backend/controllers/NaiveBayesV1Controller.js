@@ -11,10 +11,13 @@ export const naiveBayesClassifier = async (req, res) => {
     const probData = await calcProbability(normDistData);
     const result = await calcResult(probData);
 
-    res.status(201).json({
+    res.status(200).json({
         msg: "Calculation Completed! Your input is classified as:",
-        result: result
+        result: result,
+        normDistData: normDistData,
+        probData: probData
     });
+
   } catch (error) {
       console.log(error.message);
   }
@@ -48,12 +51,23 @@ export const setProbability = async (res) => {
     // Menghitung jumlah kemunculan masing-masing jurusan_id
     const countedJurusan = await SiswaIpaModel.findAll({
       attributes: ['jurusan_id', [Sequelize.fn('COUNT', Sequelize.col('jurusan_id')), 'quantity']],
-      group: ['jurusan_id']
+      group: ['jurusan_id'],
+      where: {
+        jurusan_id: {
+          [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
+        }
+      }
     });
 
     // Membuat array untuk menyimpan pasangan jurusan_id dan quantity
     const jurusanCountTemp = [];
-    const totalData = await SiswaIpaModel.count();
+    const totalData = await SiswaIpaModel.count({
+      where: {
+        jurusan_id: {
+          [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
+        }
+      }
+    });
 
     // Memasukkan hasil perhitungan ke dalam array
     countedJurusan.forEach((item) => {
@@ -77,7 +91,7 @@ export const setProbability = async (res) => {
 export const setMean = async (res) => {
   try {
     
-    const dataset = await NbIpaV1Model.findAll();
+    const dataset = await NbIpaV1Model.findAll();    
 
     for (const d of dataset) {
       // Ambil semua summary nilai
@@ -274,27 +288,29 @@ export const calcNormDist = async (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11,
     // Menyimpan hasil distribusi normal
     const normDistData = [];
 
+    const defaultValue = null;
+
     // Iterasi melalui setiap data dalam dataset
     for (const d of dataset) {
 
       // Menambahkan data distribusi normal ke dalam array
       normDistData.push({
           jurusan_id: d.jurusan_id,
-          nd_x1: 0.5 * (1 + erf((x1 - d.mean_x1) / (d.std_x1 * Math.sqrt(2)))),
-          nd_x2: 0.5 * (1 + erf((x2 - d.mean_x2) / (d.std_x2 * Math.sqrt(2)))),
-          nd_x3: 0.5 * (1 + erf((x3 - d.mean_x3) / (d.std_x3 * Math.sqrt(2)))),
-          nd_x4: 0.5 * (1 + erf((x4 - d.mean_x4) / (d.std_x4 * Math.sqrt(2)))),
-          nd_x5: 0.5 * (1 + erf((x5 - d.mean_x5) / (d.std_x5 * Math.sqrt(2)))),
-          nd_x6: 0.5 * (1 + erf((x6 - d.mean_x6) / (d.std_x6 * Math.sqrt(2)))),
-          nd_x7: 0.5 * (1 + erf((x7 - d.mean_x7) / (d.std_x7 * Math.sqrt(2)))),
-          nd_x8: 0.5 * (1 + erf((x8 - d.mean_x8) / (d.std_x8 * Math.sqrt(2)))),
-          nd_x9: 0.5 * (1 + erf((x9 - d.mean_x9) / (d.std_x9 * Math.sqrt(2)))),
-          nd_x10: 0.5 * (1 + erf((x10 - d.mean_x10) / (d.std_x10 * Math.sqrt(2)))),
-          nd_x11: 0.5 * (1 + erf((x11 - d.mean_x11) / (d.std_x11 * Math.sqrt(2)))),
-          nd_x12: 0.5 * (1 + erf((x12 - d.mean_x12) / (d.std_x12 * Math.sqrt(2)))),
-          nd_x13: 0.5 * (1 + erf((x13 - d.mean_x13) / (d.std_x13 * Math.sqrt(2)))),
-          nd_x14: 0.5 * (1 + erf((x14 - d.mean_x14) / (d.std_x14 * Math.sqrt(2)))),
-          nd_x15: 0.5 * (1 + erf((x15 - d.mean_x15) / (d.std_x15 * Math.sqrt(2))))
+          nd_x1: 0.5 * (1 + erf((x1 - d.mean_x1) / (d.std_x1 * Math.sqrt(2)))) || defaultValue,
+          nd_x2: 0.5 * (1 + erf((x2 - d.mean_x2) / (d.std_x2 * Math.sqrt(2)))) || defaultValue,
+          nd_x3: 0.5 * (1 + erf((x3 - d.mean_x3) / (d.std_x3 * Math.sqrt(2)))) || defaultValue,
+          nd_x4: 0.5 * (1 + erf((x4 - d.mean_x4) / (d.std_x4 * Math.sqrt(2)))) || defaultValue,
+          nd_x5: 0.5 * (1 + erf((x5 - d.mean_x5) / (d.std_x5 * Math.sqrt(2)))) || defaultValue,
+          nd_x6: 0.5 * (1 + erf((x6 - d.mean_x6) / (d.std_x6 * Math.sqrt(2)))) || defaultValue,
+          nd_x7: 0.5 * (1 + erf((x7 - d.mean_x7) / (d.std_x7 * Math.sqrt(2)))) || defaultValue,
+          nd_x8: 0.5 * (1 + erf((x8 - d.mean_x8) / (d.std_x8 * Math.sqrt(2)))) || defaultValue,
+          nd_x9: 0.5 * (1 + erf((x9 - d.mean_x9) / (d.std_x9 * Math.sqrt(2)))) || defaultValue,
+          nd_x10: 0.5 * (1 + erf((x10 - d.mean_x10) / (d.std_x10 * Math.sqrt(2)))) || defaultValue,
+          nd_x11: 0.5 * (1 + erf((x11 - d.mean_x11) / (d.std_x11 * Math.sqrt(2)))) || defaultValue,
+          nd_x12: 0.5 * (1 + erf((x12 - d.mean_x12) / (d.std_x12 * Math.sqrt(2)))) || defaultValue,
+          nd_x13: 0.5 * (1 + erf((x13 - d.mean_x13) / (d.std_x13 * Math.sqrt(2)))) || defaultValue,
+          nd_x14: 0.5 * (1 + erf((x14 - d.mean_x14) / (d.std_x14 * Math.sqrt(2)))) || defaultValue,
+          nd_x15: 0.5 * (1 + erf((x15 - d.mean_x15) / (d.std_x15 * Math.sqrt(2)))) || defaultValue
       });
     }
     
@@ -313,7 +329,7 @@ export const calcProbability = async (normDistData) => {
     const probData = [];
 
     for (let i = 0; i < normDistData.length; i++) {
-      let probability = dataClass[i].probability;
+      let probability = dataset[i].probability;
 
       // Menghitung probability dengan mengalikan dengan setiap nd_x
       for (let j = 1; j <= 15; j++) {

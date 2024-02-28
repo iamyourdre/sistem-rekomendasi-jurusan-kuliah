@@ -1,10 +1,10 @@
 import express from "express";
-const app = express();
-import {datasetRoutes, NBv1router} from "./routes/MainRoute.js";
+import { datasetRouter, nbv1Router } from "./routes/MainRoute.js";
 
+const app = express();
 
 app.use(express.urlencoded({ extended: true }));
-datasetRoutes(app);
-NBv1router(app);
+app.use("/api/dataset", datasetRouter);
+app.use("/api/nbv1", nbv1Router);
 
 app.listen(5000, () => console.log('Server up and running...'));
