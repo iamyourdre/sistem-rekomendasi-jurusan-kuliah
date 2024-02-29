@@ -24,5 +24,5 @@ const storage = multer.diskStorage({
   },
 });
 
-const uploadFile = multer({ storage: storage, fileFilter: excelFilter });
-module.exports = uploadFile;
+const formData = multer({ storage: storage, fileFilter: excelFilter });
+module.exports = formData;

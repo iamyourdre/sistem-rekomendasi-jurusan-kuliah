@@ -5,6 +5,21 @@ import { fileURLToPath } from "url";
 import { findOrCreateCollege } from "./CollegeController.js";
 import {JurusanModel, UnivModel} from "../models/CollegeModel.js";
 
+export const testtest = async (req, res) => {
+  try {
+    
+    res.status(200).json({
+      message: "check " + req.body.reset,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Dataset " + req.file.originalname +" gagal diimpor!",
+      error: error.message,
+    });
+  }
+};
+
 export const upload = async (req, res) => {
   try {
 
