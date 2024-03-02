@@ -156,6 +156,7 @@ JurusanModel.hasOne(NbIpaV2Model, {
   onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di NbIpaV2Model
 });
 
+
 NbIpaV2Model.belongsTo(JurusanModel, {
   foreignKey: {
     name: "jurusan_id", // Nama kolom foreign key NbIpaV2Model yang terhubung ke JurusanModel
