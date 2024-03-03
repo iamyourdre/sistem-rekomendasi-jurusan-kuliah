@@ -165,4 +165,4 @@ NbIpaV2Model.belongsTo(JurusanModel, {
   as: 'nb_ipa_v2_dataset_key',
 });
 
-export default NbIpaV1Model;
+export default NbIpaV2Model;
