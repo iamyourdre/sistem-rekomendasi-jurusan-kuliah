@@ -51,7 +51,12 @@ export const setProbability = async (res) => {
     // Menghitung jumlah kemunculan masing-masing jurusan_id
     const countedJurusan = await SiswaIpaModel.findAll({
       attributes: ['jurusan_id', [Sequelize.fn('COUNT', Sequelize.col('jurusan_id')), 'quantity']],
-      group: ['jurusan_id']
+      group: ['jurusan_id'],
+      where: {
+        jurusan_id: {
+          [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
+        }
+      }
     });
 
     // Membuat array untuk menyimpan pasangan jurusan_id dan quantity
