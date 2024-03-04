@@ -48,14 +48,20 @@ export const createTrainingData = async (req, res) => {
 export const setProbability = async (res) => {
   try {
 
-    // Menghitung jumlah kemunculan masing-masing jurusan_id
-    const countedJurusan = await SiswaIpaModel.findAll({
-      attributes: ['jurusan_id', [Sequelize.fn('COUNT', Sequelize.col('jurusan_id')), 'quantity']],
-      group: ['jurusan_id']
+    // Menghitung jumlah kemunculan masing-masing rumpun_id
+    const countedRumpun = await SiswaIpaModel.findAll({
+      attributes: ['rumpun_id', [Sequelize.fn('COUNT', Sequelize.col('rumpun_id')), 'quantity']],
+      group: ['rumpun_id'],
+      where: {
+        jurusan_id: {
+          [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
+        }
+      }
+    
     });
 
-    // Membuat array untuk menyimpan pasangan jurusan_id dan quantity
-    const jurusanCountTemp = [];
+    // Membuat array untuk menyimpan pasangan rumpun_id dan quantity
+    const rumpunCountTemp = [];
     const totalData = await SiswaIpaModel.count({
       where: {
         jurusan_id: {
@@ -65,18 +71,18 @@ export const setProbability = async (res) => {
     });
 
     // Memasukkan hasil perhitungan ke dalam array
-    countedJurusan.forEach((item) => {
-      jurusanCountTemp.push({
-        jurusan_id: item.jurusan_id,
+    countedRumpun.forEach((item) => {
+      rumpunCountTemp.push({
+        rumpun_id: item.rumpun_id,
         quantity: item.dataValues.quantity
       });
     });
     
-    for (let i = 0; i < jurusanCountTemp.length; i++) {
-      jurusanCountTemp[i].probability = jurusanCountTemp[i].quantity / totalData;
+    for (let i = 0; i < rumpunCountTemp.length; i++) {
+      rumpunCountTemp[i].probability = rumpunCountTemp[i].quantity / totalData;
     }
 
-    await NbIpaV2Model.bulkCreate(jurusanCountTemp);
+    await NbIpaV2Model.bulkCreate(rumpunCountTemp);
     
   } catch (error) {
     throw new Error(error.message);
@@ -96,7 +102,7 @@ export const setMean = async (res) => {
             model: SiswaIpaModel,
             as: 'summary_ipa_key',
             where: {
-              jurusan_id: d.jurusan_id,
+              rumpun_id: d.rumpun_id,
             },
           },
         ],
@@ -176,7 +182,7 @@ export const setMean = async (res) => {
               mean_x15: mean_x15
           },
           {
-            where: { jurusan_id: d.jurusan_id },
+            where: { rumpun_id: d.rumpun_id },
           }
         );
       }
@@ -202,7 +208,7 @@ export const setStdev = async (res) => {
             model: SiswaIpaModel,
             as: 'summary_ipa_key',
             where: {
-              jurusan_id: d.jurusan_id,
+              rumpun_id: d.rumpun_id,
             },
           },
         ],
@@ -263,7 +269,7 @@ export const setStdev = async (res) => {
             std_x15: std_x15
           },
           {
-            where: { jurusan_id: d.jurusan_id }
+            where: { rumpun_id: d.rumpun_id }
           }
         );
         
@@ -290,7 +296,7 @@ export const calcNormDist = async (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11,
 
       // Menambahkan data distribusi normal ke dalam array
       normDistData.push({
-          jurusan_id: d.jurusan_id,
+          rumpun_id: d.rumpun_id,
           nd_x1: 0.5 * (1 + erf((x1 - d.mean_x1) / (d.std_x1 * Math.sqrt(2)))) || defaultValue,
           nd_x2: 0.5 * (1 + erf((x2 - d.mean_x2) / (d.std_x2 * Math.sqrt(2)))) || defaultValue,
           nd_x3: 0.5 * (1 + erf((x3 - d.mean_x3) / (d.std_x3 * Math.sqrt(2)))) || defaultValue,
@@ -332,7 +338,7 @@ export const calcProbability = async (normDistData) => {
       }
 
       probData.push({
-        jurusan_id: normDistData[i].jurusan_id,
+        rumpun_id: normDistData[i].rumpun_id,
         probability: probability
       });
     }
@@ -352,9 +358,9 @@ export const calcResult = async (probData) => {
     let maxProbability = -Infinity;
 
     for (let i = 0; i < probData.length; i++) {
-      const { jurusan_id, probability } = probData[i];
+      const { rumpun_id, probability } = probData[i];
       if (probability > maxProbability) {
-        jurusanWithMaxProbability = jurusan_id;
+        jurusanWithMaxProbability = rumpun_id;
         maxProbability = probability;
       }
     }
