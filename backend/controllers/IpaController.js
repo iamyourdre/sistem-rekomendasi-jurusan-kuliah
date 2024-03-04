@@ -3,22 +3,8 @@ import readXlsxFile from "read-excel-file/node";
 import path from "path";
 import { fileURLToPath } from "url";
 import { findOrCreateCollege } from "./CollegeController.js";
-import {JurusanModel, UnivModel} from "../models/CollegeModel.js";
+import {JurusanModel, UnivModel, RumpunModel} from "../models/CollegeModel.js";
 
-export const testtest = async (req, res) => {
-  try {
-    
-    res.status(200).json({
-      message: "check " + req.body.reset,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Dataset " + req.file.originalname +" gagal diimpor!",
-      error: error.message,
-    });
-  }
-};
 
 export const upload = async (req, res) => {
   try {
@@ -150,7 +136,8 @@ export const upload = async (req, res) => {
               nama: data.NAMA || "-",
               akt_thn: data.TAHUN || 0,
               univ_id: college.univ_id,
-              jurusan_id: college.jurusan_id
+              jurusan_id: college.jurusan_id,
+              rumpun_id: college.rumpun_id
             });
 
             let summaryNilai = {
@@ -265,6 +252,10 @@ export const getAllIpa = async (req, res) => {
         {
           model: UnivModel,
           as: 'univ_ipa_key',
+        },
+        {
+          model: RumpunModel,
+          as: 'rumpun_ipa_key',
         },
         {
           model: SummaryIpaModel,

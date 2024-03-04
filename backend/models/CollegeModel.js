@@ -16,10 +16,6 @@ const JurusanModel = db.define(
       allowNull: false,
       unique: true,
     },
-    rumpun: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
   },
   {
     freezeTableName: true,
@@ -37,6 +33,27 @@ const UnivModel = db.define(
       autoIncrement: true,
     },
     universitas: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+  },
+  {
+    freezeTableName: true,
+    timestamps: false,
+  }
+);
+
+const RumpunModel = db.define(
+  "rumpun",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    rumpun: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
@@ -82,6 +99,23 @@ SiswaIpaModel.belongsTo(UnivModel, {
   as: 'univ_ipa_key',
 });
 
+RumpunModel.hasMany(SiswaIpaModel, {
+  foreignKey: {
+    name: "rumpun_id", // Nama kolom foreign key SiswaIpaModel yang terhubung ke RumpunModel
+    allowNull: false,
+  },
+  as: 'rumpun_ipa_key',
+  onDelete: "CASCADE", // Jika data RumpunModel dihapus, hapus juga semua data terkait di SiswaIpaModel
+});
+
+SiswaIpaModel.belongsTo(RumpunModel, {
+  foreignKey: {
+    name: "rumpun_id", // Nama kolom foreign key yang terhubung ke RumpunModel
+    allowNull: false,
+  },
+  as: 'rumpun_ipa_key',
+});
+
 (async () => {
   // Sinkronisasi database
   await db.sync();
@@ -90,7 +124,6 @@ SiswaIpaModel.belongsTo(UnivModel, {
     await JurusanModel.create({
       id: 1,
       jurusan: "-",
-      rumpun: "-"
     });
   }
   
@@ -100,7 +133,14 @@ SiswaIpaModel.belongsTo(UnivModel, {
       universitas: "-"
     });
   }
+  
+  if (!await RumpunModel.findOne({ where: { id: 1 } })) {
+    await RumpunModel.create({
+      id: 1,
+      rumpun: "-"
+    });
+  }
 
 })();
 
-export {JurusanModel, UnivModel};
+export {JurusanModel, UnivModel, RumpunModel};

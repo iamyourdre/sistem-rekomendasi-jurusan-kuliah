@@ -3,8 +3,7 @@ import formData from "../middlewares/ReqBodyHandler.cjs";
 import { 
   upload,
   getAllIpa,
-  deleteAllIpa,
-  testtest
+  deleteAllIpa
 } from "../controllers/IpaController.js";
 import { getAllCollege } from "../controllers/CollegeController.js";
 import { createTrainingData, naiveBayesClassifier } from "../controllers/NaiveBayesV1Controller.js";
