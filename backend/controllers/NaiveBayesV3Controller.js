@@ -4,26 +4,6 @@ import { SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
 import {NbIpaV3MapelModel, NbIpaV3FreqModel} from "../models/NaiveBayesV3Model.js";
 import { JurusanModel } from "../models/CollegeModel.js";
 
-// export const naiveBayesClassifier = async (req, res) => {
-//   try {
-//     const { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = req.body;
-
-//     const normDistData = await calcNormDist(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15);
-//     const probData = await calcProbability(normDistData);
-//     const result = await calcResult(probData);
-
-//     res.status(200).json({
-//         msg: "Calculation Completed! Your input is classified as:",
-//         result: result,
-//         normDistData: normDistData,
-//         probData: probData
-//     });
-
-//   } catch (error) {
-//       console.log(error.message);
-//   }
-// };
-
 export const createTrainingData = async (req, res) => {
   try {
     
@@ -165,9 +145,81 @@ export const setFreqTable = async (res) => {
 
 }
 
+export const naiveBayesClassifier = async (req, res) => {
+  try {
+    const { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = req.body;
+
+    // Mengkonversi input nilai menjadi bentuk bobot
+    const inputNilai = {
+      x1: convertToGrade(x1),
+      x2: convertToGrade(x2),
+      x3: convertToGrade(x3),
+      x4: convertToGrade(x4),
+      x5: convertToGrade(x5),
+      x6: convertToGrade(x6),
+      x7: convertToGrade(x7),
+      x8: convertToGrade(x8),
+      x9: convertToGrade(x9),
+      x10: convertToGrade(x10),
+      x11: convertToGrade(x11),
+      x12: convertToGrade(x12),
+      x13: convertToGrade(x13),
+      x14: convertToGrade(x14),
+      x15: convertToGrade(x15)
+    };
+    
+
+    // Mencari jumlah nb_ipa_v3_freq.p_yes di mana nb_ipa_v3_freq.bobot = inputNilai.x1 dan nb_ipa_v3_mapel.x =n 1
+    const result = await NbIpaV3MapelModel.findOne({
+      where: { jurusan_id: 2, x: 1 }, // Filter untuk nb_ipa_v3_mapel.x = 1
+      include: [{
+        model: NbIpaV3FreqModel,
+        as: 'nb_ipa_v3_freq_key',
+        where: { bobot: inputNilai.x1 }, // Filter untuk nb_ipa_v3_freq.bobot = inputNilai.x1
+      }]
+    });
+    let totalPYes = 0;
+
+    if (result && result.nb_ipa_v3_freq_key) {
+      totalPYes = result.nb_ipa_v3_freq_key.reduce((acc, curr) => acc + curr.p_yes, 0);
+    } 
+    
+    res.status(200).json({ totalPYes: totalPYes, result });
+
+    // if (result) {
+    //   const totalPYes = result.nb_ipa_v3_freq_key.total_p_yes;
+    //   res.status(200).json({ totalPYes });
+    // } else {
+    //   res.status(404).json({ message: 'Data not found' });
+    // }
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Function untuk mengkonversi nilai menjadi bentuk bobot
+function convertToGrade(score) {
+  const numericScore = parseFloat(score)
+  if (numericScore >= 90) {
+    return "A";
+  } else if (numericScore >= 85) {
+    return "A-";
+  } else if (numericScore >= 80) {
+    return "B+";
+  } else if (numericScore >= 75) {
+    return "B";
+  } else if (numericScore >= 70) {
+    return "B-";
+  } else {
+    return "CDE";
+  }
+}
+
 export const getAllNbIpaV3Data = async (req, res) => {
   try {
-    const data = await NbIpaV3MapelModel.findAll({
+    const dataset = await NbIpaV3MapelModel.findAll({
       include: [
         {
           model: NbIpaV3FreqModel,
@@ -179,10 +231,10 @@ export const getAllNbIpaV3Data = async (req, res) => {
         },
       ],
       raw: true,
-    }); // Ganti dengan method yang sesuai untuk mengambil data dari model
+    });
     res.status(200).json({
       message: "Data NbIpaV3Model berhasil diambil",
-      data: data
+      data: dataset
     });
   } catch (error) {
     res.status(500).json({
