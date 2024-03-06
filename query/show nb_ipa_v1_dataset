@@ -1,2 +1,2 @@
 USE srjk_adrian;
-SELECT * FROM nb_ipa_v1_dataset;
+SELECT * FROM nb_ipa_v3_mapel;
