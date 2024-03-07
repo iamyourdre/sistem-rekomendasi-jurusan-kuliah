@@ -1,0 +1,14 @@
+Child macam-macam bobot dari x: 1 gagal dibuat
+
+
+          Kondisi ini selalu null:
+            if(x == 1){
+              console.log([
+                { mapel_id: mpl.id, bobot: "A", p_no: 1, p_yes: bobotTemp[0] },
+                { mapel_id: mpl.id, bobot: "A-", p_no: 1, p_yes: bobotTemp[1] },
+                { mapel_id: mpl.id, bobot: "B+", p_no: 1, p_yes: bobotTemp[2] },
+                { mapel_id: mpl.id, bobot: "B", p_no: 1, p_yes: bobotTemp[3] },
+                { mapel_id: mpl.id, bobot: "B-", p_no: 1, p_yes: bobotTemp[4] },
+                { mapel_id: mpl.id, bobot: "CDE", p_no: 1, p_yes: bobotTemp[5] }
+              ])
+            }

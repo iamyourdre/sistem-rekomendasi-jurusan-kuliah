@@ -7,11 +7,15 @@ import { JurusanModel } from "../models/CollegeModel.js";
 export const createTrainingData = async (req, res) => {
   try {
     
-    await NbIpaV3MapelModel.destroy({ where: {} });
+    let freqError = 1;
 
-    await setMapelTable(res);
-    await setFreqTable(res);
-      
+    while (freqError > 0) {
+      await NbIpaV3MapelModel.destroy({ where: {} });
+      await setMapelTable(res);
+      freqError = await setFreqTable(res);
+      console.log()
+    }
+
     res.status(200).json({
       message: "Selesai membuat data latih!"
     });
@@ -57,7 +61,7 @@ export const setMapelTable = async (res) => {
     // Menggunakan bulkCreate untuk menambahkan baris-baris ke dalam tabel NbIpaV3MapelModel
     mapelTemp.forEach(async (nb_ipa_v3_mapel) => {
       await NbIpaV3MapelModel.bulkCreate(nb_ipa_v3_mapel);
-    });    
+    });
   
   } catch (error) {
     throw new Error(error.message);
@@ -69,6 +73,8 @@ export const setFreqTable = async (res) => {
 
   try {
 
+    let freqError = 0;
+
     // Mengambil daftar jurusan tanpa redundansi
     const jurusan = await JurusanModel.findAll({
       where: {
@@ -79,7 +85,7 @@ export const setFreqTable = async (res) => {
     })
 
     // Melakukan iterasi untuk setiap jurusan_id
-    jurusan.forEach(async(j) => {
+    for (const j of jurusan) {
 
       // Ambil semua summary nilai mapel terkait
       const sumNilai = await SummaryIpaModel.findAll({
@@ -96,7 +102,7 @@ export const setFreqTable = async (res) => {
       });
 
       // Melakukan iterasi untuk setiap mapel
-      for (let x = 1; x <= 15; x++) {
+      for (let x_id = 1; x_id <= 15; x_id++) {
         
         const bobotTemp = [1, 1, 1, 1, 1, 1];
 
@@ -104,22 +110,26 @@ export const setFreqTable = async (res) => {
         const mapel = await NbIpaV3MapelModel.findAll({
           where: {
             jurusan_id: j.id,
-            x: x
+            x: x_id
           },
           raw: true,
         });
+
+        freqError = (mapel.length==0?freqError+=1:freqError+=0);
+        console.log("==========================================================")
+        console.log(freqError)
         
         // Menghitung kemunculan bobot A, B, C pada mapel untuk setiap sumNilai
         sumNilai.forEach(sn => {
-          if (sn[Object.keys(sn)[x+1]] >= 90) {
+          if (sn[Object.keys(sn)[x_id+1]] >= 90) {
             bobotTemp[0]++;
-          } else if (sn[Object.keys(sn)[x+1]] >= 85) {
+          } else if (sn[Object.keys(sn)[x_id+1]] >= 85) {
             bobotTemp[1]++;
-          } else if (sn[Object.keys(sn)[x+1]] >= 80) {
+          } else if (sn[Object.keys(sn)[x_id+1]] >= 80) {
             bobotTemp[2]++;
-          } else if (sn[Object.keys(sn)[x+1]] >= 75) {
+          } else if (sn[Object.keys(sn)[x_id+1]] >= 75) {
             bobotTemp[3]++;
-          } else if (sn[Object.keys(sn)[x+1]] >= 70) {
+          } else if (sn[Object.keys(sn)[x_id+1]] >= 70) {
             bobotTemp[4]++;
           } else {
             bobotTemp[5]++;
@@ -134,26 +144,29 @@ export const setFreqTable = async (res) => {
           {
             where: {
               jurusan_id: j.id,
-              x: x
+              x: x_id
             }
           }
-        );    
+        );
         
         // Membuat frequency
         for (const mpl of mapel) {
-          const freqData = [
+          const freq = [
             { mapel_id: mpl.id, bobot: "A", p_no: 1, p_yes: bobotTemp[0] },
             { mapel_id: mpl.id, bobot: "A-", p_no: 1, p_yes: bobotTemp[1] },
             { mapel_id: mpl.id, bobot: "B+", p_no: 1, p_yes: bobotTemp[2] },
             { mapel_id: mpl.id, bobot: "B", p_no: 1, p_yes: bobotTemp[3] },
             { mapel_id: mpl.id, bobot: "B-", p_no: 1, p_yes: bobotTemp[4] },
             { mapel_id: mpl.id, bobot: "CDE", p_no: 1, p_yes: bobotTemp[5] }
-          ];
-          await NbIpaV3FreqModel.bulkCreate(freqData);
+          ]
+          await NbIpaV3FreqModel.bulkCreate(freq);
         }
+      
       }
 
-    });
+    };
+
+    return freqError;
 
   } catch (error) {
     throw new Error(error.message);
@@ -163,6 +176,7 @@ export const setFreqTable = async (res) => {
 
 export const naiveBayesClassifier = async (req, res) => {
   try {
+    
     const { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = req.body;
     const jurusan = await JurusanModel.findAll({
       where: {
@@ -173,43 +187,44 @@ export const naiveBayesClassifier = async (req, res) => {
     })
 
     // Mengkonversi input nilai menjadi bentuk bobot
-    const inputNilai = {
-      x1: convertToGrade(x1),
-      x2: convertToGrade(x2),
-      x3: convertToGrade(x3),
-      x4: convertToGrade(x4),
-      x5: convertToGrade(x5),
-      x6: convertToGrade(x6),
-      x7: convertToGrade(x7),
-      x8: convertToGrade(x8),
-      x9: convertToGrade(x9),
-      x10: convertToGrade(x10),
-      x11: convertToGrade(x11),
-      x12: convertToGrade(x12),
-      x13: convertToGrade(x13),
-      x14: convertToGrade(x14),
-      x15: convertToGrade(x15)
-    };
+    const inputNilai = [
+      convertToGrade(x1),
+      convertToGrade(x2),
+      convertToGrade(x3),
+      convertToGrade(x4),
+      convertToGrade(x5),
+      convertToGrade(x6),
+      convertToGrade(x7),
+      convertToGrade(x8),
+      convertToGrade(x9),
+      convertToGrade(x10),
+      convertToGrade(x11),
+      convertToGrade(x12),
+      convertToGrade(x13),
+      convertToGrade(x14),
+      convertToGrade(x15)
+    ];
+
     const probData = [];
 
+    // Membuat perbandingan probabilitas untuk tiap-tiap jurusan berdasarkan nilai rapor yang diinput
     await Promise.all(jurusan.map(async (j) => {
       const probMapel = [];
-      
+      let p_yes = 1;
+      let p_no = 1;
       for (let x = 1; x <= 15; x++) {
-        
         const mapel = await NbIpaV3MapelModel.findOne({
           where: { jurusan_id: j.id, x: x },
           include: [{
             model: NbIpaV3FreqModel,
             as: 'nb_ipa_v3_freq_key',
-            where: { bobot: inputNilai['x' + x] || "CDE" },
+            where: { bobot: inputNilai[x-1] || "CDE" },
           }],
           raw: true
         });
-    
         probMapel.push({
           x: x,
-          bobot: inputNilai['x' + x],
+          bobot: inputNilai[x-1],
           p: {
             yes: mapel.total_p_yes,
             no: mapel.total_p_no,
@@ -217,15 +232,18 @@ export const naiveBayesClassifier = async (req, res) => {
             total_no: mapel['nb_ipa_v3_freq_key.p_no'],
           }
         });
-
+        p_yes *= (mapel['nb_ipa_v3_freq_key.p_yes'] / mapel.total_p_yes)
+        p_no *= (mapel['nb_ipa_v3_freq_key.p_no'] / mapel.total_p_no )
       }
-    
       probData.push({
         jurusan_id: j.id,
-        prob: probMapel
+        p_yes: p_yes,
+        p_no: p_no
       });
     }));
-    
+    probData.sort((a, b) => a.jurusan_id - b.jurusan_id);
+
+    // Membuat output probabilitas final untuk tiap jurusan
     res.status(200).json({ probData });
 
   } catch (error) {
