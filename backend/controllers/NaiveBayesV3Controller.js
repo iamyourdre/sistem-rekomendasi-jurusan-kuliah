@@ -190,11 +190,11 @@ export const naiveBayesClassifier = async (req, res) => {
       x14: convertToGrade(x14),
       x15: convertToGrade(x15)
     };
-    const probResult = [];
+    const probData = [];
 
     await Promise.all(jurusan.map(async (j) => {
       const probMapel = [];
-    
+      
       for (let x = 1; x <= 15; x++) {
         
         const mapel = await NbIpaV3MapelModel.findOne({
@@ -203,60 +203,30 @@ export const naiveBayesClassifier = async (req, res) => {
             model: NbIpaV3FreqModel,
             as: 'nb_ipa_v3_freq_key',
             where: { bobot: inputNilai['x' + x] || "CDE" },
-          }]
+          }],
+          raw: true
         });
-    
-        let totalPYes = 0;
-        let totalPNo = 0;
-        if (mapel && mapel.nb_ipa_v3_freq_key) {
-          totalPYes = mapel.nb_ipa_v3_freq_key.reduce((acc, curr) => acc + curr.p_yes, 0);
-          totalPNo = mapel.nb_ipa_v3_freq_key.reduce((acc, curr) => acc + curr.p_no, 0);
-        }
     
         probMapel.push({
           x: x,
           bobot: inputNilai['x' + x],
           p: {
-            yes: mapel && mapel.nb_ipa_v3_freq_key[0] ? mapel.nb_ipa_v3_freq_key[0].dataValues.p_yes : 0,
-            no: mapel && mapel.nb_ipa_v3_freq_key[0] ? mapel.nb_ipa_v3_freq_key[0].dataValues.p_no : 0,
-            total_yes: totalPYes,
-            total_no: totalPNo,
+            yes: mapel.total_p_yes,
+            no: mapel.total_p_no,
+            total_yes: mapel['nb_ipa_v3_freq_key.p_yes'],
+            total_no: mapel['nb_ipa_v3_freq_key.p_no'],
           }
         });
+
       }
     
-      probResult.push({
+      probData.push({
         jurusan_id: j.id,
         prob: probMapel
       });
     }));
     
-    res.status(200).json({ probResult });
-    
-
-    // -----------
-
-    // // Mencari jumlah nb_ipa_v3_freq.p_yes di mana nb_ipa_v3_freq.bobot = inputNilai.x1 dan nb_ipa_v3_mapel.x =n 1
-    // const result = await NbIpaV3MapelModel.findOne({
-    //   where: { jurusan_id: 2, x: 1 }, // Filter untuk nb_ipa_v3_mapel.x = 1
-    //   include: [{
-    //     model: NbIpaV3FreqModel,
-    //     as: 'nb_ipa_v3_freq_key',
-    //     where: { bobot: inputNilai.x1 }, // Filter untuk nb_ipa_v3_freq.bobot = inputNilai.x1
-    //   }]
-    // });
-    // let totalPYes = 0;
-
-    // if (result && result.nb_ipa_v3_freq_key) {
-    //   totalPYes = result.nb_ipa_v3_freq_key.reduce((acc, curr) => acc + curr.p_yes, 0);
-    // }
-
-    // if (result) {
-    //   const totalPYes = result.nb_ipa_v3_freq_key.total_p_yes;
-    //   res.status(200).json({ totalPYes });
-    // } else {
-    //   res.status(404).json({ message: 'Data not found' });
-    // }
+    res.status(200).json({ probData });
 
   } catch (error) {
     res.status(500).json({ message: error.message });
