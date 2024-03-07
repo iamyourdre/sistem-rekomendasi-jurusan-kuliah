@@ -16,6 +16,14 @@ const NbIpaV3MapelModel = db.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    total_p_yes: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    total_p_no: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     freezeTableName: true,

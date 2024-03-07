@@ -45,7 +45,9 @@ export const setMapelTable = async (res) => {
       for (let i = 1; i <= 15; i++) {
         nb_ipa_v3_mapel.push({
           jurusan_id: d.id,
-          x: i
+          x: i,
+          total_p_yes: 0,
+          total_p_no: 0
         });
       }
     
@@ -123,7 +125,21 @@ export const setFreqTable = async (res) => {
             bobotTemp[5]++;
           }
         });
+
+        await NbIpaV3MapelModel.update(
+          {
+            total_p_yes: bobotTemp[0]+bobotTemp[1]+bobotTemp[2]+bobotTemp[3]+bobotTemp[4]+bobotTemp[5],
+            total_p_no: 6
+          },
+          {
+            where: {
+              jurusan_id: j.id,
+              x: x
+            }
+          }
+        );    
         
+        // Membuat frequency
         for (const mpl of mapel) {
           const freqData = [
             { mapel_id: mpl.id, bobot: "A", p_no: 1, p_yes: bobotTemp[0] },
@@ -148,6 +164,13 @@ export const setFreqTable = async (res) => {
 export const naiveBayesClassifier = async (req, res) => {
   try {
     const { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = req.body;
+    const jurusan = await JurusanModel.findAll({
+      where: {
+        id: {
+          [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
+        }
+      }
+    })
 
     // Mengkonversi input nilai menjadi bentuk bobot
     const inputNilai = {
@@ -167,24 +190,66 @@ export const naiveBayesClassifier = async (req, res) => {
       x14: convertToGrade(x14),
       x15: convertToGrade(x15)
     };
+    const probResult = [];
+
+    await Promise.all(jurusan.map(async (j) => {
+      const probMapel = [];
+    
+      for (let x = 1; x <= 15; x++) {
+        
+        const mapel = await NbIpaV3MapelModel.findOne({
+          where: { jurusan_id: j.id, x: x },
+          include: [{
+            model: NbIpaV3FreqModel,
+            as: 'nb_ipa_v3_freq_key',
+            where: { bobot: inputNilai['x' + x] || "CDE" },
+          }]
+        });
+    
+        let totalPYes = 0;
+        let totalPNo = 0;
+        if (mapel && mapel.nb_ipa_v3_freq_key) {
+          totalPYes = mapel.nb_ipa_v3_freq_key.reduce((acc, curr) => acc + curr.p_yes, 0);
+          totalPNo = mapel.nb_ipa_v3_freq_key.reduce((acc, curr) => acc + curr.p_no, 0);
+        }
+    
+        probMapel.push({
+          x: x,
+          bobot: inputNilai['x' + x],
+          p: {
+            yes: mapel && mapel.nb_ipa_v3_freq_key[0] ? mapel.nb_ipa_v3_freq_key[0].dataValues.p_yes : 0,
+            no: mapel && mapel.nb_ipa_v3_freq_key[0] ? mapel.nb_ipa_v3_freq_key[0].dataValues.p_no : 0,
+            total_yes: totalPYes,
+            total_no: totalPNo,
+          }
+        });
+      }
+    
+      probResult.push({
+        jurusan_id: j.id,
+        prob: probMapel
+      });
+    }));
+    
+    res.status(200).json({ probResult });
     
 
-    // Mencari jumlah nb_ipa_v3_freq.p_yes di mana nb_ipa_v3_freq.bobot = inputNilai.x1 dan nb_ipa_v3_mapel.x =n 1
-    const result = await NbIpaV3MapelModel.findOne({
-      where: { jurusan_id: 2, x: 1 }, // Filter untuk nb_ipa_v3_mapel.x = 1
-      include: [{
-        model: NbIpaV3FreqModel,
-        as: 'nb_ipa_v3_freq_key',
-        where: { bobot: inputNilai.x1 }, // Filter untuk nb_ipa_v3_freq.bobot = inputNilai.x1
-      }]
-    });
-    let totalPYes = 0;
+    // -----------
 
-    if (result && result.nb_ipa_v3_freq_key) {
-      totalPYes = result.nb_ipa_v3_freq_key.reduce((acc, curr) => acc + curr.p_yes, 0);
-    } 
-    
-    res.status(200).json({ totalPYes: totalPYes, result });
+    // // Mencari jumlah nb_ipa_v3_freq.p_yes di mana nb_ipa_v3_freq.bobot = inputNilai.x1 dan nb_ipa_v3_mapel.x =n 1
+    // const result = await NbIpaV3MapelModel.findOne({
+    //   where: { jurusan_id: 2, x: 1 }, // Filter untuk nb_ipa_v3_mapel.x = 1
+    //   include: [{
+    //     model: NbIpaV3FreqModel,
+    //     as: 'nb_ipa_v3_freq_key',
+    //     where: { bobot: inputNilai.x1 }, // Filter untuk nb_ipa_v3_freq.bobot = inputNilai.x1
+    //   }]
+    // });
+    // let totalPYes = 0;
+
+    // if (result && result.nb_ipa_v3_freq_key) {
+    //   totalPYes = result.nb_ipa_v3_freq_key.reduce((acc, curr) => acc + curr.p_yes, 0);
+    // }
 
     // if (result) {
     //   const totalPYes = result.nb_ipa_v3_freq_key.total_p_yes;
