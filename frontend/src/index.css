@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
 
 body {
@@ -6,6 +10,8 @@ body {
     font-family: "Open Sans", sans-serif;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer components {
+    /* .container {
+        @apply container p-4 md:px-8 md:py-5 pb-10;
+    } */
+}

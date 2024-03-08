@@ -30,16 +30,16 @@ const Navbar = () => {
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
 
   return (
-    <div className="flex justify-between p-4 md:px-8 md:py-4 relative ">
+    <div className="flex justify-between relative container p-4 md:px-8 md:py-6">
 
-  <button
-    type="button"
-    onClick={() => handleActiveMenu()}
-    className="relative text-xl rounded-lg p-3 bg-t-light text-s-dark"
-  >
-    <AiOutlineMenu/>
-  </button>
-      <div className="flex">
+      <button
+        type="button"
+        onClick={() => handleActiveMenu()}
+        className="relative text-xl rounded-lg p-3 bg-t-light text-s-dark"
+      >
+        <AiOutlineMenu/>
+      </button>
+      <div className="flex justify-items-end">
         <div
           className="flex items-center gap-2 cursor-pointer py-1 px-2 hover:bg-t-light rounded-lg"
           onClick={() => handleClick('userProfile')}

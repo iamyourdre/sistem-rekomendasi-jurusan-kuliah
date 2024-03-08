@@ -1,9 +1,5 @@
 @import url('https://cdn.syncfusion.com/ej2/material.css');
 
-.nav-item,
-.navbar {
-  z-index: 10000;
-}
 @media  screen and (max-width:800px) {
   .sidebar{
     z-index: 10000000;

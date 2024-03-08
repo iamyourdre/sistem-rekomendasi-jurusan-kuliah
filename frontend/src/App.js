@@ -12,7 +12,7 @@ const App = () => {
   return (
     <div>
       <BrowserRouter>
-        <div className="flex relative bg-s-light">
+        <div className="flex relative">
           {activeMenu ? (
               <div className='w-64 fixed sidebar'>
                   <Sidebar/>
@@ -25,10 +25,10 @@ const App = () => {
           <div className={
             `bg-s-light min-h-screen w-full ${activeMenu ? 'md:ml-64' : 'flex-2'}`
           }>
-            <div className="fixed md:static navbar w-full">
+            <div className="z-50 p-0">
               <Navbar />
             </div>
-            <div className='flex p-4 md:px-8 relative'>
+            <div className='flex relative'>
               <Routes>
                 {/* Dashboard */}
                 <Route path='/' element={<MainData/>}/>
