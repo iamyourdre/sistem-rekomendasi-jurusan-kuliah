@@ -28,7 +28,7 @@ const App = () => {
             <div className="z-50 p-0">
               <Navbar />
             </div>
-            <div className='flex relative'>
+            <div className='w-full'>
               <Routes>
                 {/* Dashboard */}
                 <Route path='/' element={<MainData/>}/>

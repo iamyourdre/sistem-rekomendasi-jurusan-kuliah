@@ -5,41 +5,48 @@ const DataSiswaTable = () => {
         <span className="p-6">
           
         </span>
-        <div className="overflow-x-auto">
-          <table className="table odd:bg-p-light even:bg-s-light">
+        <div className="overflow-x-auto p-6">
+          
+          <table className="table table-zebra">
             {/* head */}
             <thead>
-              <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Job</th>
-                <th>Favorite Color</th>
+              <tr className="border-b-1 border-t-dark text-s-dark">
+                <th>ID</th>
+                <th>Nama Siswa</th>
+                <th>Jurusan</th>
+                <th>Universitas</th>
+                <th>Rumpun</th>
+                <th>Tahun Aktif</th>
               </tr>
             </thead>
             <tbody>
               {/* row 1 */}
               <tr>
-                <th>1</th>
+                <td>1</td>
                 <td>Cy Ganderton</td>
                 <td>Quality Control Specialist</td>
                 <td>Blue</td>
+                <td>...</td> {/* Isi dengan rumpun siswa */}
+                <td>...</td> {/* Isi dengan tahun aktif siswa */}
               </tr>
               {/* row 2 */}
               <tr>
-                <th>2</th>
+                <td>2</td>
                 <td>Hart Hagerty</td>
                 <td>Desktop Support Technician</td>
                 <td>Purple</td>
-              </tr>
-              {/* row 3 */}
-              <tr>
-                <th>3</th>
-                <td>Brice Swyre</td>
-                <td>Tax Accountant</td>
-                <td>Red</td>
+                <td>...</td> {/* Isi dengan rumpun siswa */}
+                <td>...</td> {/* Isi dengan tahun aktif siswa */}
               </tr>
             </tbody>
           </table>
+
+          <div className="join pt-4 float-right">
+            <button className="join-item btn bg-s-light border-0 py-1">«</button>
+            <button className="join-item btn bg-s-light border-0 py-1">Page 22</button>
+            <button className="join-item btn bg-s-light border-0 py-1">»</button>
+          </div>
+
         </div>
       </div>
     </div>

@@ -11,9 +11,9 @@ module.exports = {
         'p-light': 'rgb(245 245 245)',
         's-light': 'rgb(229 229 229)',
         't-light': 'rgb(212 212 212)',
-        'p-dark': 'rgb(10 10 10)',
-        's-dark': 'rgb(23 23 23)',
-        't-dark': 'rgb(38 38 38)',
+        'p-dark': 'rgb(60 60 60)',
+        's-dark': 'rgb(100 100 100)',
+        't-dark': 'rgb(150 150 150)',
       },
       fontSize: {
         14: '14px',

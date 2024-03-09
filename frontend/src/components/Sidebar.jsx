@@ -15,8 +15,8 @@ const Sidebar = () => {
     }
   }
 
-  const activeLink = 'flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm text-t-dark bg-s-light hover:bg-t-light mx-2 my-1'
-  const normalLink = 'flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm text-t-dark hover:bg-s-light mx-2 my-1'
+  const activeLink = 'flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm bg-s-light hover:bg-t-light mx-2 my-1'
+  const normalLink = 'flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm hover:bg-s-light mx-2 my-1'
 
   return (
     <div className='px-2 py-4 h-screen md:overflow-hidden overflow-auto md:hover:overflow-auto pb-10 bg-p-light'>
@@ -41,7 +41,7 @@ const Sidebar = () => {
         <div className="mt-10 ">
           {links.map((item) => (
             <div key={item.title}>
-              <p className="text-t-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
+              <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
                 {item.title}
               </p>
               {item.links.map((link) => (
