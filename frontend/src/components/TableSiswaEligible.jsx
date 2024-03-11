@@ -1,12 +1,23 @@
-const DataSiswaTable = () => {
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const TableSiswaEligible = () => {
+  const [siswaData, setSiswaData] = useState([]);
+
+  useEffect(()=> {
+    getSiswaData();
+  },[]);
+
+  const getSiswaData = async () =>{
+    
+      const response = await axios.get('http://localhost:5000/api/dataset/getEligibleIpa');
+      setSiswaData(response.data);
+  }
+
   return (
     <div className="p-4 md:px-8 md:pt-6">
       <div className="bg-p-light rounded-md">
-        <span className="p-6">
-          
-        </span>
         <div className="overflow-x-auto p-6">
-          
           <table className="table table-zebra">
             {/* head */}
             <thead>
@@ -20,24 +31,16 @@ const DataSiswaTable = () => {
               </tr>
             </thead>
             <tbody>
-              {/* row 1 */}
-              <tr>
-                <td>1</td>
-                <td>Cy Ganderton</td>
-                <td>Quality Control Specialist</td>
-                <td>Blue</td>
-                <td>...</td> {/* Isi dengan rumpun siswa */}
-                <td>...</td> {/* Isi dengan tahun aktif siswa */}
-              </tr>
-              {/* row 2 */}
-              <tr>
-                <td>2</td>
-                <td>Hart Hagerty</td>
-                <td>Desktop Support Technician</td>
-                <td>Purple</td>
-                <td>...</td> {/* Isi dengan rumpun siswa */}
-                <td>...</td> {/* Isi dengan tahun aktif siswa */}
-              </tr>
+              {siswaData.map((siswa) => (
+                <tr key={siswa.id}>
+                  <td>{siswa.id}</td>
+                  <td>{siswa.nama}</td>
+                  {/* <td>{siswa.jurusan_ipa_key.nama_jurusan}</td>
+                  <td>{siswa.univ_ipa_key.nama_univ}</td>
+                  <td>{siswa.rumpun_ipa_key.nama_rumpun}</td>
+                  <td>{siswa.tahun_aktif}</td> */}
+                </tr>
+              ))}
             </tbody>
           </table>
 
@@ -50,7 +53,7 @@ const DataSiswaTable = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DataSiswaTable
+export default TableSiswaEligible;

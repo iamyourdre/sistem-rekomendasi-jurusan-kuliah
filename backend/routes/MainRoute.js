@@ -3,7 +3,8 @@ import formData from "../middlewares/ReqBodyHandler.cjs";
 import { 
   upload,
   getAllIpa,
-  deleteAllIpa
+  deleteAllIpa,
+  getEligibleIpa
 } from "../controllers/IpaController.js";
 import { getAllCollege } from "../controllers/CollegeController.js";
 import { createTrainingData, naiveBayesClassifier, getAllNbIpaV3Data } from "../controllers/NaiveBayesV3Controller.js";
@@ -14,6 +15,7 @@ const nbRouter = express.Router(); // Membuat router khusus untuk NBv1 routes
 // Definisi rute-rute untuk dataset
 datasetRouter.post("/upload", formData.single("file"), upload);
 datasetRouter.get("/getAllIpa", getAllIpa);
+datasetRouter.get("/getEligibleIpa", getEligibleIpa);
 datasetRouter.delete("/reset", deleteAllIpa);
 datasetRouter.get("/getAllCollege", getAllCollege);
 

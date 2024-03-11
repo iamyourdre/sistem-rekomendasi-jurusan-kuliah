@@ -4,8 +4,8 @@ import { SiShopware } from 'react-icons/si'
 import { FaXmark } from "react-icons/fa6";
 import { TooltipComponent } from '@syncfusion/ej2-react-popups'
 
-import { links } from '../data/constant'
 import { useStateContext } from '../contexts/ContextProvider'
+import { TbDatabasePlus, TbDatabaseStar } from 'react-icons/tb';
 
 const Sidebar = () => {
   const { activeMenu, setActiveMenu, screenSize } = useStateContext();
@@ -15,8 +15,8 @@ const Sidebar = () => {
     }
   }
 
-  const activeLink = 'flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm bg-s-light hover:bg-t-light mx-2 my-1'
-  const normalLink = 'flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm hover:bg-s-light mx-2 my-1'
+  const activeLink = 'flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm bg-s-light hover:bg-t-light my-1'
+  const normalLink = 'flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm hover:bg-s-light my-1'
 
   return (
     <div className='px-2 py-4 h-screen md:overflow-hidden overflow-auto md:hover:overflow-auto pb-10 bg-p-light'>
@@ -38,25 +38,38 @@ const Sidebar = () => {
             </button>
           </TooltipComponent>
         </div>
+
         <div className="mt-10 ">
-          {links.map((item) => (
-            <div key={item.title}>
-              <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
-                {item.title}
-              </p>
-              {item.links.map((link) => (
-                <NavLink 
-                  to={link.url}
-                  key={link.name}
-                  className={({isActive}) => isActive ? activeLink : normalLink}>
-                    {link.icon}
-                    <span>
-                      {link.name}
-                    </span>
-                </NavLink>
-              ))}
+
+          <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
+            Halaman Utama
+          </p>
+
+          <NavLink to='' className={({isActive}) => isActive ? activeLink : normalLink}>
+            <TbDatabaseStar />
+            <span>
+              Dashboard
+            </span>
+          </NavLink>
+
+          <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
+            Dataset
+          </p>
+
+          <div  className="dropdown dropdown-end cursor-pointer w-full">
+            <div tabIndex={0} role="button" className='flex items-center gap-5 pl-3 pt-3 pb-2.5 rounded-lg text-sm hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto mt-1'>
+              <TbDatabasePlus />
+              <span>
+                Lihat Data
+              </span>
+            </div >
+            <div tabIndex={0} className="dropdown-content z-[1] w-full shadow rounded-b-lg text-sm bg-base-100 p-2">
+              <NavLink to='dataset/siswa_list' className={({isActive}) => isActive ? activeLink : normalLink}>Semua Siswa</NavLink>
+              <NavLink to='dataset/college_list' className={({isActive}) => isActive ? activeLink : normalLink}>Jurusan & Kampus</NavLink>
+              <NavLink to='dataset/siswa_eligible' className={({isActive}) => isActive ? activeLink : normalLink}>Siswa Eligible</NavLink>
             </div>
-          ))}
+          </div>
+
         </div>
       </>)}
     </div>

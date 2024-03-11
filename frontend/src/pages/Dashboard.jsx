@@ -1,12 +1,16 @@
-import React from 'react'
-import { Breadcrumb, DataSiswaTable } from '../components'
+import React, {useEffect} from 'react'
+import { Breadcrumb, TableSiswaEligible } from '../components'
 import { FaCircleCheck, FaDiceD6, FaFlask, FaLandmark, FaUserGraduate } from "react-icons/fa6";
 
-const MainData = () => {
+const Dashboard = ({ title, subtitle }) => {
+  useEffect(() => {
+    document.title = "SRJK | " + title;
+  }, []);
+
   return (
     <>
       <div className="w-full">
-        <Breadcrumb menu="Dashboard" submenu="Data Utama" />
+        <Breadcrumb menu={title} submenu={subtitle} />
 
         {/* Overview */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4 px-4 md:px-8">
@@ -52,11 +56,11 @@ const MainData = () => {
         </div>
 
         {/* Data Siswa Table */}
-        <DataSiswaTable />
+        <TableSiswaEligible />
 
       </div>
     </>
   )
 }
 
-export default MainData
+export default Dashboard

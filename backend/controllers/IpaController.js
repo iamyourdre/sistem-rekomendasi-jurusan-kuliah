@@ -256,15 +256,37 @@ export const getAllIpa = async (req, res) => {
         {
           model: RumpunModel,
           as: 'rumpun_ipa_key',
+        }
+      ],
+    });
+    res.status(200).json({
+      data: siswaData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Gagal mengambil dataset!",
+      error: error.message,
+    });
+  }
+};
+
+
+export const getEligibleIpa = async (req, res) => {
+  try {
+    const siswaData = await SiswaIpaModel.findAll({
+      include: [
+        {
+          model: JurusanModel,
+          as: 'jurusan_ipa_key',
         },
         {
-          model: SummaryIpaModel,
-          as: 'summary_ipa_key',
+          model: UnivModel,
+          as: 'univ_ipa_key',
         },
         {
-          model: NilaiIpaModel,
-          as: 'nilai_ipa_key',
-        },
+          model: RumpunModel,
+          as: 'rumpun_ipa_key',
+        }
       ],
     });
     res.status(200).json({

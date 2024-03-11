@@ -11,8 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "connect-session-sequelize": "^7.1.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.18.2",
+    "express-session": "^1.18.0",
     "mathjs": "^12.3.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.7.0",

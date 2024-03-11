@@ -22,24 +22,13 @@ const UserProfile = () => {
           <p className="text-t-dark opacity-75 text-xs font-semibold"> info@shop.com </p>
         </div>
       </div>
-      <div className="mt-5 flex">
-        <div className="flex-auto w-5/6 pr-2">
-          <button
-            type="button"
-            className="relative text-sm rounded-lg p-2 bg-blue-500 text-p-light w-full inline-block align-bottom"
-          >
-            <FaUserCog className='inline text-lg'/> Atur Akun
-          </button>
-        </div>
-        <div className="flex-auto w-1/6">
-          <button
-            type="button"
-            className="relative text-md rounded-lg p-2 bg-red-500 text-p-light w-full inline-block align-bottom"
-          >
-            <IoMdExit className='inline text-sm
-            '/>
-          </button>
-        </div>
+      <div className="mt-5">
+        <button
+          type="button"
+          className="relative text-md rounded-lg p-2 bg-red-500 text-p-light w-full inline-block align-bottom"
+        >
+          <IoMdExit className='inline text-lg relative bottom-0.5'/> Logout
+        </button>
       </div>
     </div>
 
