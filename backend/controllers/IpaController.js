@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { findOrCreateCollege } from "./CollegeController.js";
 import {JurusanModel, UnivModel, RumpunModel} from "../models/CollegeModel.js";
+import { Sequelize } from "sequelize";
 
 
 export const upload = async (req, res) => {
@@ -278,6 +279,11 @@ export const getEligibleIpa = async (req, res) => {
         {
           model: JurusanModel,
           as: 'jurusan_ipa_key',
+          where: {
+            id: {
+              [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
+            }
+          },
         },
         {
           model: UnivModel,
