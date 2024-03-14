@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Breadcrumb, TableSiswaEligible } from '../components'
+import { Breadcrumb, TableSiswaEligible, TableCollege, TableAllSiswa } from '../components'
 
 const Dataset = ({ title, subtitle }) => {
 
@@ -16,8 +16,8 @@ const Dataset = ({ title, subtitle }) => {
         <Breadcrumb menu={title} submenu={subtitle} />
 
         {/* Kondisional untuk menampilkan TableSiswaEligible hanya jika alamat URL adalah siswa_eligible */}
-        {isSiswaListPath && "isSiswaListPath"}
-        {isCollegeListPath && "isCollegeListPath"}
+        {isSiswaListPath && <TableAllSiswa />}
+        {isCollegeListPath && <TableCollege />}
         {isSiswaEligiblePath && <TableSiswaEligible />}
 
       </div>

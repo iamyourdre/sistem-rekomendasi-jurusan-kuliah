@@ -1,4 +1,6 @@
+import { Sequelize } from "sequelize";
 import  { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js"
+import { SiswaIpaModel } from "../models/IpaModel.js";
 import NbIpaV1Model from "../models/NaiveBayesV1Model.js";
 
 export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
@@ -51,13 +53,33 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
 export const getAllCollege = async (req, res) => {
   try {
     const jurusanData = await JurusanModel.findAll({
+      where: {
+        id: {
+          [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
+        }
+      },
       include: [
         {
-          model: NbIpaV1Model,
-          as: 'nb_ipa_v1_dataset_key',
+          model: SiswaIpaModel,
+          as: 'jurusan_ipa_key',
+          attributes: ['id'],
+          include: [
+            {
+              model: UnivModel,
+              as: 'univ_ipa_key',
+              attributes: ['universitas']
+            },
+            {
+              model: RumpunModel,
+              as: 'rumpun_ipa_key',
+              attributes: ['rumpun']
+            },
+          ],
         },
       ],
+      group: ['jurusan', 'jurusan_ipa_key.id'] // Menambahkan 'jurusan_ipa_key.id' ke dalam GROUP BY
     });
+    
     res.status(200).json({
       data: jurusanData,
     });

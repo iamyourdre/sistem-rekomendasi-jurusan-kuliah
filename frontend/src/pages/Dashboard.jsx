@@ -12,19 +12,17 @@ const Dashboard = ({ title, subtitle }) => {
 
   const getDataLength = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/master/getDataLength');
-      const responseData = response.data; // Dapatkan data respons
+      const response = (await axios.get('http://localhost:5000/api/master/getDataLength')).data;
 
       // Pastikan hanya menyimpan data primitif
       const formattedData = {
-        eligLength: responseData.eligLength || 0,
-        siswaLength: responseData.siswaLength || 0,
-        jurusanLength: responseData.jurusanLength || 0,
-        univLength: responseData.univLength || 0,
+        eligLength: response.eligLength || 0,
+        siswaLength: response.siswaLength || 0,
+        jurusanLength: response.jurusanLength || 0,
+        univLength: response.univLength || 0,
       };
 
       setDataLength(formattedData);
-      console.log(responseData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }

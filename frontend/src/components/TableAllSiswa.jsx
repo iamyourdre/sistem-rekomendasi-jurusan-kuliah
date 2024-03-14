@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaCircleInfo } from "react-icons/fa6";
+import { FaCircleInfo } from 'react-icons/fa6';
 
-const TableSiswaEligible = () => {
+const TableAllSiswa = () => {
   const [siswaData, setSiswaData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Number of items per page
@@ -12,7 +12,7 @@ const TableSiswaEligible = () => {
   }, []);
 
   const getSiswaData = async () => {
-    const response = (await axios.get('http://localhost:5000/api/dataset/getEligibleIpa')).data;
+    const response = (await axios.get('http://localhost:5000/api/dataset/getAllIpa')).data;
     setSiswaData(response.data);
   };
 
@@ -29,7 +29,7 @@ const TableSiswaEligible = () => {
       <div className="bg-p-light rounded-md p-6">
         <div role="alert" className="alert bg-t-light mb-3 inline-block">
           <FaCircleInfo className='inline text-lg relative bottom-0.5 mr-2'/>
-          <span><b>{siswaData.length}</b> Siswa Eligible</span>
+          <span><b>{siswaData.length}</b> Data Siswa</span>
         </div>
         <div className="overflow-x-auto">
           <table className="table table-zebra">
@@ -71,4 +71,4 @@ const TableSiswaEligible = () => {
   );
 };
 
-export default TableSiswaEligible;
+export default TableAllSiswa;

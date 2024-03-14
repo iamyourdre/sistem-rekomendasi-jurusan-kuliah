@@ -22,10 +22,10 @@ export const getDataLength = async (req, res) => {
     const univLength = await UnivModel.count({});
     
     res.status(200).json({
-      siswaLength: siswaLength,
-      jurusanLength: jurusanLength,
-      univLength: univLength,
-      eligLength: eligLength // Jumlah data sesuai dengan kriteria yang diberikan
+      siswaLength,
+      jurusanLength,
+      univLength,
+      eligLength
     });    
   } catch (error) {
     res.status(500).json({

@@ -6,7 +6,7 @@ import avatar from '../data/avatar.jpg';
 const UserProfile = () => {
 
   return (
-    <div className="nav-item absolute right-4 top-16 bg-p-light shadow-sm p-6 rounded-lg w-80 text-s-dark z-50">
+    <div className="nav-item absolute right-4 top-20 bg-p-light shadow-sm p-6 rounded-lg w-80 text-s-dark z-50">
       <div className="flex justify-between items-center">
         <p className="font-semibold text-md">Profil Saya</p>
       </div>
@@ -17,9 +17,9 @@ const UserProfile = () => {
           alt="user-profile"
         />
         <div>
-          <p className="font-semibold text-lg"> Michael Roberts </p>
-          <p className="text-t-dark opacity-75 text-xs">  Administrator   </p>
-          <p className="text-t-dark opacity-75 text-xs font-semibold"> info@shop.com </p>
+          <p className="font-semibold text-lg">Adrian Sutansaty</p>
+          <p className="text-t-dark opacity-75 text-xs">Admin</p>
+          <p className="text-t-dark opacity-75 text-xs font-semibold"> admin@mail.com </p>
         </div>
       </div>
       <div className="mt-5">
