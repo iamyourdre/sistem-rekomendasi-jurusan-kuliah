@@ -5,3 +5,4 @@ export { default as Breadcrumb } from './Breadcrumb';
 export { default as TableSiswaEligible } from './TableSiswaEligible';
 export { default as TableAllSiswa } from './TableAllSiswa';
 export { default as TableCollege } from './TableCollege';
+export { default as Footer } from './Footer';

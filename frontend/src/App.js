@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-import { Navbar, Sidebar } from './components';
+import { Navbar, Sidebar, Footer } from './components';
 import './App.css';
 
 import { useStateContext } from './contexts/ContextProvider';
-import { Dashboard, Dataset } from './pages';
+import { Dashboard, Dataset, UpdateDataset } from './pages';
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -36,8 +36,10 @@ const App = () => {
                 <Route path='/dataset/siswa_list' element={<Dataset title="Dataset" subtitle="Semua Siswa"/>}/>
                 <Route path='/dataset/college_list' element={<Dataset title="Dataset" subtitle="Jurusan & Kampus"/>}/>
                 <Route path='/dataset/siswa_eligible' element={<Dataset title="Dataset" subtitle="Siswa Eligible"/>}/>
+                <Route path='/option/dataset/update' element={<UpdateDataset title="Pengaturan" subtitle="Update Dataset"/>}/>
               </Routes>
             </div>
+            <Footer />
           </div>
         </div>
       </BrowserRouter>

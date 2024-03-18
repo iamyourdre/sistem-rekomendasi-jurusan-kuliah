@@ -77,7 +77,9 @@ const Dashboard = ({ title, subtitle }) => {
         </div>
 
         {/* Data Siswa Table */}
-        <TableSiswaEligible />
+        <div className="mt-4">
+          <TableSiswaEligible/>
+        </div>
       </div>
     </>
   );
