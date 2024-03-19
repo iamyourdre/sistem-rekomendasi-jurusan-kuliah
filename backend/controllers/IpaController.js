@@ -3,6 +3,7 @@ import readXlsxFile from "read-excel-file/node";
 import path from "path";
 import { fileURLToPath } from "url";
 import { findOrCreateCollege } from "./CollegeController.js";
+import { resetDataset } from "./MasterController.js";
 import {JurusanModel, UnivModel, RumpunModel} from "../models/CollegeModel.js";
 import { Sequelize } from "sequelize";
 
@@ -10,8 +11,7 @@ import { Sequelize } from "sequelize";
 export const upload = async (req, res) => {
   try {
 
-    req.body.reset === "y" ? await deleteAllIpa() : undefined;
-    // req.reset ? y (reset) : false (no reset)
+    req.body.reset === "y" ? await resetDataset() : null;
 
     if (req.file === undefined) {
       return res.status(400).send("Silakan unggah file .xlsx!");
@@ -223,18 +223,17 @@ export const upload = async (req, res) => {
         }
       
         res.status(200).json({
-          message: "Dataset " + req.file.originalname +" berhasil diimpor!",
+          message: "Dataset " + req.file.originalname +" berhasil diinput!",
         });
 
       } catch (error) {
         res.status(500).json({
-          message: "Gagal mengimpor dataset ke database!",
+          message: "Gagal menginput dataset ke database!",
           error: error.message,
         });
       }
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       message: "Dataset " + req.file.originalname +" gagal diimpor!",
       error: error.message,
@@ -347,29 +346,5 @@ export const isDuplication = async (data, u_id, j_id, res) => {
       message: "Gagal melakukan operasi pengecekan duplikasi!",
       error: error.message,
     });
-  }
-};
-
-export const deleteAllIpa = async (res) => {
-  try {
-
-    // Hapus semua data dalam tabel NilaiIpaModel
-    await NilaiIpaModel.destroy({ where: {} });
-
-    // Hapus semua data dalam tabel SiswaIpaModel
-    await SiswaIpaModel.destroy({ where: {} });
-    
-    // Hapus semua data dalam tabel SummaryIpaModel
-    await SummaryIpaModel.destroy({ where: {} });
-
-    return {
-      success: true,
-      message: "Berhasil menghapus semua dataset!",
-    };
-  } catch (error) {
-    return {
-      message: "Gagal menghapus semua dataset!",
-      error: error.message,
-    };
   }
 };

@@ -3,7 +3,6 @@ import formData from "../middlewares/ReqBodyHandler.cjs";
 import { 
   upload,
   getAllIpa,
-  deleteAllIpa,
   getEligibleIpa
 } from "../controllers/IpaController.js";
 import { getAllCollege } from "../controllers/CollegeController.js";
@@ -18,7 +17,6 @@ const masterRouter = express.Router(); // Membuat router khusus untuk Master rou
 datasetRouter.post("/upload", formData.single("file"), upload);
 datasetRouter.get("/getAllIpa", getAllIpa);
 datasetRouter.get("/getEligibleIpa", getEligibleIpa);
-datasetRouter.delete("/reset", deleteAllIpa);
 datasetRouter.get("/getAllCollege", getAllCollege);
 
 // Definisi rute-rute untuk NB

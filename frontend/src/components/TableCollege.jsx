@@ -43,7 +43,7 @@ const TableCollege = () => {
           <>
           <div role="alert" className="alert bg-t-light mb-3 inline-block">
             <FaCircleInfo className='inline text-lg relative bottom-0.5 mr-2'/>
-            <span><b>{collegeData.length}</b> Jurusan Terlampaui</span>
+            <span><b>{collegeData.length}</b> Jurusan Tercatat</span>
           </div>
           <div className="overflow-x-auto">
             <table className="table table-zebra">
@@ -66,7 +66,13 @@ const TableCollege = () => {
                         <li>{univ.univ_ipa_key.universitas}</li>
                       </ul>
                     ))}</td>
-                    <td>{college.jurusan_ipa_key[0].rumpun_ipa_key.rumpun}</td>
+                    <td>
+                      {college.jurusan_ipa_key && college.jurusan_ipa_key[0] && college.jurusan_ipa_key[0].rumpun_ipa_key ? (
+                        college.jurusan_ipa_key[0].rumpun_ipa_key.rumpun
+                      ) : (
+                        ''
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

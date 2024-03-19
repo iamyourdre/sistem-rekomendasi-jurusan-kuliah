@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
-import { JurusanModel, UnivModel } from "../models/CollegeModel.js";
-import { SiswaIpaModel } from "../models/IpaModel.js";
+import { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js";
+import { NilaiIpaModel, SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
 
 export const getDataLength = async (req, res) => {
   try {
@@ -32,5 +32,24 @@ export const getDataLength = async (req, res) => {
       message: "Gagal mengambil dataset!",
       error: error.message,
     });
+  }
+};
+
+export const resetDataset = async (res) => {
+  try {
+
+    await NilaiIpaModel.destroy({ where: {} });
+    await SiswaIpaModel.destroy({ where: {} });
+    await SummaryIpaModel.destroy({ where: {} });
+
+    return {
+      success: true,
+      message: "Berhasil menghapus semua dataset!",
+    };
+  } catch (error) {
+    return {
+      message: "Gagal menghapus semua dataset!",
+      error: error.message,
+    };
   }
 };

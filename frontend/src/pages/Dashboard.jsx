@@ -58,7 +58,7 @@ const Dashboard = ({ title, subtitle }) => {
           <div className="bg-orange-200 p-6 rounded-lg flex border-b-1">
             <div className="flex-1">
               <span className="block text-sm font-medium">Jurusan</span>
-              <p className="text-2xl pt-1 font-medium">{dataLength.jurusanLength-1}</p>
+              <p className="text-2xl pt-1 font-medium">{dataLength.jurusanLength>0?dataLength.jurusanLength-1:dataLength.jurusanLength}</p>
             </div>
             <div className="flex justify-center items-center w-14 h-14 bg-orange-400 rounded-full">
               <FaFlask className="text-xl text-p-light" />
@@ -68,7 +68,7 @@ const Dashboard = ({ title, subtitle }) => {
           <div className="bg-pink-200 p-6 rounded-lg flex border-b-1">
             <div className="flex-1">
               <span className="block font-semibold text-sm">Universitas</span>
-              <p className="text-2xl pt-1 font-medium">{dataLength.univLength-1}</p>
+              <p className="text-2xl pt-1 font-medium">{dataLength.univLength>0?dataLength.univLength-1:dataLength.univLength}</p>
             </div>
             <div className="flex justify-center items-center w-14 h-14 bg-pink-400 rounded-full">
               <FaLandmark className="text-xl text-p-light" />

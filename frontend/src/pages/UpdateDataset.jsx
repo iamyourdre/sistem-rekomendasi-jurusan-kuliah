@@ -1,30 +1,129 @@
-import React from 'react'
-import { Breadcrumb } from '../components'
+import React, { useState } from 'react';
+import { Breadcrumb } from '../components';
+import { FaCircleInfo, FaDownload } from 'react-icons/fa6';
+import axios from 'axios';
+import { NavLink } from 'react-router-dom';
 
 const UpdateDataset = ({ title, subtitle }) => {
+  const [file, setFile] = useState(null);
+  const [reset, setReset] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleFileChange = (e) => {
+    const uploadedFile = e.target.files[0];
+    setFile(uploadedFile);
+  };
+
+  const handleResetChange = (e) => {
+    setReset(e.target.checked);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('reset', reset ? 'y' : 'n');
+
+    setLoading(true); // Menampilkan loading saat proses pengiriman dimulai
+  
+    try {
+      const response = await axios.post('http://localhost:5000/api/dataset/upload', formData);
+
+      setLoading(false); // Menyembunyikan loading setelah selesai
+      setSuccessMessage('File berhasil diunggah.'); // Menampilkan pesan berhasil
+      // Reset form jika diperlukan
+      setFile(null);
+      setReset(false);
+    } catch (error) {
+      setLoading(false); // Menyembunyikan loading jika terjadi kesalahan
+      setSuccessMessage(''); // Menghilangkan pesan berhasil jika terjadi kesalahan
+      
+      if (error.response) {
+        // Handle error based on error response from server
+        console.error('Server Error:', error.response.data);
+        console.error('Status Code:', error.response.status);
+        console.error('Response Headers:', error.response.headers);
+      } else if (error.request) {
+        // Handle request error
+        console.error('Request Error:', error.request);
+      } else {
+        // Handle other errors
+        console.error('Error:', error.message);
+      }
+    }
+  };
+  
   return (
     <>
       <div className="w-full">
         <Breadcrumb menu={title} submenu={subtitle} />
         <div className="px-4 md:px-8">
-          <div className="bg-p-light rounded-md p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>01</div>
-            <div>
-              <label className="form-control w-full">
-                <div className="label">
-                  <span className="label-text">Upload Dataset</span>
-                  <span className="label-text-alt">(.xlsx)</span>
-                </div>
-                <input type="file" className="file-input file-input-bordered w-full" />
-              </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-p-light rounded-md p-6">
+              <div className="border-b-1 mb-4 pb-2">
+                <span className='font-mono text-2xl font-bold mb-4'>LANGKAH 1</span>
+              </div>
+              <div role="alert" className="alert text-left bg-red-500 mb-3 inline-block rounded-md text-white text-sm">
+                <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2'/>
+                <b>Note!</b>&nbsp;
+                Untuk menginput dataset siswa, silahkan unduh dan gunakan template xlsx dibawah ini.
+                <a
+                  href="/assets/template_nilai_IPA.xlsx"
+                  download="template_nilai_IPA.xlsx"
+                  className="btn bg-p-light w-full mt-6"
+                >
+                  <FaDownload />  template_nilai_IPA.xlsx
+                </a>
+              </div>
             </div>
-          </div>
+            <div className="bg-p-light rounded-md p-6">
+              <div className="border-b-1 mb-4 pb-2">
+                <span className='font-mono text-2xl font-bold mb-4'>LANGKAH 2</span>
+              </div>
+              {/* Menampilkan pesan berhasil */}
+              {successMessage && (
+                <div role="alert" className="alert bg-green-500 mb-3 inline-block">
+                  <FaCircleInfo className='inline text-lg relative bottom-0.5 mr-2'/>
+                  <span>Dataset berhasil diinput! <NavLink to='/'><b>Cek disini.</b></NavLink></span>
+                </div>
+              )}
+              <form onSubmit={handleSubmit}>
+                {/* Menyembunyikan form jika loading sedang berlangsung */}
+                {!loading && (
+                  <>
+                    <label className="form-control w-full">
+                      <div className="label">
+                        <span className="label-text">Upload Dataset</span>
+                        <span className="label-text-alt">(.xlsx)</span>
+                      </div>
+                      <input type="file" className="file-input file-input-bordered w-full" onChange={handleFileChange} />
+                    </label>
+                    <div className="form-control pb-4">
+                      <label className="label cursor-pointer inline">
+                        <input type="checkbox" className="checkbox checkbox-sm top-1 relative mr-3 checkbox-error" onChange={handleResetChange} />
+                        <span className="label-text">Ingin mereset data siswa sebelumnya?</span>
+                      </label>
+                    </div>
+                    <button type="submit" className="btn btn-primary float-right">
+                      Submit & Proses
+                    </button>
+                  </>
+                )}
+                {/* Menampilkan loading jika loading sedang berlangsung */}
+                {loading && (
+                  <div role="alert" className="alert bg-t-light mb-3 inline-block">
+                    <span><b>Memproses Data</b></span>
+                    <span class="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
+                  </div>
+                )}
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default UpdateDataset
+export default UpdateDataset;

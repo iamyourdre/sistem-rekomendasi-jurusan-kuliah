@@ -1,7 +1,6 @@
 import { Sequelize } from "sequelize";
 import  { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js"
 import { SiswaIpaModel } from "../models/IpaModel.js";
-import NbIpaV1Model from "../models/NaiveBayesV1Model.js";
 
 export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
 
