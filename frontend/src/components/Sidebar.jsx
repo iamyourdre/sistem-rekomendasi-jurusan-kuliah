@@ -54,34 +54,32 @@ const Sidebar = () => {
           <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
             Dataset
           </p>
+
           <div className="collapse collapse-arrow">
-            <input type="radio" name="my-accordion-3"/>
-            <div className="collapse-title gap-5 pl-3 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0">
+            <input type="radio" name="my-accordion" className='p-0 m-0 min-h-0'/>
+            <div className="collapse-title gap-5 pl-3 pt-3 pb-2.5 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0">
               <TbDatabaseSearch className='inline mr-5 relative text-lg bottom-0.5'/>
               <span>
                 Lihat Data
               </span>
             </div>
-            <div className="collapse-content px-2 py-0 border-b-1">
+            <div className="collapse-content px-2 py-0 mb-2 border-b-1 border-t-light">
               <NavLink to='dataset/siswa_list' className={({isActive}) => isActive ? activeLink : normalLink}>Semua Siswa</NavLink>
               <NavLink to='dataset/college_list' className={({isActive}) => isActive ? activeLink : normalLink}>Jurusan & Kampus</NavLink>
               <NavLink to='dataset/siswa_eligible' className={({isActive}) => isActive ? activeLink : normalLink}>Siswa Eligible</NavLink>
             </div>
           </div>
           
-          <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
-            Pengaturan
-          </p>
           <div className="collapse collapse-arrow">
-            <input type="radio" name="my-accordion-3"/>
-            <div className="collapse-title gap-5 pl-3 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0">
+            <input type="radio" name="my-accordion" className='p-0 m-0 min-h-0'/>
+            <div className="collapse-title gap-5 pl-3 pt-3 pb-2.5 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0">
               <TbDatabaseStar className='inline mr-5 relative text-lg bottom-0.5'/>
               <span>
-                Dataset
+                Pengaturan
               </span>
             </div>
-            <div className="collapse-content px-2 py-0 border-b-1">
-              <NavLink to='/option/dataset/update' className={({isActive}) => isActive ? activeLink : normalLink}>Update Dataset</NavLink>
+            <div className="collapse-content px-2 py-0 mb-2 border-b-1 border-t-light">
+              <NavLink to='/dataset/update' className={({isActive}) => isActive ? activeLink : normalLink}>Update Dataset</NavLink>
             </div>
           </div>
 

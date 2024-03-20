@@ -36,7 +36,7 @@ const App = () => {
                 <Route path='/dataset/siswa_list' element={<Dataset title="Dataset" subtitle="Semua Siswa"/>}/>
                 <Route path='/dataset/college_list' element={<Dataset title="Dataset" subtitle="Jurusan & Kampus"/>}/>
                 <Route path='/dataset/siswa_eligible' element={<Dataset title="Dataset" subtitle="Siswa Eligible"/>}/>
-                <Route path='/option/dataset/update' element={<UpdateDataset title="Pengaturan" subtitle="Update Dataset"/>}/>
+                <Route path='/dataset/update' element={<UpdateDataset title="Dataset" subtitle="Update Dataset"/>}/>
               </Routes>
             </div>
             <Footer />

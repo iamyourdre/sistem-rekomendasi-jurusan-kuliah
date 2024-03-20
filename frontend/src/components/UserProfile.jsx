@@ -6,7 +6,7 @@ import avatar from '../data/avatar.jpg';
 const UserProfile = () => {
 
   return (
-    <div className="nav-item absolute right-4 top-20 bg-p-light shadow-sm p-6 rounded-lg w-80 text-s-dark z-50">
+    <div className="nav-item absolute right-4 top-20 bg-p-light shadow-md shadow-t-dark p-6 rounded-lg w-80 text-s-dark z-50">
       <div className="flex justify-between items-center">
         <p className="font-semibold text-md">Profil Saya</p>
       </div>

@@ -7,8 +7,7 @@ import { NavLink } from 'react-router-dom';
 const UpdateDataset = ({ title, subtitle }) => {
   const [file, setFile] = useState(null);
   const [reset, setReset] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [progressStatus, setProgress] = useState(0);
 
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0];
@@ -24,19 +23,17 @@ const UpdateDataset = ({ title, subtitle }) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('reset', reset ? 'y' : 'n');
-
-    setLoading(true); // Menampilkan loading saat proses pengiriman dimulai
   
     try {
-      const response = await axios.post('http://localhost:5000/api/dataset/upload', formData);
-
-      setLoading(false); // Menyembunyikan loading setelah selesai
-      setSuccessMessage('File berhasil diunggah.'); // Menampilkan pesan berhasil
+      setProgress(1);
+      const response1 = await axios.post('http://localhost:5000/api/dataset/upload', formData);
+      setProgress(2);
+      const response2 = await axios.post('http://localhost:5000/api/nb/createTrainingData');
+      setProgress(3);
       // Reset form jika diperlukan
       setFile(null);
       setReset(false);
     } catch (error) {
-      setLoading(false); // Menyembunyikan loading jika terjadi kesalahan
       setSuccessMessage(''); // Menghilangkan pesan berhasil jika terjadi kesalahan
       
       if (error.response) {
@@ -82,15 +79,15 @@ const UpdateDataset = ({ title, subtitle }) => {
                 <span className='font-mono text-2xl font-bold mb-4'>LANGKAH 2</span>
               </div>
               {/* Menampilkan pesan berhasil */}
-              {successMessage && (
+              {progressStatus === 3 && (
                 <div role="alert" className="alert bg-green-500 mb-3 inline-block">
                   <FaCircleInfo className='inline text-lg relative bottom-0.5 mr-2'/>
-                  <span>Dataset berhasil diinput! <NavLink to='/'><b>Cek disini.</b></NavLink></span>
+                  <span><b>(2/2)</b> Dataset berhasil diklasifikasi! <NavLink to='/'><b>Lihat disini.</b></NavLink></span>
                 </div>
               )}
               <form onSubmit={handleSubmit}>
                 {/* Menyembunyikan form jika loading sedang berlangsung */}
-                {!loading && (
+                {progressStatus === 0 && (
                   <>
                     <label className="form-control w-full">
                       <div className="label">
@@ -111,9 +108,15 @@ const UpdateDataset = ({ title, subtitle }) => {
                   </>
                 )}
                 {/* Menampilkan loading jika loading sedang berlangsung */}
-                {loading && (
+                {progressStatus === 1 && (
                   <div role="alert" className="alert bg-t-light mb-3 inline-block">
-                    <span><b>Memproses Data</b></span>
+                    <span><b>(0/2)</b> Mengupload dataset</span>
+                    <span class="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
+                  </div>
+                )}
+                {progressStatus === 2 && (
+                  <div role="alert" className="alert bg-t-light mb-3 inline-block">
+                    <span><b>(1/2)</b> Melakukan klasifikasi dataset</span>
                     <span class="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
                   </div>
                 )}

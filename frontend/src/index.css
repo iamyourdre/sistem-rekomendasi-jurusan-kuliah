@@ -19,3 +19,6 @@ body {
         @apply bg-s-light
      }
 }
+.collapse-arrow > .collapse-title:after {
+    top: 1.5rem;
+}
