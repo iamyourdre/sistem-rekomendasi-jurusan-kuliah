@@ -13,7 +13,6 @@ export const createTrainingData = async (req, res) => {
       await NbIpaV3MapelModel.destroy({ where: {} });
       await setMapelTable(res);
       freqError = await setFreqTable(res);
-      console.log()
     }
 
     res.status(200).json({

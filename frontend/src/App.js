@@ -5,7 +5,7 @@ import { Navbar, Sidebar, Footer } from './components';
 import './App.css';
 
 import { useStateContext } from './contexts/ContextProvider';
-import { Dashboard, Dataset, UpdateDataset } from './pages';
+import { Dashboard, Dataset, Srjk, UpdateDataset } from './pages';
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -37,6 +37,7 @@ const App = () => {
                 <Route path='/dataset/college_list' element={<Dataset title="Dataset" subtitle="Jurusan & Kampus"/>}/>
                 <Route path='/dataset/siswa_eligible' element={<Dataset title="Dataset" subtitle="Siswa Eligible"/>}/>
                 <Route path='/dataset/update' element={<UpdateDataset title="Dataset" subtitle="Update Dataset"/>}/>
+                <Route path='/feature/srjk' element={<Srjk title="Fitur" subtitle="Rekomendasi Jurusan"/>}/>
               </Routes>
             </div>
             <Footer />
