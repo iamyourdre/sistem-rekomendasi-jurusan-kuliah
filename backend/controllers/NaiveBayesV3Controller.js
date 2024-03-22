@@ -177,6 +177,7 @@ export const naiveBayesClassifier = async (req, res) => {
   try {
     
     const { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = req.body;
+
     const jurusan = await JurusanModel.findAll({
       where: {
         id: {
@@ -243,7 +244,7 @@ export const naiveBayesClassifier = async (req, res) => {
     probData.sort((a, b) => a.jurusan_id - b.jurusan_id);
 
     // Membuat output probabilitas final untuk tiap jurusan
-    res.status(200).json({ probData });
+    res.status(200).json({ probData, inputValues: { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } });
 
   } catch (error) {
     res.status(500).json({ message: error.message });

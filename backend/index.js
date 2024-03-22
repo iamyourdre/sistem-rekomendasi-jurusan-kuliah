@@ -29,6 +29,8 @@ app.use(cors({ // mengatur kredensial untuk request dari frontend
     credentials: true,
     origin: 'http://localhost:3000' // domain yang diizinkan untuk mengakses API
 }))
+
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/dataset", datasetRouter);
 app.use("/api/nb", nbRouter);
