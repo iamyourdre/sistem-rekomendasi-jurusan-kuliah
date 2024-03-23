@@ -1,8 +1,8 @@
 import { Sequelize } from "sequelize";
 import { erf } from 'mathjs';
-import { SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
+import { NilaiIpaModel, SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
 import {NbIpaV3MapelModel, NbIpaV3FreqModel} from "../models/NaiveBayesV3Model.js";
-import { JurusanModel } from "../models/CollegeModel.js";
+import { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js";
 
 export const createTrainingData = async (req, res) => {
   try {
@@ -115,8 +115,6 @@ export const setFreqTable = async (res) => {
         });
 
         freqError = (mapel.length==0?freqError+=1:freqError+=0);
-        console.log("==========================================================")
-        console.log(freqError)
         
         // Menghitung kemunculan bobot A, B, C pada mapel untuk setiap sumNilai
         sumNilai.forEach(sn => {
@@ -236,15 +234,44 @@ export const naiveBayesClassifier = async (req, res) => {
         p_no *= (mapel['nb_ipa_v3_freq_key.p_no'] / mapel.total_p_no )
       }
       probData.push({
-        jurusan_id: j.id,
+        jurusan: await JurusanModel.findOne({where: {id: j.id}}),
         p_yes: p_yes,
-        p_no: p_no
+        p_no: p_no,
+        reference: await SiswaIpaModel.findAll({
+          where: {
+            jurusan_id: j.id
+          },
+          include: [
+            {
+              model: JurusanModel,
+              as: 'jurusan_ipa_key',
+              where: {
+                id: j.id
+              },
+              attributes: ['jurusan']
+            },
+            {
+              model: SummaryIpaModel,
+              as: 'summary_ipa_key',
+            },
+            {
+              model: UnivModel,
+              as: 'univ_ipa_key',
+              attributes: ['universitas']
+            },
+            {
+              model: RumpunModel,
+              as: 'rumpun_ipa_key',
+              attributes: ['rumpun']
+            },
+          ],
+        })
       });
     }));
     probData.sort((a, b) => a.jurusan_id - b.jurusan_id);
 
     // Membuat output probabilitas final untuk tiap jurusan
-    res.status(200).json({ probData, inputValues: { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } });
+    res.status(200).json({ probData });
 
   } catch (error) {
     res.status(500).json({ message: error.message });

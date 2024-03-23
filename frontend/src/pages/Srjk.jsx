@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const Srjk = ({ title, subtitle }) => {
 
-  const mapels = ["PABP", "PPKN", "B.Indonesia", "MTK Wajib", "Sejarah Indonesia", "B.Inggris Wajib", "Seni Budaya", "PJOK", "PKWU", "MTK Terapan", "Biologi", "Fisika", "Kimia", "Ekonomi", "B.Inggris Terapan"];
+  const mapels = ["PABP", "PPKN", "B.Indonesia", "MTK Wajib", "Sejarah Indonesia", "B.Inggris Wajib", "Seni Budaya", "PJOK", "PKWU", "MTK Peminatan", "Biologi", "Fisika", "Kimia", "Ekonomi", "B.Inggris Terapan"];
   const semesters = ["1", "2", "3", "4", "5"];
 
   const [formData, setFormData] = useState(getInitialFormData());
@@ -62,7 +62,6 @@ const Srjk = ({ title, subtitle }) => {
     setFormData(updatedFormData);
   }
 
-
   // Fungsi untuk menyimpan nilai input ke state dan cookie
   function handleInputChange(semester, mapel, value) {
     const expires = new Date();
@@ -75,7 +74,6 @@ const Srjk = ({ title, subtitle }) => {
     setFormData(newFormData);
     document.cookie = cookieValue;
   }
-  
 
   // Fungsi untuk mereset semua nilai input dan hapus cookie
   function resetAllValues() {
@@ -114,7 +112,6 @@ const Srjk = ({ title, subtitle }) => {
     const avgSc = calculateAverageScores();
 
     const averageScoresArray = Object.values(avgSc);
-    console.log(averageScoresArray);
 
     // Membuat objek requestBody sesuai dengan bentuk yang diharapkan oleh API
     const requestBody = {
@@ -146,25 +143,61 @@ const Srjk = ({ title, subtitle }) => {
         
         // Menetapkan probData yang sudah diurutkan ke state
         setProbData(sortedProbData);
+
+        // Mencari elemen dengan id "rekomendasi"
+        const rekomendasiElement = document.getElementById('rekomendasi');
+        // Memastikan elemen ditemukan sebelum mencoba untuk mengarahkan scroll
+        if (rekomendasiElement) {
+          // Mengarahkan scroll ke elemen "rekomendasi" secara smooth
+          rekomendasiElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       })
       .catch(error => {
         console.error('Error submitting average scores:', error);
       });
+  }
 
+  function convertToGrade(score) {
+    const numericScore = parseFloat(score)
+    if (numericScore >= 90) {
+      return "A";
+    } else if (numericScore >= 85) {
+      return "A-";
+    } else if (numericScore >= 80) {
+      return "B+";
+    } else if (numericScore >= 75) {
+      return "B";
+    } else if (numericScore >= 70) {
+      return "B-";
+    } else {
+      return "CDE";
+    }
+  }
+
+  function biggerOrSame(grade1, grade2) {
+    const gradeOrder = ["A", "A-", "B+", "B", "B-", "CDE"];
+    const index1 = gradeOrder.indexOf(grade1);
+    const index2 = gradeOrder.indexOf(grade2);
+    return index1 <= index2;
   }
 
   return (
     <div className="w-full">
       <div className="px-4 md:px-8">
         <div className="bg-p-light rounded-md p-6">
-          <div role="alert" className="alert text-left bg-red-500 mb-3 inline-block rounded-md text-white text-sm">
-            <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2'/>
-            <b>Note!</b>&nbsp;
-            Untuk menginput dataset siswa, silahkan unduh dan gunakan template xlsx dibawah ini.
-          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className='border-1 border-t-light rounded-md bg-s-light p-4'>
-              Cara Menggunakan:
+            <div>
+              <div role="alert" className="alert text-left bg-green-500 mb-3 inline-block rounded-md text-white text-sm">
+                <span className="label text-xl font-bold mb-2">Cara Menggunakan:</span>
+                <ol class="list-decimal pl-4 mt-2">
+                  <li> Isi nilai-nilai tiap semester berdasarkan rapor Anda pada kolom input yang disediakan.</li>
+                  <li> Koreksi ulang nilai-nilai yang telah anda masukkan demi mencegah kesalahan rekomendasi jurusan.</li>
+                  <li> Tekan tombol "Submit" setelah semua nilai dimasukkan.</li>
+                  <li> Silahkan tunggu proses klasifikasi hingga selesai.</li>
+                  <li> Setelah proses klasifikasi selesai, hasil rekomendasi akan otomatis muncul dibagian paling bawah pada halaman ini.</li>
+                  <li> Selamat mempertimbangkan rekomendasi jurusan pada hasil yang disediakan!</li>
+                </ol>
+              </div>
             </div>
             {semesters.map((semester) => (
               <div key={`semester-${semester}`} className='border-1 border-t-light rounded-md bg-s-light p-4'>
@@ -206,51 +239,69 @@ const Srjk = ({ title, subtitle }) => {
           </div>
         </div>
       </div>
-      {Object.keys(averageScores).length > 0 && (
-        <div className="px-4 md:px-8 mt-4">
-          <div className="bg-p-light rounded-md p-6">
-            <h2 className="text-xl font-bold mb-4">Nilai Rata-rata Setiap Mata Pelajaran:</h2>
-            <ul>
-              {mapels.map((mapel, index) => (
-                <li key={index}>
-                  <strong>{mapel}:</strong> {averageScores[mapel]}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
       {probData.length > 0 && (
-        <div className="px-4 md:px-8 mt-4">
-          <div className="bg-p-light rounded-md p-6">
-            <h2 className="text-xl font-bold mb-4">Tabel Probabilitas</h2>
-            <table className="border-collapse border border-gray-400 w-full">
-              <thead>
-                <tr>
-                  <th className="border border-gray-400 px-4 py-2">#</th>
-                  <th className="border border-gray-400 px-4 py-2">Jurusan ID</th>
-                  <th className="border border-gray-400 px-4 py-2">Probabilitas Yes</th>
-                  <th className="border border-gray-400 px-4 py-2">Probabilitas No</th>
-                  <th className="border border-gray-400 px-4 py-2">Persentase Yes</th>
-                  <th className="border border-gray-400 px-4 py-2">Persentase No</th>
-                </tr>
-              </thead>
-              <tbody>
-                {probData.map((data, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-400 px-4 py-2">{index + 1}</td>
-                    <td className="border border-gray-400 px-4 py-2">{data.jurusan_id}</td>
-                    <td className="border border-gray-400 px-4 py-2">{data.p_yes}</td>
-                    <td className="border border-gray-400 px-4 py-2">{data.p_no}</td>
-                    <td className="border border-gray-400 px-4 py-2">{((data.p_yes / (data.p_yes + data.p_no)) * 100).toFixed(2)}%</td>
-                    <td className="border border-gray-400 px-4 py-2">{((data.p_no / (data.p_yes + data.p_no)) * 100).toFixed(2)}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="px-4 md:px-8 mt-4 max-w-fit">
+          <div className="bg-p-light rounded-md p-6" id="rekomendasi">
+            <h2 className="text-xl font-bold mb-3">Rekomendasi Jurusan Untuk Anda</h2>
+            <div role="alert" className="alert text-left bg-green-500 mb-3 inline-block rounded-md text-white text-sm">
+              <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2'/>
+              Berdasarkan hasil klasifikasi, <b>anda direkomendasikan untuk masuk ke jurusan <u>{probData[0].jurusan.jurusan}</u></b>. Untuk dijadikan pertimbangan, silahkan cek detail dan rekomendasi lainnya pada tabel dibawah ini. 
+            </div>
+            <div className="flex flex-col">
+              <div className="overflow-x-auto pb-2">      
+                <table className="table-xs border-collapse border border-gray-400">
+                  <tbody>
+                    <tr>
+                      <th className="border border-gray-400 px-4 py-2" rowSpan='2'>Rekomendasi</th>
+                      <th className="border border-gray-400 px-4 py-2" colSpan='15'>Rata-Rata Bobot</th>
+                      <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Rasio Kualifikasi</th>
+                    </tr>
+                    <tr>
+                      {mapels.map((mapel) => (
+                        <td className="border border-gray-400 px-4 py-2 font-bold [writing-mode:vertical-lr]">{mapel}</td>
+                      ))}
+                    </tr>
+                    <tr className="bg-p-dark text-white">
+                      <td className="border border-gray-400 px-4 py-2"><b>NILAI ANDA</b></td>
+                      {mapels.map((mapel) => (
+                        // <td className="border border-gray-400 px-4 py-2">{convertToGrade(averageScores[mapel])}</td>
+                        <td className="border border-gray-400 px-4 py-2">{convertToGrade(averageScores[mapel])}</td>
+                      ))}
+                    </tr>
+                    {probData.map((pData) => (
+                      pData.reference.map((rData, index) => {
+                        let count = 0;
+                        return(
+                          <tr key={index}>
+                            <td className="border border-gray-400 px-4 py-2">
+                              <ul>
+                                <li className="font-bold">{rData.jurusan_ipa_key.jurusan}</li>
+                                <li>{rData.univ_ipa_key.universitas}</li>
+                                <li>{rData.nama}</li>
+                              </ul>
+                            </td>
+                            {Object.keys(rData.summary_ipa_key[0]).map((key, idx) => {
+                              const status = biggerOrSame(convertToGrade(averageScores[mapels[idx-2]]), convertToGrade(rData.summary_ipa_key[0][key]));
+                              if(status) count++;
+                              return (
+                              key.startsWith('mean_') &&
+                              <td className={`border border-gray-400 px-4 py-2 font-semibold ${status?'bg-green-300':'bg-red-300'}`} key={idx}>
+                                {convertToGrade(rData.summary_ipa_key[0][key])}
+                              </td>
+                            )})}
+                            <td className="border border-gray-400 px-4 py-2 font-bold">{((count / 15) * 100).toFixed(2)}%</td>
+                          </tr>
+                        )
+                      })
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       )}
+
 
 
     </div>
