@@ -237,21 +237,21 @@ const SrjkForm = () => {
         </div>
       </div>
       {probData.length > 0 && (
-        <div className="px-4 md:px-8 mt-4 max-w-fit">
-          <div className="bg-p-light rounded-md p-6" id="rekomendasi">
+        <div className="px-4 md:px-8 mt-4">
+          <div className="bg-p-light rounded-md p-6 w-full" id="rekomendasi">
             <h2 className="text-xl font-bold mb-3">Rekomendasi Jurusan Untuk Anda</h2>
             <div role="alert" className="alert text-left bg-green-500 mb-3 inline-block rounded-md text-white text-sm">
               <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2'/>
               Berdasarkan hasil klasifikasi, <b>anda direkomendasikan untuk masuk ke jurusan <u>{probData[0].jurusan.jurusan}</u></b>. Untuk dijadikan pertimbangan, silahkan cek detail dan rekomendasi lainnya pada tabel dibawah ini. 
             </div>
-            <div className="flex flex-col">
-              <div className="overflow-x-auto pb-2">      
-                <table className="table-xs border-collapse border border-gray-400">
+              <div className="overflow-x-auto w-full">      
+                <table className="w-full table-xs border-collapse border border-gray-400">
                   <tbody>
                     <tr>
                       <th className="border border-gray-400 px-4 py-2" rowSpan='2'>Rekomendasi</th>
                       <th className="border border-gray-400 px-4 py-2" colSpan='15'>Rata-Rata Bobot</th>
                       <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Rasio Kualifikasi</th>
+                      <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Probabilitas Klasifikasi</th>
                     </tr>
                     <tr>
                       {mapels.map((mapel) => (
@@ -287,6 +287,7 @@ const SrjkForm = () => {
                               </td>
                             )})}
                             <td className="border border-gray-400 px-4 py-2 font-bold">{((count / 15) * 100).toFixed(2)}%</td>
+                            <td className="border border-gray-400 px-4 py-2 font-bold">{pData.p_yes}</td>
                           </tr>
                         )
                       })
@@ -294,7 +295,6 @@ const SrjkForm = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
           </div>
         </div>
       )}

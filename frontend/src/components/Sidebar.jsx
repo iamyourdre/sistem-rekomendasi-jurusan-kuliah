@@ -44,7 +44,7 @@ const Sidebar = () => {
           <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
             Halaman Utama
           </p>
-          <NavLink to='' className={({isActive}) => isActive ? activeLink : normalLink}>
+          <NavLink to='' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
             <TbCategory className='text-lg'/>
             <span>
               Dashboard
@@ -54,7 +54,7 @@ const Sidebar = () => {
           <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
             Fitur
           </p>
-          <NavLink to='feature/srjk' className={({isActive}) => isActive ? activeLink : normalLink}>
+          <NavLink to='feature/srjk' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
             <TbFlower className='text-lg'/>
             <span>
               Rekomendasi Jurusan
@@ -73,9 +73,9 @@ const Sidebar = () => {
               </span>
             </div>
             <div className="collapse-content px-2 m-0 border-b-1 border-t-light">
-              <NavLink to='dataset/siswa_list' className={({isActive}) => isActive ? activeLink : normalLink}>Semua Siswa</NavLink>
-              <NavLink to='dataset/college_list' className={({isActive}) => isActive ? activeLink : normalLink}>Jurusan & Kampus</NavLink>
-              <NavLink to='dataset/siswa_eligible' className={({isActive}) => isActive ? activeLink : normalLink}>Siswa Eligible</NavLink>
+              <NavLink to='dataset/siswa_list' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Semua Siswa</NavLink>
+              <NavLink to='dataset/college_list' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Jurusan & Kampus</NavLink>
+              <NavLink to='dataset/siswa_eligible' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Siswa Eligible</NavLink>
             </div>
           </div>
           
@@ -88,7 +88,7 @@ const Sidebar = () => {
               </span>
             </div>
             <div className="collapse-content px-2 m-0 border-b-1 border-t-light">
-              <NavLink to='/dataset/update' className={({isActive}) => isActive ? activeLink : normalLink}>Update Dataset</NavLink>
+              <NavLink to='/dataset/update' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Update Dataset</NavLink>
             </div>
           </div>
 

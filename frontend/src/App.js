@@ -23,7 +23,7 @@ const App = () => {
               </div>
           )}
           <div className={
-            `bg-s-light min-h-screen w-full ${activeMenu ? 'md:ml-64' : 'flex-2'}`
+            `bg-s-light w-full ${activeMenu ? 'md:pl-64' : 'flex-2'}`
           }>
             <div className="z-50 p-0">
               <Navbar />
