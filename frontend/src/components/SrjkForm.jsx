@@ -273,8 +273,8 @@ const SrjkForm = () => {
                             <td className="border border-gray-400 px-4 py-2">
                               <ul>
                                 <li className="font-bold">{rData.jurusan_ipa_key.jurusan}</li>
-                                <li className="font-bold">{rData.univ_ipa_key.universitas}</li>
-                                <li>{rData.nama}</li>
+                                <li>{rData.univ_ipa_key.universitas}</li>
+                                <li>{rData.nama} </li>
                               </ul>
                             </td>
                             {Object.keys(rData.summary_ipa_key[0]).map((key, idx) => {
