@@ -1,7 +1,6 @@
 import { Sequelize } from "sequelize";
-import { erf } from 'mathjs';
-import { NilaiIpaModel, SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
-import {NbIpaV3MapelModel, NbIpaV3FreqModel} from "../models/NaiveBayesV3Model.js";
+import { SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
+import { NbIpaV3MapelModel, NbIpaV3FreqModel } from "../models/NaiveBayesV3Model.js";
 import { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js";
 
 export const createTrainingData = async (req, res) => {
@@ -234,7 +233,14 @@ export const naiveBayesClassifier = async (req, res) => {
         p_no *= (mapel['nb_ipa_v3_freq_key.p_no'] / mapel.total_p_no )
       }
       probData.push({
-        jurusan: await JurusanModel.findOne({where: {id: j.id}}),
+        jurusan: await JurusanModel.findOne({
+          where: {id: j.id},
+          include: [{
+            model: RumpunModel,
+            as: 'rumpun_ipa_key',
+            attributes: ['rumpun']
+          }],
+        }),
         p_yes: p_yes,
         p_no: p_no,
         reference: await SiswaIpaModel.findAll({
@@ -251,19 +257,14 @@ export const naiveBayesClassifier = async (req, res) => {
               attributes: ['jurusan']
             },
             {
-              model: SummaryIpaModel,
-              as: 'summary_ipa_key',
-            },
-            {
               model: UnivModel,
               as: 'univ_ipa_key',
               attributes: ['universitas']
             },
             {
-              model: RumpunModel,
-              as: 'rumpun_ipa_key',
-              attributes: ['rumpun']
-            },
+              model: SummaryIpaModel,
+              as: 'summary_ipa_key',
+            }
           ],
         })
       });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import axios from 'axios';
+import SrjkRumpun from "./SrjkRumpun";
 
 const SrjkForm = () => {
 
@@ -261,7 +262,6 @@ const SrjkForm = () => {
                     <tr className="bg-p-dark text-white">
                       <td className="border border-gray-400 px-4 py-2"><b>NILAI ANDA</b></td>
                       {mapels.map((mapel) => (
-                        // <td className="border border-gray-400 px-4 py-2">{convertToGrade(averageScores[mapel])}</td>
                         <td className="border border-gray-400 px-4 py-2">{convertToGrade(averageScores[mapel])}</td>
                       ))}
                     </tr>
@@ -279,14 +279,14 @@ const SrjkForm = () => {
                             </td>
                             {Object.keys(rData.summary_ipa_key[0]).map((key, idx) => {
                               const status = biggerOrSame(convertToGrade(averageScores[mapels[idx-2]]), convertToGrade(rData.summary_ipa_key[0][key]));
-                              if(status) count++;
+                              if(status){count++};
                               return (
                               key.startsWith('mean_') &&
                               <td className={`border border-gray-400 px-4 py-2 font-semibold ${status?'bg-green-300':'bg-red-300'}`} key={idx}>
                                 {convertToGrade(rData.summary_ipa_key[0][key])}
                               </td>
                             )})}
-                            <td className="border border-gray-400 px-4 py-2 font-bold">{((count / 15) * 100).toFixed(2)}%</td>
+                            <td className="border border-gray-400 px-4 py-2 font-bold">{(((count-2) / 15) * 100).toFixed(2)}%</td>
                             <td className="border border-gray-400 px-4 py-2 font-bold">{pData.p_yes}</td>
                           </tr>
                         )
@@ -295,6 +295,7 @@ const SrjkForm = () => {
                   </tbody>
                 </table>
               </div>
+              {/* <SrjkRumpun rmpn={probData[0].jurusan.rumpun_ipa_key.rumpun} /> */}
           </div>
         </div>
       )}

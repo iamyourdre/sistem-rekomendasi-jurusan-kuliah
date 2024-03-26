@@ -7,6 +7,18 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
   let jurusan_id = 1;
   let univ_id = 1;
   let rumpun_id = 1;
+  
+  // Cari apakah data.rumpun ada di tabel rumpun
+  if (rmpn !== null) { // Jika param rumpun tidak null
+    const rumpun = await RumpunModel.findOne({ // Cari rumpun yang sama
+      where: {
+        rumpun: rmpn
+      }
+    });
+    rumpun_id = rumpun ? rumpun.id : (await RumpunModel.create({
+      rumpun: rmpn
+    })).id;
+  }
 
   // Cari apakah data.jrsn ada di tabel jurusan
   if (jrsn !== null) { // Jika param jrsn tidak null
@@ -16,7 +28,8 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
       }
     });
     jurusan_id = jurusan ? jurusan.id : (await JurusanModel.create({
-      jurusan: jrsn
+      jurusan: jrsn,
+      rumpun_id: rumpun_id
     })).id;
   }
 
@@ -29,18 +42,6 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
     });
     univ_id = universitas ? universitas.id : (await UnivModel.create({
       universitas: univ
-    })).id;
-  }
-
-  // Cari apakah data.rumpun ada di tabel rumpun
-  if (rmpn !== null) { // Jika param rumpun tidak null
-    const rumpun = await RumpunModel.findOne({ // Cari rumpun yang sama
-      where: {
-        rumpun: rmpn
-      }
-    });
-    rumpun_id = rumpun ? rumpun.id : (await RumpunModel.create({
-      rumpun: rmpn
     })).id;
   }
 
