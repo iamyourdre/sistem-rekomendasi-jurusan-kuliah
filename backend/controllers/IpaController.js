@@ -7,17 +7,19 @@ import { resetDataset } from "./MasterController.js";
 import {JurusanModel, UnivModel, RumpunModel} from "../models/CollegeModel.js";
 import { Sequelize } from "sequelize";
 
-
+// Fungsi admin untuk mengupload file dataset Excel
 export const upload = async (req, res) => {
   try {
 
+    // Mengecek apakah user meminta reset dataset sebelum menambahkan yang baru?
     req.body.reset === "y" ? await resetDataset() : null;
 
+    // Mengecek apakah file Excel ada
     if (req.file === undefined) {
       return res.status(400).send("Silakan unggah file .xlsx!");
     }
 
-    // Direktori untuk menyimpan file upload
+    // Menyimpan file Excel ke direktori
     const uploadDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..\\assets\\uploads\\");
 
     // Membaca file Excel
@@ -26,7 +28,7 @@ export const upload = async (req, res) => {
       let dataset = [];
       const headerRow = rows.shift();
 
-      // Mengisi dataset dengan data dari file Excel
+      // Mengambil nilai setiap dataset Excel ke datas dan memasukkannya ke array object dataset
       rows.forEach((row, rowIndex) => {
         if (rows[(rowIndex + 3)] && rows[(rowIndex + 3)][1] !== undefined) {
           let datas = {
@@ -122,17 +124,20 @@ export const upload = async (req, res) => {
         }
       });
 
-
       try {
 
-
-        // Membuat data siswa dan data nilai untuk setiap siswa
+        // Melakukan iterasi untuk setiap object pada dataset
         for (const data of dataset) {
           
+          // Mengecek ketersediaan univ, jurusan, dan rumpun atau membuat data baru apabila terdapat nilai yang unik
           const college = await findOrCreateCollege(data.UNIV, data.JRSN, data.RUMPUN);
+
+          // Mengecek duplikasi data untuk mencegah redundansi
           const isDupli = await isDuplication(data, college.univ_id, college.jurusan_id);
           
+          // Apabila tidak ada redundansi, maka lakukan proses masukkan data ke database
           if (!isDupli) {
+
             const createdSiswa = await SiswaIpaModel.create({
               nama: data.NAMA || "-",
               akt_thn: data.TAHUN || 0,
@@ -216,7 +221,7 @@ export const upload = async (req, res) => {
             summaryNilai[Object.keys(summaryNilai)[16]] /= 2; // Menghitung rata-rata nilai BING_T
             summaryNilai.total = totalNilai; // Menyimpan total nilai ke dalam properti total
 
-            
+            // Memasukkan ringkasan rata-rata nilai ke database
             await SummaryIpaModel.create(summaryNilai);
 
           }

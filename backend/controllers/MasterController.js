@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js";
+import { JurusanModel, UnivModel } from "../models/CollegeModel.js";
 import { NilaiIpaModel, SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
 
 export const getDataLength = async (req, res) => {

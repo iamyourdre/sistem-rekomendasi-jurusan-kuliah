@@ -1,15 +1,14 @@
 import { Sequelize } from "sequelize";
-import { erf } from 'mathjs';
-import { NilaiIpaModel, SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
-import {NbIpaV3MapelModel, NbIpaV3FreqModel} from "../models/NaiveBayesV3Model.js";
+import { SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
+import { NbIpaV3MapelModel, NbIpaV3FreqModel } from "../models/NaiveBayesV3Model.js";
 import { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js";
 
 export const createTrainingData = async (req, res) => {
   try {
     
-    let freqError = 1;
+    let freqError = true;
 
-    while (freqError > 0) {
+    while (freqError) {
       await NbIpaV3MapelModel.destroy({ where: {} });
       await setMapelTable(res);
       freqError = await setFreqTable(res);
@@ -72,8 +71,6 @@ export const setFreqTable = async (res) => {
 
   try {
 
-    let freqError = 0;
-
     // Mengambil daftar jurusan tanpa redundansi
     const jurusan = await JurusanModel.findAll({
       where: {
@@ -114,7 +111,9 @@ export const setFreqTable = async (res) => {
           raw: true,
         });
 
-        freqError = (mapel.length==0?freqError+=1:freqError+=0);
+        if(mapel.length==0){
+          return true;
+        }
         
         // Menghitung kemunculan bobot A, B, C pada mapel untuk setiap sumNilai
         sumNilai.forEach(sn => {
@@ -163,7 +162,7 @@ export const setFreqTable = async (res) => {
 
     };
 
-    return freqError;
+    return false;
 
   } catch (error) {
     throw new Error(error.message);
@@ -234,7 +233,14 @@ export const naiveBayesClassifier = async (req, res) => {
         p_no *= (mapel['nb_ipa_v3_freq_key.p_no'] / mapel.total_p_no )
       }
       probData.push({
-        jurusan: await JurusanModel.findOne({where: {id: j.id}}),
+        jurusan: await JurusanModel.findOne({
+          where: {id: j.id},
+          include: [{
+            model: RumpunModel,
+            as: 'rumpun_ipa_key',
+            attributes: ['rumpun']
+          }],
+        }),
         p_yes: p_yes,
         p_no: p_no,
         reference: await SiswaIpaModel.findAll({
@@ -251,19 +257,14 @@ export const naiveBayesClassifier = async (req, res) => {
               attributes: ['jurusan']
             },
             {
-              model: SummaryIpaModel,
-              as: 'summary_ipa_key',
-            },
-            {
               model: UnivModel,
               as: 'univ_ipa_key',
               attributes: ['universitas']
             },
             {
-              model: RumpunModel,
-              as: 'rumpun_ipa_key',
-              attributes: ['rumpun']
-            },
+              model: SummaryIpaModel,
+              as: 'summary_ipa_key',
+            }
           ],
         })
       });

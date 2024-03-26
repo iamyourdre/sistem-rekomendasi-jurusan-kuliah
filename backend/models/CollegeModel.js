@@ -2,6 +2,28 @@ import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
 import { SiswaIpaModel } from "./IpaModel.js";
 
+
+const RumpunModel = db.define(
+  "rumpun",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    rumpun: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+  },
+  {
+    freezeTableName: true,
+    timestamps: false,
+  }
+);
+
 const JurusanModel = db.define(
   "jurusan",
   {
@@ -44,26 +66,22 @@ const UnivModel = db.define(
   }
 );
 
-const RumpunModel = db.define(
-  "rumpun",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    rumpun: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
+RumpunModel.hasMany(JurusanModel, {
+  foreignKey: {
+    name: "rumpun_id", // Nama kolom foreign key JurusanModel yang terhubung ke RumpunModel
+    allowNull: false,
   },
-  {
-    freezeTableName: true,
-    timestamps: false,
-  }
-);
+  as: 'rumpun_ipa_key',
+  onDelete: "CASCADE", // Jika data RumpunModel dihapus, hapus juga semua data terkait di SiswaIpaModel
+});
+
+JurusanModel.belongsTo(RumpunModel, {
+  foreignKey: {
+    name: "rumpun_id", // Nama kolom foreign key yang terhubung ke RumpunModel
+    allowNull: false,
+  },
+  as: 'rumpun_ipa_key',
+});
 
 JurusanModel.hasMany(SiswaIpaModel, {
   foreignKey: {
@@ -99,15 +117,6 @@ SiswaIpaModel.belongsTo(UnivModel, {
   as: 'univ_ipa_key',
 });
 
-RumpunModel.hasMany(SiswaIpaModel, {
-  foreignKey: {
-    name: "rumpun_id", // Nama kolom foreign key SiswaIpaModel yang terhubung ke RumpunModel
-    allowNull: false,
-  },
-  as: 'rumpun_ipa_key',
-  onDelete: "CASCADE", // Jika data RumpunModel dihapus, hapus juga semua data terkait di SiswaIpaModel
-});
-
 SiswaIpaModel.belongsTo(RumpunModel, {
   foreignKey: {
     name: "rumpun_id", // Nama kolom foreign key yang terhubung ke RumpunModel
@@ -119,11 +128,20 @@ SiswaIpaModel.belongsTo(RumpunModel, {
 (async () => {
   // Sinkronisasi database
   await db.sync();
+  
+  
+  if (!await RumpunModel.findOne({ where: { id: 1 } })) {
+    await RumpunModel.create({
+      id: 1,
+      rumpun: "-"
+    });
+  }
 
   if (!await JurusanModel.findOne({ where: { id: 1 } })) {
     await JurusanModel.create({
       id: 1,
       jurusan: "-",
+      rumpun_id: 1
     });
   }
   
@@ -131,13 +149,6 @@ SiswaIpaModel.belongsTo(RumpunModel, {
     await UnivModel.create({
       id: 1,
       universitas: "-"
-    });
-  }
-  
-  if (!await RumpunModel.findOne({ where: { id: 1 } })) {
-    await RumpunModel.create({
-      id: 1,
-      rumpun: "-"
     });
   }
 
