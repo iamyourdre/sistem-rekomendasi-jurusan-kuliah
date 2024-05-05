@@ -69,7 +69,7 @@ const UpdateDataset = ({ title, subtitle }) => {
                   download="template_nilai_IPA.xlsx"
                   className="btn bg-p-light w-full mt-6"
                 >
-                  <FaDownload />  template_nilai_IPA.xlsx
+                  <FaDownload />  template_nilai_IPA.xlsx 
                 </a>
               </div>
             </div>
