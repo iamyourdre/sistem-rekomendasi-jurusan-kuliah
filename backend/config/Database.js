@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 
 // Initialize Sequelize object to connect with the database
-const db = new Sequelize('srjk_adrian', 'root', 'root', {
+const db = new Sequelize('srjk_adrian', 'root', 'starxshop123', {
     host: 'localhost', // Database server address
     dialect: 'mysql' // Database dialect used (in this case, MySQL)
 });

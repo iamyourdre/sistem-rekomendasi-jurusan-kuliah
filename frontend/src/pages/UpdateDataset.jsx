@@ -34,8 +34,7 @@ const UpdateDataset = ({ title, subtitle }) => {
       setFile(null);
       setReset(false);
     } catch (error) {
-      setSuccessMessage(''); // Menghilangkan pesan berhasil jika terjadi kesalahan
-      
+      setProgress(-1);
       if (error.response) {
         // Handle error based on error response from server
         console.error('Server Error:', error.response.data);
@@ -53,7 +52,7 @@ const UpdateDataset = ({ title, subtitle }) => {
   
   return (
     <>
-      <div className="w-full">
+      <div className="w-full h-full min-h-screen">
         <Breadcrumb menu={title} submenu={subtitle} />
         <div className="px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,9 +84,15 @@ const UpdateDataset = ({ title, subtitle }) => {
                   <span><b>(2/2)</b> Dataset berhasil diklasifikasi! <NavLink to='/'><b>Lihat disini.</b></NavLink></span>
                 </div>
               )}
+              {progressStatus === -1 && (
+                <div role="alert" className="alert bg-red-500 mb-3 text-white inline-block">
+                  <FaCircleInfo className='inline text-lg relative bottom-0.5 mr-2'/>
+                  <span><b>(Error)</b> Pengklasifikasian dataset gagal! Coba lagi. </span>
+                </div>
+              )}
               <form onSubmit={handleSubmit}>
                 {/* Menyembunyikan form jika loading sedang berlangsung */}
-                {progressStatus === 0 && (
+                {progressStatus < 1 && (
                   <>
                     <label className="form-control w-full">
                       <div className="label">
