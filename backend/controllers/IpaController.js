@@ -139,7 +139,7 @@ export const upload = async (req, res) => {
           if (!isDupli) {
 
             const createdSiswa = await SiswaIpaModel.create({
-              nama: data.NAMA || "-",
+              nama: (data.NAMA || "-").toUpperCase(),
               akt_thn: data.TAHUN || 0,
               univ_id: college.univ_id,
               jurusan_id: college.jurusan_id,
