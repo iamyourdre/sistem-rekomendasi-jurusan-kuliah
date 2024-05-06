@@ -208,7 +208,6 @@ export const upload = async (req, res) => {
               summaryNilai.mean_KIM += nilaiSemester.KIM || 0;
               summaryNilai.mean_EKO += nilaiSemester.EKO || 0;
               summaryNilai.mean_BING_T += (i === 1 || i === 2 ? nilaiSemester.BING_T : 0);
-
             }
             
             // Menghitung rata-rata nilai mapel
