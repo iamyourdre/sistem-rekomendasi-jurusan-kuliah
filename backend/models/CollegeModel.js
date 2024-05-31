@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
-import { SiswaIpaModel } from "./IpaModel.js";
+import { SiswaModel } from "./DataSiswaModel.js";
 
 
 const RumpunModel = db.define(
@@ -45,7 +45,7 @@ const JurusanModel = db.define(
   }
 );
 
-const UnivModel = db.define(
+const UniversitasModel = db.define(
   "universitas",
   {
     id: {
@@ -71,8 +71,8 @@ RumpunModel.hasMany(JurusanModel, {
     name: "rumpun_id", // Nama kolom foreign key JurusanModel yang terhubung ke RumpunModel
     allowNull: false,
   },
-  as: 'rumpun_ipa_key',
-  onDelete: "CASCADE", // Jika data RumpunModel dihapus, hapus juga semua data terkait di SiswaIpaModel
+  as: 'rumpun_key',
+  onDelete: "CASCADE", // Jika data RumpunModel dihapus, hapus juga semua data terkait di SiswaModel
 });
 
 JurusanModel.belongsTo(RumpunModel, {
@@ -80,49 +80,49 @@ JurusanModel.belongsTo(RumpunModel, {
     name: "rumpun_id", // Nama kolom foreign key yang terhubung ke RumpunModel
     allowNull: false,
   },
-  as: 'rumpun_ipa_key',
+  as: 'rumpun_key',
 });
 
-JurusanModel.hasMany(SiswaIpaModel, {
+JurusanModel.hasMany(SiswaModel, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key SiswaIpaModel yang terhubung ke JurusanModel
+    name: "jurusan_id", // Nama kolom foreign key SiswaModel yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'jurusan_ipa_key',
-  onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di SiswaIpaModel
+  as: 'jurusan_key',
+  onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di SiswaModel
 });
 
-SiswaIpaModel.belongsTo(JurusanModel, {
+SiswaModel.belongsTo(JurusanModel, {
   foreignKey: {
     name: "jurusan_id", // Nama kolom foreign key yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'jurusan_ipa_key',
+  as: 'jurusan_key',
 });
 
-UnivModel.hasMany(SiswaIpaModel, {
+UniversitasModel.hasMany(SiswaModel, {
   foreignKey: {
-    name: "univ_id", // Nama kolom foreign key SiswaIpaModel yang terhubung ke UnivModel
+    name: "univ_id", // Nama kolom foreign key SiswaModel yang terhubung ke UniversitasModel
     allowNull: false,
   },
-  as: 'univ_ipa_key',
-  onDelete: "CASCADE", // Jika data UnivModel dihapus, hapus juga semua data terkait di SiswaIpaModel
+  as: 'univ_key',
+  onDelete: "CASCADE", // Jika data UniversitasModel dihapus, hapus juga semua data terkait di SiswaModel
 });
 
-SiswaIpaModel.belongsTo(UnivModel, {
+SiswaModel.belongsTo(UniversitasModel, {
   foreignKey: {
-    name: "univ_id", // Nama kolom foreign key yang terhubung ke UnivModel
+    name: "univ_id", // Nama kolom foreign key yang terhubung ke UniversitasModel
     allowNull: false,
   },
-  as: 'univ_ipa_key',
+  as: 'univ_key',
 });
 
-SiswaIpaModel.belongsTo(RumpunModel, {
+SiswaModel.belongsTo(RumpunModel, {
   foreignKey: {
     name: "rumpun_id", // Nama kolom foreign key yang terhubung ke RumpunModel
     allowNull: false,
   },
-  as: 'rumpun_ipa_key',
+  as: 'rumpun_key',
 });
 
 (async () => {
@@ -145,8 +145,8 @@ SiswaIpaModel.belongsTo(RumpunModel, {
     });
   }
   
-  if (!await UnivModel.findOne({ where: { id: 1 } })) {
-    await UnivModel.create({
+  if (!await UniversitasModel.findOne({ where: { id: 1 } })) {
+    await UniversitasModel.create({
       id: 1,
       universitas: "-"
     });
@@ -154,4 +154,4 @@ SiswaIpaModel.belongsTo(RumpunModel, {
 
 })();
 
-export {JurusanModel, UnivModel, RumpunModel};
+export {JurusanModel, UniversitasModel, RumpunModel};

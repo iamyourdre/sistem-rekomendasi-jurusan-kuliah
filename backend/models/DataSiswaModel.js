@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
 
-const NilaiIpaModel = db.define(
-  "nilai_ipa",
+const NilaiModel = db.define(
+  "nilai",
   {
     semester: {
       type: DataTypes.INTEGER,
@@ -81,8 +81,8 @@ const NilaiIpaModel = db.define(
   }
 );
 
-const SummaryIpaModel = db.define(
-  "summary_ipa",
+const SummaryModel = db.define(
+  "summary_nilai",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -161,8 +161,8 @@ const SummaryIpaModel = db.define(
   }
 );
 
-const SiswaIpaModel = db.define(
-  "siswa_ipa",
+const SiswaModel = db.define(
+  "siswa",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -185,38 +185,38 @@ const SiswaIpaModel = db.define(
   }
 );
 
-SiswaIpaModel.hasMany(NilaiIpaModel, {
+SiswaModel.hasMany(NilaiModel, {
   foreignKey: {
-    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
+    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SiswaModel
     allowNull: false,
   },
-  as: 'nilai_ipa_key',
-  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di NilaiIpaModel
+  as: 'nilai_key',
+  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di DataSiswaModel
 });
 
-NilaiIpaModel.belongsTo(SiswaIpaModel, {
+NilaiModel.belongsTo(SiswaModel, {
   foreignKey: {
-    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SiswaIpaModel
+    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SiswaModel
     allowNull: false,
   },
-  as: 'nilai_ipa_key',
+  as: 'nilai_key',
 });
 
-SiswaIpaModel.hasMany(SummaryIpaModel, {
+SiswaModel.hasMany(SummaryModel, {
   foreignKey: {
-    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SummaryIpaModel
+    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SummaryModel
     allowNull: false,
   },
-  as: 'summary_ipa_key',
-  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di NilaiIpaModel
+  as: 'summary_key',
+  onDelete: "CASCADE", // Jika data siswa dihapus, hapus juga semua data terkait di DataSiswaModel
 });
 
-SummaryIpaModel.belongsTo(SiswaIpaModel, {
+SummaryModel.belongsTo(SiswaModel, {
   foreignKey: {
-    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SummaryIpaModel
+    name: "siswa_id", // Nama kolom foreign key yang terhubung ke SummaryModel
     allowNull: false,
   },
-  as: 'summary_ipa_key',
+  as: 'summary_key',
 });
 
 (async () => {
@@ -224,4 +224,4 @@ SummaryIpaModel.belongsTo(SiswaIpaModel, {
   await db.sync();
 })();
 
-export { SiswaIpaModel, SummaryIpaModel, NilaiIpaModel };
+export { SiswaModel, SummaryModel, NilaiModel };

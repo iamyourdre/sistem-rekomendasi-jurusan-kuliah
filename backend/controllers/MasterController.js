@@ -1,14 +1,14 @@
 import { Sequelize } from "sequelize";
-import { JurusanModel, UnivModel } from "../models/CollegeModel.js";
-import { NilaiIpaModel, SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
+import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
+import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 
 export const getDataLength = async (req, res) => {
   try {
-    const eligLength = await SiswaIpaModel.count({
+    const eligLength = await SiswaModel.count({
       include: [
         {
           model: JurusanModel,
-          as: 'jurusan_ipa_key',
+          as: 'jurusan_key',
           where: {
             id: {
               [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
@@ -17,9 +17,9 @@ export const getDataLength = async (req, res) => {
         }
       ],
     });
-    const siswaLength = await SiswaIpaModel.count({});
+    const siswaLength = await SiswaModel.count({});
     const jurusanLength = await JurusanModel.count({});
-    const univLength = await UnivModel.count({});
+    const univLength = await UniversitasModel.count({});
     
     res.status(200).json({
       siswaLength,
@@ -38,9 +38,9 @@ export const getDataLength = async (req, res) => {
 export const resetDataset = async (res) => {
   try {
 
-    await NilaiIpaModel.destroy({ where: {} });
-    await SiswaIpaModel.destroy({ where: {} });
-    await SummaryIpaModel.destroy({ where: {} });
+    await DataSiswaModel.destroy({ where: {} });
+    await SiswaModel.destroy({ where: {} });
+    await SummaryModel.destroy({ where: {} });
 
     return {
       success: true,

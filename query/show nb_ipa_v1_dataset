@@ -1,3 +1,3 @@
 USE srjk_adrian;
-SELECT * FROM nb_ipa_v3_mapel;
-SELECT * FROM nb_ipa_v3_freq;
+SELECT * FROM dataset_mapel;
+SELECT * FROM dataset_freq;

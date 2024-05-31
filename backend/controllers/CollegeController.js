@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
-import  { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js"
-import { SiswaIpaModel } from "../models/IpaModel.js";
+import  { JurusanModel, RumpunModel, UniversitasModel } from "../models/CollegeModel.js"
+import { SiswaModel } from "../models/DataSiswaModel.js";
 
 export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
 
@@ -35,12 +35,12 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
 
   // Cari apakah data.univ ada di tabel universitas
   if (univ !== null) { // Jika param univ tidak null
-    const universitas = await UnivModel.findOne({ // Cari univ yang sama
+    const universitas = await UniversitasModel.findOne({ // Cari univ yang sama
       where: {
         universitas: univ
       }
     });
-    univ_id = universitas ? universitas.id : (await UnivModel.create({
+    univ_id = universitas ? universitas.id : (await UniversitasModel.create({
       universitas: univ
     })).id;
   }
@@ -50,7 +50,7 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
 };
 
 
-export const getAllCollege = async (req, res) => {
+export const getCollege = async (req, res) => {
   try {
     const jurusanData = await JurusanModel.findAll({
       where: {
@@ -60,24 +60,24 @@ export const getAllCollege = async (req, res) => {
       },
       include: [
         {
-          model: SiswaIpaModel,
-          as: 'jurusan_ipa_key',
+          model: SiswaModel,
+          as: 'jurusan_key',
           attributes: ['id'],
           include: [
             {
-              model: UnivModel,
-              as: 'univ_ipa_key',
+              model: UniversitasModel,
+              as: 'univ_key',
               attributes: ['universitas']
             },
             {
               model: RumpunModel,
-              as: 'rumpun_ipa_key',
+              as: 'rumpun_key',
               attributes: ['rumpun']
             },
           ],
         },
       ],
-      group: ['jurusan', 'jurusan_ipa_key.id'] // Menambahkan 'jurusan_ipa_key.id' ke dalam GROUP BY
+      group: ['jurusan', 'jurusan_key.id'] // Menambahkan 'jurusan_key.id' ke dalam GROUP BY
     });
     
     res.status(200).json({

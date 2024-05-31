@@ -1,14 +1,14 @@
-import { SiswaIpaModel, NilaiIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
+import { SiswaModel, NilaiModel, SummaryModel } from "../models/DataSiswaModel.js";
 import readXlsxFile from "read-excel-file/node";
 import path from "path";
 import { fileURLToPath } from "url";
 import { findOrCreateCollege } from "./CollegeController.js";
 import { resetDataset } from "./MasterController.js";
-import {JurusanModel, UnivModel, RumpunModel} from "../models/CollegeModel.js";
+import { JurusanModel, UniversitasModel, RumpunModel } from "../models/CollegeModel.js";
 import { Sequelize } from "sequelize";
 
 // Fungsi admin untuk mengupload file dataset Excel
-export const upload = async (req, res) => {
+export const uploadDataSiswa = async (req, res) => {
   try {
 
     // Mengecek apakah user meminta reset dataset sebelum menambahkan yang baru?
@@ -138,7 +138,7 @@ export const upload = async (req, res) => {
           // Apabila tidak ada redundansi, maka lakukan proses masukkan data ke database
           if (!isDupli) {
 
-            const createdSiswa = await SiswaIpaModel.create({
+            const createdSiswa = await SiswaModel.create({
               nama: (data.NAMA || "-").toUpperCase(),
               akt_thn: data.TAHUN || 0,
               univ_id: college.univ_id,
@@ -190,7 +190,7 @@ export const upload = async (req, res) => {
                 EKO: nilaiSemester.EKO || 0,
                 BING_T: (i === 1 || i === 2 ? nilaiSemester.BING_T : 0)
               };
-              await NilaiIpaModel.create(nilaiData);
+              await NilaiModel.create(nilaiData);
 
               // Menghitung total nilai tiap mapel
               summaryNilai.mean_PABP += nilaiSemester.PABP || 0;
@@ -221,7 +221,7 @@ export const upload = async (req, res) => {
             summaryNilai.total = totalNilai; // Menyimpan total nilai ke dalam properti total
 
             // Memasukkan ringkasan rata-rata nilai ke database
-            await SummaryIpaModel.create(summaryNilai);
+            await SummaryModel.create(summaryNilai);
 
           }
         }
@@ -238,6 +238,7 @@ export const upload = async (req, res) => {
       }
     });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({
       message: "Dataset " + req.file.originalname +" gagal diimpor!",
       error: error.message,
@@ -245,21 +246,21 @@ export const upload = async (req, res) => {
   }
 };
 
-export const getAllIpa = async (req, res) => {
+export const getDataSiswa = async (req, res) => {
   try {
-    const siswaData = await SiswaIpaModel.findAll({
+    const siswaData = await SiswaModel.findAll({
       include: [
         {
           model: JurusanModel,
-          as: 'jurusan_ipa_key',
+          as: 'jurusan_key',
         },
         {
-          model: UnivModel,
-          as: 'univ_ipa_key',
+          model: UniversitasModel,
+          as: 'univ_key',
         },
         {
           model: RumpunModel,
-          as: 'rumpun_ipa_key',
+          as: 'rumpun_key',
         }
       ],
     });
@@ -267,6 +268,7 @@ export const getAllIpa = async (req, res) => {
       data: siswaData,
     });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({
       message: "Gagal mengambil dataset!",
       error: error.message,
@@ -275,13 +277,13 @@ export const getAllIpa = async (req, res) => {
 };
 
 
-export const getEligibleIpa = async (req, res) => {
+export const getSiswaEligible = async (req, res) => {
   try {
-    const siswaData = await SiswaIpaModel.findAll({
+    const siswaData = await SiswaModel.findAll({
       include: [
         {
           model: JurusanModel,
-          as: 'jurusan_ipa_key',
+          as: 'jurusan_key',
           where: {
             id: {
               [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
@@ -289,12 +291,12 @@ export const getEligibleIpa = async (req, res) => {
           },
         },
         {
-          model: UnivModel,
-          as: 'univ_ipa_key',
+          model: UniversitasModel,
+          as: 'univ_key',
         },
         {
           model: RumpunModel,
-          as: 'rumpun_ipa_key',
+          as: 'rumpun_key',
         }
       ],
     });
@@ -302,6 +304,7 @@ export const getEligibleIpa = async (req, res) => {
       data: siswaData,
     });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({
       message: "Gagal mengambil dataset!",
       error: error.message,
@@ -312,14 +315,14 @@ export const getEligibleIpa = async (req, res) => {
 export const isDuplication = async (data, u_id, j_id, res) => {
   try {
     // Cari data siswa berdasarkan nama, dan sertakan relasinya dengan nilai ipa
-    if(await SiswaIpaModel.findOne({
+    if(await SiswaModel.findOne({
       where: { 
         nama: data.NAMA,
         univ_id: u_id || 1,
         jurusan_id: j_id || 1,
       },
       include: [{ 
-        model: NilaiIpaModel,
+        model: NilaiModel,
         where: {
           semester: 1,
           PABP: data['SEMESTER_1']['PABP'],
@@ -338,7 +341,7 @@ export const isDuplication = async (data, u_id, j_id, res) => {
           EKO: data['SEMESTER_1']['EKO'],
           BING_T: data['SEMESTER_1']['BING_T'],
         },
-        as: 'nilai_ipa_key' 
+        as: 'nilai_key' 
       }],
       raw: true,
     })) return true
@@ -346,9 +349,9 @@ export const isDuplication = async (data, u_id, j_id, res) => {
     return false;
 
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({
       message: "Gagal melakukan operasi pengecekan duplikasi!",
-      error: error.message,
     });
   }
 };
