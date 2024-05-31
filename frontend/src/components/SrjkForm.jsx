@@ -272,18 +272,18 @@ const SrjkForm = () => {
                           <tr key={index}>
                             <td className="border border-gray-400 px-4 py-2">
                               <ul>
-                                <li className="font-bold">{rData.jurusan_ipa_key.jurusan}</li>
-                                <li>{rData.univ_ipa_key.universitas}</li>
+                                <li className="font-bold">{rData.jurusan_key.jurusan}</li>
+                                <li>{rData.univ_key.universitas}</li>
                                 <li>{rData.nama} </li>
                               </ul>
                             </td>
-                            {Object.keys(rData.summary_ipa_key[0]).map((key, idx) => {
-                              const status = biggerOrSame(convertToGrade(averageScores[mapels[idx-2]]), convertToGrade(rData.summary_ipa_key[0][key]));
+                            {Object.keys(rData.summary_key[0]).map((key, idx) => {
+                              const status = biggerOrSame(convertToGrade(averageScores[mapels[idx-2]]), convertToGrade(rData.summary_key[0][key]));
                               if(status){count++};
                               return (
                               key.startsWith('mean_') &&
                               <td className={`border border-gray-400 px-4 py-2 font-semibold ${status?'bg-green-300':'bg-red-300'}`} key={idx}>
-                                {convertToGrade(rData.summary_ipa_key[0][key])}
+                                {convertToGrade(rData.summary_key[0][key])}
                               </td>
                             )})}
                             <td className="border border-gray-400 px-4 py-2 font-bold">{(((count-2) / 15) * 100).toFixed(2)}%</td>
@@ -295,7 +295,7 @@ const SrjkForm = () => {
                   </tbody>
                 </table>
               </div>
-              {/* <SrjkRumpun rmpn={probData[0].jurusan.rumpun_ipa_key.rumpun} /> */}
+              {/* <SrjkRumpun rmpn={probData[0].jurusan.rumpun_key.rumpun} /> */}
           </div>
         </div>
       )}

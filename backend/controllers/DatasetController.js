@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
-import { SiswaIpaModel, SummaryIpaModel } from "../models/IpaModel.js";
-import { NbIpaV3MapelModel, NbIpaV3FreqModel } from "../models/NaiveBayesV3Model.js";
-import { JurusanModel, RumpunModel, UnivModel } from "../models/CollegeModel.js";
+import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
+import { DatasetMapelModel, DatasetFreqModel } from "../models/DatasetModel.js";
+import { JurusanModel, RumpunModel, UniversitasModel } from "../models/CollegeModel.js";
 
 export const createTrainingData = async (req, res) => {
   try {
@@ -9,7 +9,7 @@ export const createTrainingData = async (req, res) => {
     let freqError = true;
 
     while (freqError) {
-      await NbIpaV3MapelModel.destroy({ where: {} });
+      await DatasetMapelModel.destroy({ where: {} });
       await setMapelTable(res);
       freqError = await setFreqTable(res);
     }
@@ -42,10 +42,10 @@ export const setMapelTable = async (res) => {
 
     // Membuat tabel mapel untuk setiap jurusan
     jurusan.forEach((d) => {
-      const nb_ipa_v3_mapel = [];
+      const dataset_mapel = [];
     
       for (let i = 1; i <= 15; i++) {
-        nb_ipa_v3_mapel.push({
+        dataset_mapel.push({
           jurusan_id: d.id,
           x: i,
           total_p_yes: 0,
@@ -53,12 +53,12 @@ export const setMapelTable = async (res) => {
         });
       }
     
-      mapelTemp.push(nb_ipa_v3_mapel);
+      mapelTemp.push(dataset_mapel);
     });
     
-    // Menggunakan bulkCreate untuk menambahkan baris-baris ke dalam tabel NbIpaV3MapelModel
-    mapelTemp.forEach(async (nb_ipa_v3_mapel) => {
-      await NbIpaV3MapelModel.bulkCreate(nb_ipa_v3_mapel);
+    // Menggunakan bulkCreate untuk menambahkan baris-baris ke dalam tabel DatasetMapelModel
+    mapelTemp.forEach(async (dataset_mapel) => {
+      await DatasetMapelModel.bulkCreate(dataset_mapel);
     });
   
   } catch (error) {
@@ -84,11 +84,11 @@ export const setFreqTable = async (res) => {
     for (const j of jurusan) {
 
       // Ambil semua summary nilai mapel terkait
-      const sumNilai = await SummaryIpaModel.findAll({
+      const sumNilai = await SummaryModel.findAll({
         include: [
           {
-            model: SiswaIpaModel,
-            as: 'summary_ipa_key',
+            model: SiswaModel,
+            as: 'summary_key',
             where: {
               jurusan_id: j.id,
             },
@@ -103,7 +103,7 @@ export const setFreqTable = async (res) => {
         const bobotTemp = [1, 1, 1, 1, 1, 1];
 
         // Mengambil parent dari tiap mapel dengan jurusan_id dan mapel (x) tertentu
-        const mapel = await NbIpaV3MapelModel.findAll({
+        const mapel = await DatasetMapelModel.findAll({
           where: {
             jurusan_id: j.id,
             x: x_id
@@ -132,7 +132,7 @@ export const setFreqTable = async (res) => {
           }
         });
 
-        await NbIpaV3MapelModel.update(
+        await DatasetMapelModel.update(
           {
             total_p_yes: bobotTemp[0]+bobotTemp[1]+bobotTemp[2]+bobotTemp[3]+bobotTemp[4]+bobotTemp[5],
             total_p_no: 6
@@ -155,7 +155,7 @@ export const setFreqTable = async (res) => {
             { mapel_id: mpl.id, bobot: "B-", p_no: 1, p_yes: bobotTemp[4] },
             { mapel_id: mpl.id, bobot: "CDE", p_no: 1, p_yes: bobotTemp[5] }
           ]
-          await NbIpaV3FreqModel.bulkCreate(freq);
+          await DatasetFreqModel.bulkCreate(freq);
         }
       
       }
@@ -210,11 +210,11 @@ export const naiveBayesClassifier = async (req, res) => {
       let p_yes = 1;
       let p_no = 1;
       for (let x = 1; x <= 15; x++) {
-        const mapel = await NbIpaV3MapelModel.findOne({
+        const mapel = await DatasetMapelModel.findOne({
           where: { jurusan_id: j.id, x: x },
           include: [{
-            model: NbIpaV3FreqModel,
-            as: 'nb_ipa_v3_freq_key',
+            model: DatasetFreqModel,
+            as: 'dataset_freq_key',
             where: { bobot: inputNilai[x-1] || "CDE" },
           }],
           raw: true
@@ -225,45 +225,45 @@ export const naiveBayesClassifier = async (req, res) => {
           p: {
             yes: mapel.total_p_yes,
             no: mapel.total_p_no,
-            total_yes: mapel['nb_ipa_v3_freq_key.p_yes'],
-            total_no: mapel['nb_ipa_v3_freq_key.p_no'],
+            total_yes: mapel['dataset_freq_key.p_yes'],
+            total_no: mapel['dataset_freq_key.p_no'],
           }
         });
-        p_yes *= (mapel['nb_ipa_v3_freq_key.p_yes'] / mapel.total_p_yes)
-        p_no *= (mapel['nb_ipa_v3_freq_key.p_no'] / mapel.total_p_no )
+        p_yes *= (mapel['dataset_freq_key.p_yes'] / mapel.total_p_yes)
+        p_no *= (mapel['dataset_freq_key.p_no'] / mapel.total_p_no )
       }
       probData.push({
         jurusan: await JurusanModel.findOne({
           where: {id: j.id},
           include: [{
             model: RumpunModel,
-            as: 'rumpun_ipa_key',
+            as: 'rumpun_key',
             attributes: ['rumpun']
           }],
         }),
         p_yes: p_yes,
         p_no: p_no,
-        reference: await SiswaIpaModel.findAll({
+        reference: await SiswaModel.findAll({
           where: {
             jurusan_id: j.id
           },
           include: [
             {
               model: JurusanModel,
-              as: 'jurusan_ipa_key',
+              as: 'jurusan_key',
               where: {
                 id: j.id
               },
               attributes: ['jurusan']
             },
             {
-              model: UnivModel,
-              as: 'univ_ipa_key',
+              model: UniversitasModel,
+              as: 'univ_key',
               attributes: ['universitas']
             },
             {
-              model: SummaryIpaModel,
-              as: 'summary_ipa_key',
+              model: SummaryModel,
+              as: 'summary_key',
             }
           ],
         })
@@ -298,17 +298,17 @@ function convertToGrade(score) {
   }
 }
 
-export const getAllNbIpaV3Data = async (req, res) => {
+export const getDataset = async (req, res) => {
   try {
-    const dataset = await NbIpaV3MapelModel.findAll({
+    const dataset = await DatasetMapelModel.findAll({
       include: [
         {
-          model: NbIpaV3FreqModel,
-          as: 'nb_ipa_v3_freq_key'
+          model: DatasetFreqModel,
+          as: 'dataset_freq_key'
         },
         {
           model: JurusanModel,
-          as: 'nb_ipa_v3_mapel_key'
+          as: 'dataset_mapel_key'
         },
       ],
       raw: true,

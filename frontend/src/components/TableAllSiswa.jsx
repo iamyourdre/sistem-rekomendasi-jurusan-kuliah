@@ -16,7 +16,7 @@ const TableAllSiswa = () => {
   const getSiswaData = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/dataset/getAllIpa');
+      const response = await axios.get('http://localhost:5000/api/dataset/getDataSiswa');
       setSiswaData(response.data.data);
     } catch (error) {
       console.error('Error fetching data: ', error);
@@ -65,9 +65,9 @@ const TableAllSiswa = () => {
                     <td>{(index+1)+(indexOfLastItem - itemsPerPage)}</td>
                     <td>{siswa.nama}</td>
                     <td>{siswa.akt_thn}</td>
-                    <td>{siswa.jurusan_ipa_key.jurusan}</td>
-                    <td>{siswa.univ_ipa_key.universitas}</td>
-                    <td>{siswa.rumpun_ipa_key.rumpun}</td>
+                    <td>{siswa.jurusan_key.jurusan}</td>
+                    <td>{siswa.univ_key.universitas}</td>
+                    <td>{siswa.rumpun_key.rumpun}</td>
                   </tr>
                 ))}
               </tbody>

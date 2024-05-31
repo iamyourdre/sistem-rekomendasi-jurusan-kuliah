@@ -3,8 +3,8 @@ import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
 import { JurusanModel } from "./CollegeModel.js";
 
-const NbIpaV3MapelModel = db.define(
-  "nb_ipa_v3_mapel",
+const DatasetMapelModel = db.define(
+  "dataset_mapel",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -31,26 +31,26 @@ const NbIpaV3MapelModel = db.define(
   }
 );
 
-JurusanModel.hasMany(NbIpaV3MapelModel, {
+JurusanModel.hasMany(DatasetMapelModel, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key NbIpaV3MapelModel yang terhubung ke JurusanModel
+    name: "jurusan_id", // Nama kolom foreign key DatasetMapelModel yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'nb_ipa_v3_mapel_key',
-  onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di NbIpaV3MapelModel
+  as: 'dataset_mapel_key',
+  onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di DatasetMapelModel
 });
 
-NbIpaV3MapelModel.belongsTo(JurusanModel, {
+DatasetMapelModel.belongsTo(JurusanModel, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key NbIpaV3MapelModel yang terhubung ke JurusanModel
+    name: "jurusan_id", // Nama kolom foreign key DatasetMapelModel yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'nb_ipa_v3_mapel_key',
+  as: 'dataset_mapel_key',
 });
 
 
-const NbIpaV3FreqModel = db.define(
-  "nb_ipa_v3_freq",
+const DatasetFreqModel = db.define(
+  "dataset_freq",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -77,21 +77,21 @@ const NbIpaV3FreqModel = db.define(
   }
 );
 
-NbIpaV3MapelModel.hasMany(NbIpaV3FreqModel, {
+DatasetMapelModel.hasMany(DatasetFreqModel, {
   foreignKey: {
-    name: "mapel_id", // Nama kolom foreign key NbIpaV3FreqModel yang terhubung ke NbIpaV3MapelModel
+    name: "mapel_id", // Nama kolom foreign key DatasetFreqModel yang terhubung ke DatasetMapelModel
     allowNull: false,
   },
-  as: 'nb_ipa_v3_freq_key',
-  onDelete: "CASCADE", // Jika data NbIpaV3MapelModel dihapus, hapus juga semua data terkait di NbIpaV3FreqModel
+  as: 'dataset_freq_key',
+  onDelete: "CASCADE", // Jika data DatasetMapelModel dihapus, hapus juga semua data terkait di DatasetFreqModel
 });
 
-NbIpaV3FreqModel.belongsTo(NbIpaV3MapelModel, {
+DatasetFreqModel.belongsTo(DatasetMapelModel, {
   foreignKey: {
-    name: "mapel_id", // Nama kolom foreign key NbIpaV3FreqModel yang terhubung ke NbIpaV3MapelModel
+    name: "mapel_id", // Nama kolom foreign key DatasetFreqModel yang terhubung ke DatasetMapelModel
     allowNull: false,
   },
-  as: 'nb_ipa_v3_freq_key',
+  as: 'dataset_freq_key',
 });
 
-export {NbIpaV3MapelModel, NbIpaV3FreqModel};
+export {DatasetMapelModel, DatasetFreqModel};

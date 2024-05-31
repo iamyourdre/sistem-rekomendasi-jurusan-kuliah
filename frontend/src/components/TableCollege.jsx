@@ -15,7 +15,7 @@ const TableCollege = () => {
   const getCollegeData = async () => {
     setIsLoading(true);
     try {
-      const response = (await axios.get('http://localhost:5000/api/dataset/getAllCollege')).data;
+      const response = (await axios.get('http://localhost:5000/api/dataset/getCollege')).data;
       setCollegeData(response.data);
     } catch (error) {
       console.error('Error fetching data: ', error);
@@ -61,14 +61,14 @@ const TableCollege = () => {
                   <tr key={college.id}>
                     <td>{(index+1)+(indexOfLastItem - itemsPerPage)}</td>
                     <td>{college.jurusan}</td>
-                    <td>{college.jurusan_ipa_key.map((univ) => (
+                    <td>{college.jurusan_key.map((univ) => (
                       <ul class="list-disc">
-                        <li>{univ.univ_ipa_key.universitas}</li>
+                        <li>{univ.univ_key.universitas}</li>
                       </ul>
                     ))}</td>
                     <td>
-                      {college.jurusan_ipa_key && college.jurusan_ipa_key[0] && college.jurusan_ipa_key[0].rumpun_ipa_key ? (
-                        college.jurusan_ipa_key[0].rumpun_ipa_key.rumpun
+                      {college.jurusan_key && college.jurusan_key[0] && college.jurusan_key[0].rumpun_key ? (
+                        college.jurusan_key[0].rumpun_key.rumpun
                       ) : (
                         ''
                       )}
