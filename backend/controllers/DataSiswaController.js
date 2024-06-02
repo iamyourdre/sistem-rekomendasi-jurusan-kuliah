@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { findOrCreateCollege } from "./CollegeController.js";
 import { resetDataset } from "./MasterController.js";
-import { JurusanModel, UniversitasModel, RumpunModel } from "../models/CollegeModel.js";
+import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
 import { Sequelize } from "sequelize";
 
 // Fungsi admin untuk mengupload file dataset Excel
@@ -118,7 +118,6 @@ export const uploadDataSiswa = async (req, res) => {
             TAHUN: rows[(rowIndex + 3)][74],
             UNIV: rows[(rowIndex + 3)][75],
             JRSN: rows[(rowIndex + 3)][76],
-            RUMPUN: rows[(rowIndex + 3)][77],
           };
           dataset.push(datas);
         }
@@ -129,8 +128,8 @@ export const uploadDataSiswa = async (req, res) => {
         // Melakukan iterasi untuk setiap object pada dataset
         for (const data of dataset) {
           
-          // Mengecek ketersediaan univ, jurusan, dan rumpun atau membuat data baru apabila terdapat nilai yang unik
-          const college = await findOrCreateCollege(data.UNIV, data.JRSN, data.RUMPUN);
+          // Mengecek ketersediaan univ, dan jurusan atau membuat data baru apabila terdapat nilai yang unik
+          const college = await findOrCreateCollege(data.UNIV, data.JRSN);
 
           // Mengecek duplikasi data untuk mencegah redundansi
           const isDupli = await isDuplication(data, college.univ_id, college.jurusan_id);
@@ -143,7 +142,6 @@ export const uploadDataSiswa = async (req, res) => {
               akt_thn: data.TAHUN || 0,
               univ_id: college.univ_id,
               jurusan_id: college.jurusan_id,
-              rumpun_id: college.rumpun_id
             });
 
             let summaryNilai = {
@@ -258,10 +256,6 @@ export const getDataSiswa = async (req, res) => {
           model: UniversitasModel,
           as: 'univ_key',
         },
-        {
-          model: RumpunModel,
-          as: 'rumpun_key',
-        }
       ],
     });
     res.status(200).json({
@@ -294,10 +288,6 @@ export const getSiswaEligible = async (req, res) => {
           model: UniversitasModel,
           as: 'univ_key',
         },
-        {
-          model: RumpunModel,
-          as: 'rumpun_key',
-        }
       ],
     });
     res.status(200).json({

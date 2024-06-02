@@ -2,28 +2,6 @@ import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
 import { SiswaModel } from "./DataSiswaModel.js";
 
-
-const RumpunModel = db.define(
-  "rumpun",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    rumpun: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-  },
-  {
-    freezeTableName: true,
-    timestamps: false,
-  }
-);
-
 const JurusanModel = db.define(
   "jurusan",
   {
@@ -66,23 +44,6 @@ const UniversitasModel = db.define(
   }
 );
 
-RumpunModel.hasMany(JurusanModel, {
-  foreignKey: {
-    name: "rumpun_id", // Nama kolom foreign key JurusanModel yang terhubung ke RumpunModel
-    allowNull: false,
-  },
-  as: 'rumpun_key',
-  onDelete: "CASCADE", // Jika data RumpunModel dihapus, hapus juga semua data terkait di SiswaModel
-});
-
-JurusanModel.belongsTo(RumpunModel, {
-  foreignKey: {
-    name: "rumpun_id", // Nama kolom foreign key yang terhubung ke RumpunModel
-    allowNull: false,
-  },
-  as: 'rumpun_key',
-});
-
 JurusanModel.hasMany(SiswaModel, {
   foreignKey: {
     name: "jurusan_id", // Nama kolom foreign key SiswaModel yang terhubung ke JurusanModel
@@ -117,31 +78,14 @@ SiswaModel.belongsTo(UniversitasModel, {
   as: 'univ_key',
 });
 
-SiswaModel.belongsTo(RumpunModel, {
-  foreignKey: {
-    name: "rumpun_id", // Nama kolom foreign key yang terhubung ke RumpunModel
-    allowNull: false,
-  },
-  as: 'rumpun_key',
-});
-
 (async () => {
   // Sinkronisasi database
   await db.sync();
-  
-  
-  if (!await RumpunModel.findOne({ where: { id: 1 } })) {
-    await RumpunModel.create({
-      id: 1,
-      rumpun: "-"
-    });
-  }
 
   if (!await JurusanModel.findOne({ where: { id: 1 } })) {
     await JurusanModel.create({
       id: 1,
       jurusan: "-",
-      rumpun_id: 1
     });
   }
   
@@ -154,4 +98,4 @@ SiswaModel.belongsTo(RumpunModel, {
 
 })();
 
-export {JurusanModel, UniversitasModel, RumpunModel};
+export {JurusanModel, UniversitasModel};

@@ -53,7 +53,6 @@ const TableCollege = () => {
                   <th>ID</th>
                   <th>Jurusan</th>
                   <th>Universitas</th>
-                  <th>Rumpun</th>
                 </tr>
               </thead>
               <tbody>
@@ -66,13 +65,6 @@ const TableCollege = () => {
                         <li>{univ.univ_key.universitas}</li>
                       </ul>
                     ))}</td>
-                    <td>
-                      {college.jurusan_key && college.jurusan_key[0] && college.jurusan_key[0].rumpun_key ? (
-                        college.jurusan_key[0].rumpun_key.rumpun
-                      ) : (
-                        ''
-                      )}
-                    </td>
                   </tr>
                 ))}
               </tbody>

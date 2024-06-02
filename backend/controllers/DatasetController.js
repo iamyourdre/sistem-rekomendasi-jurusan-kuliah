@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { DatasetMapelModel, DatasetFreqModel } from "../models/DatasetModel.js";
-import { JurusanModel, RumpunModel, UniversitasModel } from "../models/CollegeModel.js";
+import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
 
 export const createTrainingData = async (req, res) => {
   try {
@@ -235,11 +235,6 @@ export const naiveBayesClassifier = async (req, res) => {
       probData.push({
         jurusan: await JurusanModel.findOne({
           where: {id: j.id},
-          include: [{
-            model: RumpunModel,
-            as: 'rumpun_key',
-            attributes: ['rumpun']
-          }],
         }),
         p_yes: p_yes,
         p_no: p_no,

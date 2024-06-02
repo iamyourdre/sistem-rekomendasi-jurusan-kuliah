@@ -6,5 +6,4 @@ export { default as TableSiswaEligible } from './TableSiswaEligible';
 export { default as TableAllSiswa } from './TableAllSiswa';
 export { default as TableCollege } from './TableCollege';
 export { default as SrjkForm } from './SrjkForm';
-export { default as SrjkRumpun } from './SrjkRumpun';
 export { default as Footer } from './Footer';
