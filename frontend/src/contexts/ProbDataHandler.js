@@ -69,6 +69,13 @@ class ProbDataHandler {
     const index2 = gradeOrder.indexOf(grade2);
     return index1 <= index2;
   }
+  
+  getGradeRank(grade) {
+    const gradeOrder = ["A", "A-", "B+", "B", "B-", "CDE"];
+    const index = gradeOrder.indexOf(grade);
+    return index;
+  }
+  
 }
 
 export default ProbDataHandler;
