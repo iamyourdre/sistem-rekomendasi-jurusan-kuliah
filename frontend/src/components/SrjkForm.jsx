@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import axios from 'axios';
 
+import {
+  isLowerSameBigger,
+  handlePaste,
+  handleInputChange,
+  resetAllValues,
+  convertToGrade
+} from "../utils/SrjkFormHelpers";
+
 const SrjkForm = () => {
 
   const mapels = ["PABP", "PPKN", "B.Indonesia", "MTK Wajib", "Sejarah Indonesia", "B.Inggris Wajib", "Seni Budaya", "PJOK", "PKWU", "MTK Peminatan", "Biologi", "Fisika", "Kimia", "Ekonomi", "B.Inggris Terapan"];
@@ -26,63 +34,6 @@ const SrjkForm = () => {
   // Fungsi untuk mengubah kunci sesuai dengan format yang diharapkan
   function formatKey(semester, mapel) {
     return `s${semester}_${mapel.replace(/\s+/g, '_')}`;
-  }
-  
-  // Fungsi untuk menangani paste dari clipboard
-  function handlePaste(event) {
-    event.preventDefault();
-    const clipboardData = event.clipboardData || window.clipboardData;
-    const pastedData = clipboardData.getData('text');
-    const scores = pastedData.split('\t').map(score => parseInt(score.trim(), 10));
-
-    // Menetapkan nilai-nilai yang dipaste ke input sesuai dengan urutannya
-    let updatedFormData = { ...formData }; // Copy the current state
-
-    let index = 0;
-    semesters.forEach((semester, semesterIndex) => {
-      mapels.forEach((mapel, mapelIndex) => {
-        if (scores[index] !== undefined) {
-          if(semester > 2 && mapelIndex === 14){
-            const key = formatKey(semester, mapel);
-            updatedFormData[key] = 0;
-            handleInputChange(semester, mapel, updatedFormData[key])
-            index--;
-          } else {
-            const key = formatKey(semester, mapel);
-            updatedFormData[key] = scores[index];
-            handleInputChange(semester, mapel, updatedFormData[key])
-          }
-        }
-        index++;
-      });
-    });
-
-    // Set the updated state
-    setFormData(updatedFormData);
-  }
-
-  // Fungsi untuk menyimpan nilai input ke state dan cookie
-  function handleInputChange(semester, mapel, value) {
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-  
-    const cookieKey = formatKey(semester, mapel);
-    const cookieValue = `${cookieKey}=${value}; expires=${expires.toUTCString()}; path=/`;
-  
-    const newFormData = { ...formData, [cookieKey]: value };
-    setFormData(newFormData);
-    document.cookie = cookieValue;
-  }
-
-  // Fungsi untuk mereset semua nilai input dan hapus cookie
-  function resetAllValues() {
-    const newFormData = {};
-    setFormData(newFormData);
-    mapels.forEach(mapel => {
-      semesters.forEach(semester => {
-        document.cookie = `${formatKey(semester, mapel)}=; path=/;`;
-      });
-    });
   }
 
   // Fungsi untuk menghitung rata-rata nilai setiap mata pelajaran
@@ -157,29 +108,6 @@ const SrjkForm = () => {
       });
   }
 
-  function convertToGrade(score) {
-    const numericScore = parseFloat(score)
-    if (numericScore >= 90) {
-      return "A";
-    } else if (numericScore >= 85) {
-      return "A-";
-    } else if (numericScore >= 80) {
-      return "B+";
-    } else if (numericScore >= 75) {
-      return "B";
-    } else if (numericScore >= 70) {
-      return "B-";
-    } else {
-      return "CDE";
-    }
-  }
-
-  function biggerOrSame(grade1, grade2) {
-    const gradeOrder = ["A", "A-", "B+", "B", "B-", "CDE"];
-    const index1 = gradeOrder.indexOf(grade1);
-    const index2 = gradeOrder.indexOf(grade2);
-    return index1 <= index2;
-  }
   return (
     <div>
       <div className="px-4 md:px-8">
@@ -285,11 +213,13 @@ const SrjkForm = () => {
                                 </ul>
                               </td>
                               {Object.keys(rData.summary_key[0]).map((key, id) => {
-                                const status = biggerOrSame(convertToGrade(averageScores[mapels[id-2]]), convertToGrade(rData.summary_key[0][key]));
-                                if(status) { count++; }
+                                const status = isLowerSameBigger(convertToGrade(averageScores[mapels[id-2]]), convertToGrade(rData.summary_key[0][key]));
+                                if(status!=-1) { count++; }
                                 return (
                                   key.startsWith('mean_') &&
-                                  <td className={`border border-gray-400 px-4 py-2 font-semibold ${status ? 'bg-green-300' : 'bg-red-300'}`} key={id}>
+                                  <td className={`border border-gray-400 px-4 py-2 font-semibold ${
+                                    status>-1 ? (status==0 ? 'bg-green-300' : 'bg-teal-300') : 'bg-red-300'
+                                    }`} key={id}>
                                     {convertToGrade(rData.summary_key[0][key])}
                                   </td>
                                 );
@@ -305,36 +235,6 @@ const SrjkForm = () => {
                         })}
                       </>
                     ))}
-
-
-
-                    {/* {probData.map((pData) => (
-                      pData.reference.map((rData, index) => {
-                        let count = 0;
-                        return(
-                          <tr key={index}>
-                            <td className="border border-gray-400 px-4 py-2">
-                              <ul>
-                                <li className="font-bold">{rData.jurusan_key.jurusan}</li>
-                                <li>{rData.univ_key.universitas}</li>
-                                <li>{rData.nama} </li>
-                              </ul>
-                            </td>
-                            {Object.keys(rData.summary_key[0]).map((key, idx) => {
-                              const status = biggerOrSame(convertToGrade(averageScores[mapels[idx-2]]), convertToGrade(rData.summary_key[0][key]));
-                              if(status){count++};
-                              return (
-                              key.startsWith('mean_') &&
-                              <td className={`border border-gray-400 px-4 py-2 font-semibold ${status?'bg-green-300':'bg-red-300'}`} key={idx}>
-                                {convertToGrade(rData.summary_key[0][key])}
-                              </td>
-                            )})}
-                            <td className="border border-gray-400 px-4 py-2 font-bold">{(((count-2) / 15) * 100).toFixed(2)}%</td>
-                            <td className="border border-gray-400 px-4 py-2 font-bold">{pData.p_yes}</td>
-                          </tr>
-                        )
-                      })
-                    ))} */}
                   </tbody>
                 </table>
               </div>

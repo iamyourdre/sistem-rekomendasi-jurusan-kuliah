@@ -1,13 +1,15 @@
 import express from "express";
 import formData from "../middlewares/ReqBodyHandler.cjs";
-import { 
-  uploadDataSiswa,
+import { uploadDataSiswa } from "../controllers/DataSiswaController.js";
+import { getCollege } from "../controllers/UtilsController.js";
+import { createTrainingData  } from "../controllers/DatasetController.js";
+import { naiveBayesClassifier } from "../controllers/ClassifierController.js";
+import {
+  getDataLength,
   getDataSiswa,
-  getSiswaEligible
-} from "../controllers/DataSiswaController.js";
-import { getCollege } from "../controllers/CollegeController.js";
-import { createTrainingData, naiveBayesClassifier, getDataset } from "../controllers/DatasetController.js";
-import { getDataLength } from "../controllers/MasterController.js";
+  getSiswaEligible,
+  getDataset
+} from "../controllers/UtilsController.js";
 
 const datasetRouter = express.Router(); // Membuat router khusus untuk dataset routes
 const nbRouter = express.Router(); // Membuat router khusus untuk NB routes
