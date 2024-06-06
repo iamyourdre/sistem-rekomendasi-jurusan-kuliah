@@ -55,7 +55,6 @@ const TableSiswaEligible = () => {
                   <th>Angkatan</th>
                   <th>Jurusan</th>
                   <th>Universitas</th>
-                  <th>Rumpun</th>
                 </tr>
               </thead>
               <tbody>
@@ -66,7 +65,6 @@ const TableSiswaEligible = () => {
                     <td>{siswa.akt_thn}</td>
                     <td>{siswa.jurusan_key.jurusan}</td>
                     <td>{siswa.univ_key.universitas}</td>
-                    <td>{siswa.rumpun_key.rumpun}</td>
                   </tr>
                 ))}
               </tbody>

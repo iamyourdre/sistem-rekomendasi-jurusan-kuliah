@@ -1,4 +1,3 @@
 USE srjk_adrian;
 SELECT * FROM jurusan;
 SELECT * FROM universitas;
-SELECT * FROM rumpun;

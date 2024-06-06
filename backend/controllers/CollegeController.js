@@ -1,24 +1,11 @@
 import { Sequelize } from "sequelize";
-import  { JurusanModel, RumpunModel, UniversitasModel } from "../models/CollegeModel.js"
+import  { JurusanModel, UniversitasModel } from "../models/CollegeModel.js"
 import { SiswaModel } from "../models/DataSiswaModel.js";
 
 export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
 
   let jurusan_id = 1;
   let univ_id = 1;
-  let rumpun_id = 1;
-  
-  // Cari apakah data.rumpun ada di tabel rumpun
-  if (rmpn !== null) { // Jika param rumpun tidak null
-    const rumpun = await RumpunModel.findOne({ // Cari rumpun yang sama
-      where: {
-        rumpun: rmpn
-      }
-    });
-    rumpun_id = rumpun ? rumpun.id : (await RumpunModel.create({
-      rumpun: rmpn
-    })).id;
-  }
 
   // Cari apakah data.jrsn ada di tabel jurusan
   if (jrsn !== null) { // Jika param jrsn tidak null
@@ -28,8 +15,7 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
       }
     });
     jurusan_id = jurusan ? jurusan.id : (await JurusanModel.create({
-      jurusan: jrsn,
-      rumpun_id: rumpun_id
+      jurusan: jrsn
     })).id;
   }
 
@@ -45,7 +31,7 @@ export const findOrCreateCollege = async (univ, jrsn, rmpn) => {
     })).id;
   }
 
-  return { jurusan_id, univ_id, rumpun_id };
+  return { jurusan_id, univ_id };
 
 };
 
@@ -68,11 +54,6 @@ export const getCollege = async (req, res) => {
               model: UniversitasModel,
               as: 'univ_key',
               attributes: ['universitas']
-            },
-            {
-              model: RumpunModel,
-              as: 'rumpun_key',
-              attributes: ['rumpun']
             },
           ],
         },
