@@ -15,7 +15,7 @@ export const naiveBayesClassifier = async (req, res) => {
           [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
         }
       }
-    })
+    });
 
     // Mengkonversi input nilai menjadi bentuk bobot
     const inputNilai = [
@@ -63,42 +63,64 @@ export const naiveBayesClassifier = async (req, res) => {
             total_no: mapel['dataset_freq_key.p_no'],
           }
         });
-        p_yes *= (mapel['dataset_freq_key.p_yes'] / mapel.total_p_yes)
-        p_no *= (mapel['dataset_freq_key.p_no'] / mapel.total_p_no )
+        p_yes *= (mapel['dataset_freq_key.p_yes'] / mapel.total_p_yes);
+        p_no *= (mapel['dataset_freq_key.p_no'] / mapel.total_p_no);
       }
+      const jurusanData = await JurusanModel.findOne({ where: { id: j.id } });
+      const summaryData = await SiswaModel.findAll({
+        where: { jurusan_id: j.id },
+        include: [
+          {
+            model: JurusanModel,
+            as: 'jurusan_key',
+            where: { id: j.id },
+            attributes: ['jurusan']
+          },
+          {
+            model: UniversitasModel,
+            as: 'univ_key',
+            attributes: ['universitas']
+          },
+          {
+            model: SummaryModel,
+            as: 'summary_key',
+          }
+        ],
+      });
+
+      // Menambahkan nilai bobot huruf ke dalam summary_key
+      let grade = [];
+      summaryData.forEach((data) => {
+        data.summary_key.forEach((summary) => {
+          grade.push({
+            mean_PABP: convertToGrade(summary.mean_PABP),
+            mean_PPKN: convertToGrade(summary.mean_PPKN),
+            mean_B_IND: convertToGrade(summary.mean_B_IND),
+            mean_MTK_W: convertToGrade(summary.mean_MTK_W),
+            mean_S_IND: convertToGrade(summary.mean_S_IND),
+            mean_BING_W: convertToGrade(summary.mean_BING_W),
+            mean_S_BUD: convertToGrade(summary.mean_S_BUD),
+            mean_PJOK: convertToGrade(summary.mean_PJOK),
+            mean_PKWU: convertToGrade(summary.mean_PKWU),
+            mean_MTK_T: convertToGrade(summary.mean_MTK_T),
+            mean_BIO: convertToGrade(summary.mean_BIO),
+            mean_FIS: convertToGrade(summary.mean_FIS),
+            mean_KIM: convertToGrade(summary.mean_KIM),
+            mean_EKO: convertToGrade(summary.mean_EKO),
+            mean_BING_T: convertToGrade(summary.mean_BING_T),
+          });
+        });
+      });
+
       probData.push({
-        jurusan: await JurusanModel.findOne({
-          where: {id: j.id},
-        }),
+        jurusan: jurusanData,
         p_yes: p_yes,
         p_no: p_no,
-        reference: await SiswaModel.findAll({
-          where: {
-            jurusan_id: j.id
-          },
-          include: [
-            {
-              model: JurusanModel,
-              as: 'jurusan_key',
-              where: {
-                id: j.id
-              },
-              attributes: ['jurusan']
-            },
-            {
-              model: UniversitasModel,
-              as: 'univ_key',
-              attributes: ['universitas']
-            },
-            {
-              model: SummaryModel,
-              as: 'summary_key',
-            }
-          ],
-        })
+        reference: summaryData,
+        ref: [summaryData, grade]
       });
     }));
-    probData.sort((a, b) => a.jurusan_id - b.jurusan_id);
+    probData.sort((a, b) => a.jurusan.id - b.jurusan.id);
 
     // Membuat output probabilitas final untuk tiap jurusan
     res.status(200).json({ probData });
@@ -107,4 +129,3 @@ export const naiveBayesClassifier = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
