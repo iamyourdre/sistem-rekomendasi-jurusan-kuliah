@@ -116,7 +116,6 @@ export const naiveBayesClassifier = async (req, res) => {
         jurusan: jurusanData,
         p_yes: p_yes,
         p_no: p_no,
-        reference: summaryData,
         ref: [summaryData, grade]
       });
     }));

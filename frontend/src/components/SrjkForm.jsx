@@ -3,14 +3,6 @@ import { FaCircleInfo } from "react-icons/fa6";
 import axios from 'axios';
 var distance = require('euclidean-distance');
 
-import {
-  isLowerSameBigger,
-  handlePaste,
-  handleInputChange,
-  resetAllValues,
-  convertToGrade
-} from "../utils/SrjkFormHelpers";
-
 const SrjkForm = () => {
   const mapels = ["PABP", "PPKN", "B.Indonesia", "MTK Wajib", "Sejarah Indonesia", "B.Inggris Wajib", "Seni Budaya", "PJOK", "PKWU", "MTK Peminatan", "Biologi", "Fisika", "Kimia", "Ekonomi", "B.Inggris Terapan"];
   const semesters = ["1", "2", "3", "4", "5"];
@@ -19,6 +11,7 @@ const SrjkForm = () => {
   const [myAverageScores, setMyAverageScores] = useState({});
   const [myAverageGrades, setMyAverageGrades] = useState({});
   const [probData, setProbData] = useState([]);
+  const [eucDistResult, setEucDistResult] = useState([]);
 
   function getInitialFormData() {
     const cookieData = document.cookie.split(';').reduce((acc, cookie) => {
@@ -31,9 +24,99 @@ const SrjkForm = () => {
     return cookieData;
   }
 
+  function isLowerSameBigger(grade1, grade2) {
+    const gradeOrder = ["A", "A-", "B+", "B", "B-", "CDE"];
+    const index1 = gradeOrder.indexOf(grade1);
+    const index2 = gradeOrder.indexOf(grade2);
+  
+    if (index1 > index2) {
+      return -1;
+    } else if (index1 < index2) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+  
   function formatKey(semester, mapel) {
     return `s${semester}_${mapel.replace(/\s+/g, '_')}`;
   }
+  
+  // Fungsi untuk menangani paste dari clipboard
+  function handlePaste(event) {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const pastedData = clipboardData.getData('text');
+    const scores = pastedData.split('\t').map(score => parseInt(score.trim(), 10));
+  
+    // Menetapkan nilai-nilai yang dipaste ke input sesuai dengan urutannya
+    let updatedFormData = { ...formData }; // Copy the current state
+  
+    let index = 0;
+    semesters.forEach((semester, semesterIndex) => {
+      mapels.forEach((mapel, mapelIndex) => {
+        if (scores[index] !== undefined) {
+          if(semester > 2 && mapelIndex === 14){
+            const key = formatKey(semester, mapel);
+            updatedFormData[key] = 0;
+            handleInputChange(semester, mapel, updatedFormData[key])
+            index--;
+          } else {
+            const key = formatKey(semester, mapel);
+            updatedFormData[key] = scores[index];
+            handleInputChange(semester, mapel, updatedFormData[key])
+          }
+        }
+        index++;
+      });
+    });
+  
+    // Set the updated state
+    setFormData(updatedFormData);
+  }
+  
+  
+  // Fungsi untuk menyimpan nilai input ke state dan cookie
+  function handleInputChange(semester, mapel, value) {
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 7);
+  
+    const cookieKey = formatKey(semester, mapel);
+    const cookieValue = `${cookieKey}=${value}; expires=${expires.toUTCString()}; path=/`;
+  
+    const newFormData = { ...formData, [cookieKey]: value };
+    setFormData(newFormData);
+    document.cookie = cookieValue;
+  }
+  
+  // Fungsi untuk mereset semua nilai input dan hapus cookie
+  function resetAllValues() {
+    const newFormData = {};
+    setFormData(newFormData);
+    mapels.forEach(mapel => {
+      semesters.forEach(semester => {
+        document.cookie = `${formatKey(semester, mapel)}=; path=/;`;
+      });
+    });
+  }
+  
+  function convertToGrade(score) {
+    const numericScore = parseFloat(score)
+    if (numericScore >= 90) {
+      return "A";
+    } else if (numericScore >= 85) {
+      return "A-";
+    } else if (numericScore >= 80) {
+      return "B+";
+    } else if (numericScore >= 75) {
+      return "B";
+    } else if (numericScore >= 70) {
+      return "B-";
+    } else {
+      return "CDE";
+    }
+  }
+
 
   function calcAvgScores() {
     // Menetapkan nilai rata-rata
@@ -63,77 +146,108 @@ const SrjkForm = () => {
     return avgScores;
   }
 
-  function calcEucDist(my_s, s) {
-    console.log(distance([
-      my_s[0], 
-      my_s[1], 
-      my_s[2], 
-      my_s[3], 
-      my_s[4], 
-      my_s[5], 
-      my_s[6], 
-      my_s[7], 
-      my_s[8], 
-      my_s[9], 
-      my_s[10], 
-      my_s[11], 
-      my_s[12], 
-      my_s[13], 
-      my_s[14], 
-    ], [
-      s[0], 
-      s[1], 
-      s[2], 
-      s[3], 
-      s[4], 
-      s[5], 
-      s[6], 
-      s[7], 
-      s[8], 
-      s[9], 
-      s[10], 
-      s[11], 
-      s[12], 
-      s[13], 
-      s[14], 
-    ]));
-  }
-
-  function handleSubmit() {
-    const averageScoresArray = Object.values(calcAvgScores());
-
+  async function handleSubmit() {
+    const myAvgScores = Object.values(calcAvgScores());
+  
     const requestBody = {
-      x1: averageScoresArray[0],
-      x2: averageScoresArray[1],
-      x3: averageScoresArray[2],
-      x4: averageScoresArray[3],
-      x5: averageScoresArray[4],
-      x6: averageScoresArray[5],
-      x7: averageScoresArray[6],
-      x8: averageScoresArray[7],
-      x9: averageScoresArray[8],
-      x10: averageScoresArray[9],
-      x11: averageScoresArray[10],
-      x12: averageScoresArray[11],
-      x13: averageScoresArray[12],
-      x14: averageScoresArray[13],
-      x15: averageScoresArray[14]
+      x1: myAvgScores[0],
+      x2: myAvgScores[1],
+      x3: myAvgScores[2],
+      x4: myAvgScores[3],
+      x5: myAvgScores[4],
+      x6: myAvgScores[5],
+      x7: myAvgScores[6],
+      x8: myAvgScores[7],
+      x9: myAvgScores[8],
+      x10: myAvgScores[9],
+      x11: myAvgScores[10],
+      x12: myAvgScores[11],
+      x13: myAvgScores[12],
+      x14: myAvgScores[13],
+      x15: myAvgScores[14]
     };
+    
+    const probData = await naiveBayes(requestBody);
+    const euqDistData = eucDist(myAvgScores, probData);
+    console.log(euqDistData[0])
+  
+    const rekomendasiElement = document.getElementById('rekomendasi');
+    if (rekomendasiElement) {
+      rekomendasiElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+  
+  async function naiveBayes(req) {
+    return axios.post('http://localhost:5000/api/nb/naiveBayesClassifier', req).then(response => {
+      const probDataFromServer = response.data.probData;
+      const sortedProbData = probDataFromServer.sort((a, b) => b.p_yes - a.p_yes);
+      setProbData(sortedProbData);
+      return sortedProbData;
+    })
+    .catch(error => {
+      console.error('Error submitting average scores:', error);
+      throw error; // Re-throw the error to ensure handleSubmit can handle it if needed
+    });
+  }
+  
+  
+  function eucDist(my_score, probData) {
+    let shortestSimilarity = [];
+    let shortestScore = 999;
+    probData.forEach(data => {
+      data.ref[0].forEach(ref => {
+        ref.summary_key.forEach(score => {
+          const dist = distance([
+            my_score[0], 
+            my_score[1], 
+            my_score[2], 
+            my_score[3], 
+            my_score[4], 
+            my_score[5], 
+            my_score[6], 
+            my_score[7], 
+            my_score[8], 
+            my_score[9], 
+            my_score[10], 
+            my_score[11], 
+            my_score[12], 
+            my_score[13], 
+            my_score[14], 
+          ], [
+            Object.values(score)[2], 
+            Object.values(score)[3], 
+            Object.values(score)[4], 
+            Object.values(score)[5], 
+            Object.values(score)[6], 
+            Object.values(score)[7], 
+            Object.values(score)[8], 
+            Object.values(score)[9], 
+            Object.values(score)[10], 
+            Object.values(score)[11], 
+            Object.values(score)[12], 
+            Object.values(score)[13], 
+            Object.values(score)[14], 
+            Object.values(score)[15], 
+            Object.values(score)[16], 
+          ])
 
-    axios.post('http://localhost:5000/api/nb/naiveBayesClassifier', requestBody)
-      .then(response => {
-        const probDataFromServer = response.data.probData;
-        const sortedProbData = probDataFromServer.sort((a, b) => b.p_yes - a.p_yes);
-        setProbData(sortedProbData);
-        console.log(sortedProbData)
-        const rekomendasiElement = document.getElementById('rekomendasi');
-        if (rekomendasiElement) {
-          rekomendasiElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      })
-      .catch(error => {
-        console.error('Error submitting average scores:', error);
+          // jika jarak euc dist sama dengan rekor shortestScore, maka cek tahun angkatan
+          if(dist == shortestScore){ 
+            if(shortestSimilarity[0].akt_thn<ref.akt_thn){
+              shortestSimilarity = [];
+              shortestSimilarity.push(ref); // gunakan angkatan paling baru karena lebih relevan
+              shortestScore = dist;
+            }
+          } else if(dist < shortestScore){
+            shortestSimilarity = [];
+            shortestSimilarity.push(ref); // gunakan angkatan paling baru karena lebih relevan
+            shortestScore = dist;
+          }
+        });
       });
+    });
+    setEucDistResult(shortestSimilarity);
+    return shortestSimilarity;
   }
 
   return (
@@ -193,6 +307,7 @@ const SrjkForm = () => {
           </div>
         </div>
       </div>
+      
       {probData.length > 0 && (
         <div className="px-4 md:px-8 mt-4">
           <div className="bg-p-light rounded-md p-6 w-full" id="rekomendasi">
