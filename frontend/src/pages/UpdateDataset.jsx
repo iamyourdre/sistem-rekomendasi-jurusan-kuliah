@@ -26,9 +26,9 @@ const UpdateDataset = ({ title, subtitle }) => {
   
     try {
       setProgress(1);
-      const response1 = await axios.post('http://localhost:5000/api/dataset/upload', formData);
+      const response1 = await axios.post('http://localhost:5000/api/siswa/upload', formData);
       setProgress(2);
-      const response2 = await axios.post('http://localhost:5000/api/nb/createTrainingData');
+      const response2 = await axios.post('http://localhost:5000/api/dataset/createTrainingData');
       setProgress(3);
       // Reset form jika diperlukan
       setFile(null);

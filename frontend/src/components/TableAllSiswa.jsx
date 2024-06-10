@@ -16,7 +16,7 @@ const TableAllSiswa = () => {
   const getSiswaData = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/dataset/getDataSiswa');
+      const response = await axios.get('http://localhost:5000/api/siswa/getDataSiswa');
       setSiswaData(response.data.data);
     } catch (error) {
       console.error('Error fetching data: ', error);
