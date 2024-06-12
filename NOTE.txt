@@ -1,0 +1,16 @@
+Hasil klasifikasi terlihat bias karena polanya memiliki kesamaan lebih dari satu jurusan.
+Sekarang, bagaimana agar output yang lebih dari satu jurusan ini dapat menjadi fitur?
+
+---
+
+Ide #1
+
+Kombinasikan 2 model:
+1. Naive Bayes Classifier
+2. Euclidean Distance
+
+Hasil kombinasinya, Naive Bayes Classifier dapat memberikan rekomendasi jurusan yang probabilitas kelolosannya paling tinggi berdasarkan data historikal. Kemudian Euclidean Distance mencari potensi yang lebih tinggi berdasarkan pola nilai yang paling mirip atau mendekati dengan nilai rapor penggunanya.
+
+Pengujiannya menggunakan K Means
+
+Evaluasinya dengan precision berdasarkan output setelah naive bayes + euclidean distance karena keluaran yang diberikan pada hasil kombinasi 2 model ini adalah tentang jurusan mana yang polanya paling mendekati nilai rapornya, bukan tentang lolos atau tidaknya.
