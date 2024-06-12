@@ -2,22 +2,37 @@ import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { DatasetMapelModel, DatasetFreqModel } from "../models/DatasetModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
-import { convertToGrade } from "./UtilsController.js";
+import { convertToGrade, getDataset } from "./UtilsController.js";
 
 
 export const createTrainingData = async (req, res) => {
   try {
     
-    let freqError = true;
+    let freqError = true
+    
+    await DatasetMapelModel.destroy({ where: {} });
+    await setMapelTable(res);
+    freqError = await setFreqTable(res);
 
-    while (freqError) {
-      await DatasetMapelModel.destroy({ where: {} });
-      await setMapelTable(res);
-      freqError = await setFreqTable(res);
-    }
+    let resCode = 200;
+    if(freqError==true) resCode = 500;
 
-    res.status(200).json({
-      message: "Selesai membuat data latih!"
+    res.status(resCode).json({
+      message: "Selesai membuat data latih!",
+      freqError: freqError,
+      dataset: await DatasetMapelModel.findAll({
+        include: [
+          {
+            model: DatasetFreqModel,
+            as: 'dataset_freq_key'
+          },
+          {
+            model: JurusanModel,
+            as: 'dataset_mapel_key'
+          },
+        ],
+        raw: true,
+      })
     });
 
   } catch (error) {
@@ -29,7 +44,6 @@ export const createTrainingData = async (req, res) => {
 };
 
 export const setMapelTable = async (res) => {
-
   try {
     // Mengambil daftar jurusan tanpa redundansi
     const jurusan = await JurusanModel.findAll({
@@ -38,9 +52,9 @@ export const setMapelTable = async (res) => {
           [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
         }
       }
-    })
+    });
     
-    const mapelTemp = [];// Membuat objek untuk menyimpan jumlah data dalam masing-masing rentang
+    const mapelTemp = []; // Membuat objek untuk menyimpan jumlah data dalam masing-masing rentang
 
     // Membuat tabel mapel untuk setiap jurusan
     jurusan.forEach((d) => {
@@ -58,16 +72,15 @@ export const setMapelTable = async (res) => {
       mapelTemp.push(dataset_mapel);
     });
     
-    // Menggunakan bulkCreate untuk menambahkan baris-baris ke dalam tabel DatasetMapelModel
-    mapelTemp.forEach(async (dataset_mapel) => {
+    // Menggunakan Promise.all untuk menambahkan baris-baris ke dalam tabel DatasetMapelModel
+    await Promise.all(mapelTemp.map(async (dataset_mapel) => {
       await DatasetMapelModel.bulkCreate(dataset_mapel);
-    });
-  
+    }));
+
   } catch (error) {
     throw new Error(error.message);
   }
-
-}
+};
 
 export const setFreqTable = async (res) => {
 
