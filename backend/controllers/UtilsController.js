@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
 import { NilaiModel, SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
+import { DatasetFreqModel, DatasetMapelModel } from "../models/DatasetModel.js";
 
 export const getDataset = async (req, res) => {
   try {
@@ -18,12 +19,12 @@ export const getDataset = async (req, res) => {
       raw: true,
     });
     res.status(200).json({
-      message: "Data NbIpaV3Model berhasil diambil",
+      message: "Dataset berhasil diambil",
       data: dataset
     });
   } catch (error) {
     res.status(500).json({
-      message: "Gagal mengambil data NbIpaV3Model",
+      message: "Gagal mengambil dataset",
       error: error.message
     });
   }

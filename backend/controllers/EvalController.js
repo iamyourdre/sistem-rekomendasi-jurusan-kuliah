@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { EvalDataFreqModel, EvalDataMapelModel } from "../models/EvalModel.js";
 import { JurusanModel } from "../models/CollegeModel.js";
+import { DatasetMapelModel } from "../models/DatasetModel.js";
 
 export const createTrainingData = async (req, res) => {
   try {
@@ -58,7 +59,7 @@ export const setMapelTable = async (res) => {
     
     // Menggunakan bulkCreate untuk menambahkan baris-baris ke dalam tabel EvalDataMapelModel
     mapelTemp.forEach(async (dataset_mapel) => {
-      await EvalDataMapelModel.bulkCreate(dataset_mapel);
+      await DatasetMapelModel.bulkCreate(dataset_mapel);
     });
   
   } catch (error) {

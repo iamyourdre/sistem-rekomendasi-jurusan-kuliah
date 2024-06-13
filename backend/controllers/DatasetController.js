@@ -2,19 +2,15 @@ import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { DatasetMapelModel, DatasetFreqModel } from "../models/DatasetModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
-import { convertToGrade } from "./UtilsController.js";
+import { convertToGrade, getDataset } from "./UtilsController.js";
 
 
 export const createTrainingData = async (req, res) => {
   try {
     
-    let freqError = true;
-
-    while (freqError) {
-      await DatasetMapelModel.destroy({ where: {} });
-      await setMapelTable(res);
-      freqError = await setFreqTable(res);
-    }
+    await DatasetMapelModel.destroy({ where: {} });
+    await setMapelTable(res);
+    await setFreqTable(res);
 
     res.status(200).json({
       message: "Selesai membuat data latih!"
@@ -29,7 +25,6 @@ export const createTrainingData = async (req, res) => {
 };
 
 export const setMapelTable = async (res) => {
-
   try {
     // Mengambil daftar jurusan tanpa redundansi
     const jurusan = await JurusanModel.findAll({
@@ -38,9 +33,9 @@ export const setMapelTable = async (res) => {
           [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
         }
       }
-    })
+    });
     
-    const mapelTemp = [];// Membuat objek untuk menyimpan jumlah data dalam masing-masing rentang
+    const mapelTemp = []; // Membuat objek untuk menyimpan jumlah data dalam masing-masing rentang
 
     // Membuat tabel mapel untuk setiap jurusan
     jurusan.forEach((d) => {
@@ -58,16 +53,15 @@ export const setMapelTable = async (res) => {
       mapelTemp.push(dataset_mapel);
     });
     
-    // Menggunakan bulkCreate untuk menambahkan baris-baris ke dalam tabel DatasetMapelModel
-    mapelTemp.forEach(async (dataset_mapel) => {
+    // Menggunakan Promise.all untuk menambahkan baris-baris ke dalam tabel DatasetMapelModel
+    await Promise.all(mapelTemp.map(async (dataset_mapel) => {
       await DatasetMapelModel.bulkCreate(dataset_mapel);
-    });
-  
+    }));
+
   } catch (error) {
     throw new Error(error.message);
   }
-
-}
+};
 
 export const setFreqTable = async (res) => {
 
@@ -112,10 +106,6 @@ export const setFreqTable = async (res) => {
           },
           raw: true,
         });
-
-        if(mapel.length==0){
-          return true;
-        }
         
         // Menghitung kemunculan bobot A, B, C pada mapel untuk setiap sumNilai
         sumNilai.forEach(sn => {
@@ -163,8 +153,6 @@ export const setFreqTable = async (res) => {
       }
 
     };
-
-    return false;
 
   } catch (error) {
     throw new Error(error.message);
