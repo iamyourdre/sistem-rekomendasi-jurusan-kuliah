@@ -3,7 +3,7 @@ import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
 import db from "./config/Database.js";
-import { datasetRouter, nbRouter, masterRouter } from "./routes/MainRoute.js";
+import { siswaRouter, datasetRouter, utilsRouter } from "./routes/MainRoute.js";
 import SequelizeStore from "connect-session-sequelize";
 dotenv.config();
 
@@ -32,9 +32,9 @@ app.use(cors({ // mengatur kredensial untuk request dari frontend
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/api/siswa", siswaRouter);
 app.use("/api/dataset", datasetRouter);
-app.use("/api/nb", nbRouter);
-app.use("/api/master", masterRouter);
+app.use("/api/utils", utilsRouter);
 
 app.listen(process.env.APP_PORT, ()=> {
   console.log('Server up and running...');

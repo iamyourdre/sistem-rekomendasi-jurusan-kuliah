@@ -12,7 +12,7 @@ const Dashboard = ({ title, subtitle }) => {
 
   const getDataLength = async () => {
     try {
-      const response = (await axios.get('http://localhost:5000/api/master/getDataLength')).data;
+      const response = (await axios.get('http://localhost:5000/api/utils/getDataLength')).data;
 
       // Pastikan hanya menyimpan data primitif
       const formattedData = {

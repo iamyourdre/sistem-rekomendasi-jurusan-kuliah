@@ -11,6 +11,6 @@ Kombinasikan 2 model:
 
 Hasil kombinasinya, Naive Bayes Classifier dapat memberikan rekomendasi jurusan yang probabilitas kelolosannya paling tinggi berdasarkan data historikal. Kemudian Euclidean Distance mencari potensi yang lebih tinggi berdasarkan pola nilai yang paling mirip atau mendekati dengan nilai rapor penggunanya.
 
-Pengujiannya menggunakan K Means
+Pengujiannya menggunakan K Fold
 
 Evaluasinya dengan precision berdasarkan output setelah naive bayes + euclidean distance karena keluaran yang diberikan pada hasil kombinasi 2 model ini adalah tentang jurusan mana yang polanya paling mendekati nilai rapornya, bukan tentang lolos atau tidaknya.

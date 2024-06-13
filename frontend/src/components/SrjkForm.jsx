@@ -168,9 +168,10 @@ const SrjkForm = () => {
     };
     
     const probData = await naiveBayes(requestBody);
-    const euqDistData = eucDist(myAvgScores, probData);
-    console.log(euqDistData[0])
-  
+    const eucDistData = await eucDist(myAvgScores, probData);
+    setEucDistResult(eucDistData);
+    console.log(eucDistResult)
+    
     const rekomendasiElement = document.getElementById('rekomendasi');
     if (rekomendasiElement) {
       rekomendasiElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -178,7 +179,7 @@ const SrjkForm = () => {
   }
   
   async function naiveBayes(req) {
-    return axios.post('http://localhost:5000/api/nb/naiveBayesClassifier', req).then(response => {
+    return axios.post('http://localhost:5000/api/dataset/naiveBayesClassifier', req).then(response => {
       const probDataFromServer = response.data.probData;
       const sortedProbData = probDataFromServer.sort((a, b) => b.p_yes - a.p_yes);
       setProbData(sortedProbData);
@@ -191,7 +192,7 @@ const SrjkForm = () => {
   }
   
   
-  function eucDist(my_score, probData) {
+  async function eucDist(my_score, probData) {
     let shortestSimilarity = [];
     let shortestScore = 999;
     probData.forEach(data => {
@@ -314,7 +315,7 @@ const SrjkForm = () => {
             <h2 className="text-xl font-bold mb-3">Rekomendasi Jurusan Untuk Anda</h2>
             <div role="alert" className="alert text-left bg-green-500 mb-3 inline-block rounded-md text-white text-sm">
               <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2' />
-              Berdasarkan hasil klasifikasi, <b>anda direkomendasikan untuk masuk ke jurusan <u>{probData[0].jurusan.jurusan}</u></b>. Untuk dijadikan pertimbangan, silahkan cek detail dan rekomendasi lainnya pada tabel dibawah ini.
+              Berdasarkan hasil klasifikasi, <b>anda direkomendasikan untuk masuk ke jurusan <u>{eucDistResult.length > 0 && (eucDistResult[0].jurusan_key.jurusan)}</u></b>. Untuk dijadikan pertimbangan, silahkan cek detail dan rekomendasi lainnya pada tabel dibawah ini.
             </div>
             <div className="overflow-x-auto w-full">
               <table className="w-full table-xs border-collapse border border-gray-400">
@@ -325,7 +326,6 @@ const SrjkForm = () => {
                     <th className="border border-gray-400 px-4 py-2" colSpan='15'>Rata-Rata Bobot</th>
                     <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Rasio Kualifikasi</th>
                     <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Probabilitas Klasifikasi</th>
-                    <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Euclidean Distances</th>
                   </tr>
                   <tr>
                     {mapels.map((mapel, index) => (
@@ -371,9 +371,6 @@ const SrjkForm = () => {
                               {pData.p_yes}
                             </td>
                           )}
-                          <td className="border border-gray-400 px-4 py-2 font-bold">
-                            
-                          </td>
                         </tr>
                       );
                     })
