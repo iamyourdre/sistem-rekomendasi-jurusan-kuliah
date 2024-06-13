@@ -8,31 +8,12 @@ import { convertToGrade, getDataset } from "./UtilsController.js";
 export const createTrainingData = async (req, res) => {
   try {
     
-    let freqError = true
-    
     await DatasetMapelModel.destroy({ where: {} });
     await setMapelTable(res);
-    freqError = await setFreqTable(res);
+    await setFreqTable(res);
 
-    let resCode = 200;
-    if(freqError==true) resCode = 500;
-
-    res.status(resCode).json({
-      message: "Selesai membuat data latih!",
-      freqError: freqError,
-      dataset: await DatasetMapelModel.findAll({
-        include: [
-          {
-            model: DatasetFreqModel,
-            as: 'dataset_freq_key'
-          },
-          {
-            model: JurusanModel,
-            as: 'dataset_mapel_key'
-          },
-        ],
-        raw: true,
-      })
+    res.status(200).json({
+      message: "Selesai membuat data latih!"
     });
 
   } catch (error) {
@@ -125,10 +106,6 @@ export const setFreqTable = async (res) => {
           },
           raw: true,
         });
-
-        if(mapel.length==0){
-          return true;
-        }
         
         // Menghitung kemunculan bobot A, B, C pada mapel untuk setiap sumNilai
         sumNilai.forEach(sn => {
@@ -176,8 +153,6 @@ export const setFreqTable = async (res) => {
       }
 
     };
-
-    return false;
 
   } catch (error) {
     throw new Error(error.message);
