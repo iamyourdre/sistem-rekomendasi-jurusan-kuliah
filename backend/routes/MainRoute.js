@@ -1,18 +1,22 @@
 import express from "express";
 import formData from "../middlewares/ReqBodyHandler.cjs";
 import { uploadDataSiswa } from "../controllers/DataSiswaController.js";
-import { getCollege } from "../controllers/UtilsController.js";
 import { createTrainingData, naiveBayesClassifier  } from "../controllers/DatasetController.js";
+import { createTrainingDataLOOCV  } from "../controllers/EvalController.js";
 import {
   getDataLength,
   getDataSiswa,
   getSiswaEligible,
-  getDataset
+  getDataset,
+  getEval,
+  getCollege,
+  resetDataset
 } from "../controllers/UtilsController.js";
 
-const siswaRouter = express.Router(); // Membuat router khusus untuk dataset routes
-const datasetRouter = express.Router(); // Membuat router khusus untuk NB routes
-const utilsRouter = express.Router(); // Membuat router khusus untuk Master routes
+const siswaRouter = express.Router();
+const datasetRouter = express.Router();
+const evalRouter = express.Router();
+const utilsRouter = express.Router();
 
 siswaRouter.post("/upload", formData.single("file"), uploadDataSiswa);
 siswaRouter.get("/getDataSiswa", getDataSiswa);
@@ -21,8 +25,13 @@ siswaRouter.get("/getCollege", getCollege);
 
 datasetRouter.post("/createTrainingData", createTrainingData);
 datasetRouter.post("/naiveBayesClassifier", formData.single(), naiveBayesClassifier);
-datasetRouter.get("/getAllDataset", getDataset);
 
+evalRouter.post("/createTrainingDataLOOCV", createTrainingDataLOOCV);
+
+utilsRouter.get("/getDataset", getDataset);
+utilsRouter.get("/getEval", getEval);
 utilsRouter.get("/getDataLength", getDataLength);
+utilsRouter.get("/getDataLength", getDataLength);
+utilsRouter.get("/resetDataset", resetDataset);
 
-export { siswaRouter, datasetRouter, utilsRouter };
+export { siswaRouter, datasetRouter, utilsRouter, evalRouter };

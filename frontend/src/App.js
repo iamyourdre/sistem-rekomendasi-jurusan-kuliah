@@ -5,14 +5,14 @@ import { Navbar, Sidebar, Footer } from './components';
 import './App.css';
 
 import { useStateContext } from './contexts/ContextProvider';
-import { Dashboard, Dataset, Srjk, UpdateDataset } from './pages';
+import { Dashboard, Dataset, Evaluation, Srjk, UpdateDataset } from './pages';
 
 const App = () => {
   const { activeMenu } = useStateContext();
   return (
     <div>
       <BrowserRouter>
-        <div className="flex relative">
+        <div className="flex relative min-h-dvh">
           {activeMenu ? (
               <div className='w-64 fixed sidebar'>
                   <Sidebar/>
@@ -33,10 +33,13 @@ const App = () => {
                 {/* Dashboard */}
                 <Route path='/' element={<Dashboard title="Halaman Utama" subtitle="Dashboard"/>}/>
                 {/* Dashboard */}
+
                 <Route path='/dataset/siswa_list' element={<Dataset title="Dataset" subtitle="Semua Siswa"/>}/>
                 <Route path='/dataset/college_list' element={<Dataset title="Dataset" subtitle="Jurusan & Kampus"/>}/>
                 <Route path='/dataset/siswa_eligible' element={<Dataset title="Dataset" subtitle="Siswa Eligible"/>}/>
                 <Route path='/dataset/update' element={<UpdateDataset title="Dataset" subtitle="Update Dataset"/>}/>
+                <Route path='/dataset/evaluation' element={<Evaluation title="Dataset" subtitle="Evaluasi"/>}/>
+
                 <Route path='/feature/srjk' element={<Srjk title="Fitur" subtitle="Rekomendasi Jurusan"/>}/>
               </Routes>
             </div>
