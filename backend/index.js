@@ -3,7 +3,7 @@ import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
 import db from "./config/Database.js";
-import { siswaRouter, datasetRouter, utilsRouter } from "./routes/MainRoute.js";
+import { siswaRouter, datasetRouter, utilsRouter, evalRouter } from "./routes/MainRoute.js";
 import SequelizeStore from "connect-session-sequelize";
 dotenv.config();
 
@@ -34,6 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/siswa", siswaRouter);
 app.use("/api/dataset", datasetRouter);
+app.use("/api/evaluation", evalRouter);
 app.use("/api/utils", utilsRouter);
 
 app.listen(process.env.APP_PORT, ()=> {

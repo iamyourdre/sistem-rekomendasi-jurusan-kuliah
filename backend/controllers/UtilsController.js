@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
 import { NilaiModel, SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { DatasetFreqModel, DatasetMapelModel } from "../models/DatasetModel.js";
+import { EvalFreqModel, EvalMapelModel } from "../models/EvalModel.js";
 
 export const getDataset = async (req, res) => {
   try {
@@ -13,23 +14,60 @@ export const getDataset = async (req, res) => {
         },
         {
           model: JurusanModel,
-          as: 'dataset_mapel_key'
+          as: 'dataset_mapel_key',
+          include: [
+            {
+              model: SiswaModel,
+              as: 'jurusan_key',
+            },
+          ],
         },
       ],
       raw: true,
     });
     res.status(200).json({
-      message: "Dataset berhasil diambil",
       data: dataset
     });
   } catch (error) {
     res.status(500).json({
-      message: "Gagal mengambil dataset",
-      error: error.message
+      message: "Gagal mengambil dataset!",
+      error: error.message,
     });
   }
 };
 
+
+export const getEval = async (req, res) => {
+  try {
+    const dataset = await EvalMapelModel.findAll({
+      include: [
+        {
+          model: EvalFreqModel,
+          as: 'eval_freq_key'
+        },
+        {
+          model: JurusanModel,
+          as: 'eval_mapel_key',
+          include: [
+            {
+              model: SiswaModel,
+              as: 'jurusan_key',
+            },
+          ],
+        },
+      ],
+      raw: true,
+    });
+    res.status(200).json({
+      data: dataset
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Gagal mengambil dataset!",
+      error: error.message,
+    });
+  }
+};
 
 export const getDataLength = async (req, res) => {
   try {
@@ -64,22 +102,29 @@ export const getDataLength = async (req, res) => {
   }
 };
 
-export const resetDataset = async (res) => {
+export const resetDataset = async () => {
   try {
 
-    await NilaiModel.destroy({ where: {} });
-    await SiswaModel.destroy({ where: {} });
-    await SummaryModel.destroy({ where: {} });
+    await JurusanModel.destroy({ where: {} });
+    await UniversitasModel.destroy({ where: {} });
+    
+    if (!await JurusanModel.findOne({ where: { id: 1 } })) {
+      await JurusanModel.create({
+        id: 1,
+        jurusan: "-",
+      });
+    }
+    
+    if (!await UniversitasModel.findOne({ where: { id: 1 } })) {
+      await UniversitasModel.create({
+        id: 1,
+        universitas: "-"
+      });
+    }
 
-    return {
-      success: true,
-      message: "Berhasil menghapus semua dataset!",
-    };
+    return true;
   } catch (error) {
-    return {
-      message: "Gagal menghapus semua dataset!",
-      error: error.message,
-    };
+    return error;
   }
 };
 

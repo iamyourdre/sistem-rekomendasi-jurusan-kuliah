@@ -91,6 +91,13 @@ const Sidebar = () => {
               <NavLink to='/dataset/update' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Update Dataset</NavLink>
             </div>
           </div>
+          
+          <NavLink to='/dataset/evaluation' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
+            <TbFlower className='text-lg'/>
+            <span>
+              Evaluasi
+            </span>
+          </NavLink>
 
         </div>
       </>)}

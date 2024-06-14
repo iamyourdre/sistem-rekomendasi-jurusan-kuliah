@@ -9,7 +9,7 @@ export const uploadDataSiswa = async (req, res) => {
   try {
 
     // Mengecek apakah user meminta reset dataset sebelum menambahkan yang baru?
-    req.body.reset === "y" ? await resetDataset() : null;
+    req.body.reset === "y" ? await resetDataset(res) : null;
 
     // Mengecek apakah file Excel ada
     if (req.file === undefined) {
