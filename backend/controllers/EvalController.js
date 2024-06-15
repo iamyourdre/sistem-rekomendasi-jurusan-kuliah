@@ -2,23 +2,63 @@ import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { EvalMapelModel, EvalFreqModel } from "../models/EvalModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
-import { convertToGrade, getDataset, getEval } from "./UtilsController.js";
+import { convertToGrade, getSiswaEligible } from "./UtilsController.js";
 
 
-export const createTrainingDataLOOCV = async (req, res) => {
+
+export const evalLOOCV = async (req, res) => {
   try {
+
     
-    let testSet = [];
-    let trainingSet = [];
+    const dataLength = await SiswaModel.count({
+      include: [
+        {
+          model: JurusanModel,
+          as: 'jurusan_key',
+          where: {
+            id: {
+              [Sequelize.Op.ne]: 1 // Blacklist jurusan_id yang nilainya 1
+            }
+          },
+        },
+        {
+          model: UniversitasModel,
+          as: 'univ_key',
+        },
+      ],
+    });
+    
+    let iter = 0;
     let counter = 0;
-    await EvalMapelModel.destroy({ where: {} });
-    await setMapelTable(res);
-    const freq = await setFreqTable(testSet, trainingSet, counter, res);
+    let subcounter = 0;
+
+    let log = []
+    
+    while(iter<dataLength){
+      let testSet;
+      let trainingSet;
+
+      await EvalMapelModel.destroy({ where: {} });
+      await setMapelTable(res);
+      const dataset = await setFreqTable(counter, subcounter, res);
+
+      testSet = dataset.testSet;
+      trainingSet = dataset.trainingSet;
+      counter = dataset.counter;
+      subcounter = dataset.subcounter;
+
+      log.push({
+        iter: iter,
+        testSet: testSet,
+        trainingSet: trainingSet
+      })
+
+      iter++;
+    }
 
     res.status(200).json({
       message: "Selesai membuat data latih!",
-      testSet: freq.testSet,
-      trainingSet: freq.trainingSet
+      log: log
     });
 
   } catch (error) {
@@ -68,7 +108,12 @@ export const setMapelTable = async (res) => {
   }
 };
 
-export const setFreqTable = async (testSet, trainingSet, counter, res) => {
+export const setFreqTable = async (counter, subcounter, res) => {
+  
+  let testSet = [];
+  let trainingSet = [];
+
+  let indexJ = 0;
 
   try {
 
@@ -97,12 +142,23 @@ export const setFreqTable = async (testSet, trainingSet, counter, res) => {
         ],
         raw: true,
       });
-      
-      if(counter==1){
-        testSet.push(...sumNilai.splice(counter, 1));
+
+      // sumNilai adalah data nilai untuk setiap iterasi jurusan
+      // mengambil 1 data dari sumNilai sebagai data testing
+      if(counter == indexJ && sumNilai.length==1){
+        subcounter = 0;
+        testSet.push(...sumNilai.splice(subcounter, 1));
+      } else if(counter == indexJ && sumNilai.length>1) {
+        testSet.push(...sumNilai.splice((0, subcounter), 1));
+        if(subcounter < sumNilai.length){
+          subcounter++;
+        } else {
+          subcounter = 0;
+        }
       }
+
+      // menyimpan sisa data sumNilai sebagai data uji
       trainingSet.push(sumNilai);
-      counter++;
 
       // Melakukan iterasi untuk setiap mapel
       for (let x_id = 1; x_id <= 15; x_id++) {
@@ -162,10 +218,14 @@ export const setFreqTable = async (testSet, trainingSet, counter, res) => {
         }
       
       }
-
+      
+      indexJ++;
     };
-
-    return {testSet, trainingSet, counter};
+    
+    if(subcounter==0){
+      counter++;
+    }
+    return {testSet, trainingSet, counter, subcounter};
 
   } catch (error) {
     throw new Error(error.message);
