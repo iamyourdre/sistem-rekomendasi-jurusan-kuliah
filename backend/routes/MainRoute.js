@@ -26,7 +26,7 @@ siswaRouter.get("/getCollege", getCollege);
 datasetRouter.post("/createTrainingData", createTrainingData);
 datasetRouter.post("/naiveBayesClassifier", formData.single(), naiveBayesClassifier);
 
-evalRouter.post("/evalLOOCV", evalLOOCV);
+evalRouter.get("/evalLOOCV", evalLOOCV);
 
 utilsRouter.get("/getDataset", getDataset);
 utilsRouter.get("/getEval", getEval);

@@ -3,13 +3,24 @@ import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { EvalMapelModel, EvalFreqModel } from "../models/EvalModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
 import { convertToGrade, getSiswaEligible } from "./UtilsController.js";
+import distance from 'euclidean-distance';
 
-
+let isProcessing = false;
 
 export const evalLOOCV = async (req, res) => {
-  try {
 
-    
+  if (isProcessing) {
+    res.status(400).json({ message: "Pemrosesan sudah berjalan." });
+    return;
+  }
+
+  isProcessing = true;
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders(); // Memastikan header dikirimkan ke client
+
+  try {
     const dataLength = await SiswaModel.count({
       include: [
         {
@@ -27,14 +38,12 @@ export const evalLOOCV = async (req, res) => {
         },
       ],
     });
-    
+
     let iter = 0;
     let counter = 0;
     let subcounter = 0;
 
-    let log = []
-    
-    while(iter<dataLength){
+    while (iter < dataLength) {
       let testSet;
       let trainingSet;
 
@@ -47,27 +56,111 @@ export const evalLOOCV = async (req, res) => {
       counter = dataset.counter;
       subcounter = dataset.subcounter;
 
-      log.push({
+      const requestBody = {
+        id: testSet[0].siswa_id,
+        x1: Object.values(testSet[0])[2],
+        x2: Object.values(testSet[0])[3],
+        x3: Object.values(testSet[0])[4],
+        x4: Object.values(testSet[0])[5],
+        x5: Object.values(testSet[0])[6],
+        x6: Object.values(testSet[0])[7],
+        x7: Object.values(testSet[0])[8],
+        x8: Object.values(testSet[0])[9],
+        x9: Object.values(testSet[0])[10],
+        x10: Object.values(testSet[0])[11],
+        x11: Object.values(testSet[0])[12],
+        x12: Object.values(testSet[0])[13],
+        x13: Object.values(testSet[0])[14],
+        x14: Object.values(testSet[0])[15],
+        x15: Object.values(testSet[0])[16],
+      };
+
+      const response = await naiveBayesClassifier(requestBody);
+      const sortedProbData = response.sort((a, b) => b.p_yes - a.p_yes);
+
+      const eucDistResult = await eucDist(testSet[0], sortedProbData);
+
+      const logEntry = {
         iter: iter,
         testSet: testSet,
-        trainingSet: trainingSet
-      })
+        trainingSet: trainingSet,
+        probData: sortedProbData,
+        eucDistResult: eucDistResult
+      };
 
+      res.write(`data: ${JSON.stringify(logEntry)}\n\n`);
       iter++;
     }
 
-    res.status(200).json({
-      message: "Selesai membuat data latih!",
-      log: log
-    });
+    isProcessing = false;
+    res.write('event: done\ndata: Selesai membuat data latih!\n\n');
+    res.end();
 
   } catch (error) {
-    res.status(500).json({
-      message: "Gagal membuat data latih!",
-      error: error.message,
-    });
+    res.write(`event: error\ndata: ${JSON.stringify({ message: "Gagal membuat data latih!", error: error.message })}\n\n`);
+    res.end();
   }
 };
+
+
+async function eucDist(my_score, probData) {
+
+  let shortestSimilarity = [];
+  let shortestScore = 999;
+  probData.forEach(data => {
+    data.ref[0].forEach(ref => {
+      ref.summary_key.forEach(score => {
+        const dist = distance([
+          Object.values(my_score)[2], 
+          Object.values(my_score)[3], 
+          Object.values(my_score)[4], 
+          Object.values(my_score)[5], 
+          Object.values(my_score)[6], 
+          Object.values(my_score)[7], 
+          Object.values(my_score)[8], 
+          Object.values(my_score)[9], 
+          Object.values(my_score)[10], 
+          Object.values(my_score)[11], 
+          Object.values(my_score)[12], 
+          Object.values(my_score)[13], 
+          Object.values(my_score)[14], 
+          Object.values(my_score)[15], 
+          Object.values(my_score)[16], 
+        ], [
+          Object.values(Object.values(score)[0])[2], 
+          Object.values(Object.values(score)[0])[3], 
+          Object.values(Object.values(score)[0])[4], 
+          Object.values(Object.values(score)[0])[5], 
+          Object.values(Object.values(score)[0])[6], 
+          Object.values(Object.values(score)[0])[7], 
+          Object.values(Object.values(score)[0])[8], 
+          Object.values(Object.values(score)[0])[9], 
+          Object.values(Object.values(score)[0])[10], 
+          Object.values(Object.values(score)[0])[11], 
+          Object.values(Object.values(score)[0])[12], 
+          Object.values(Object.values(score)[0])[13], 
+          Object.values(Object.values(score)[0])[14], 
+          Object.values(Object.values(score)[0])[15], 
+          Object.values(Object.values(score)[0])[16], 
+        ])
+
+        // jika jarak euc dist sama dengan rekor shortestScore, maka cek tahun angkatan
+        if(dist == shortestScore){ 
+          if(shortestSimilarity[0].akt_thn<ref.akt_thn){
+            shortestSimilarity = [];
+            shortestSimilarity.push(ref); // gunakan angkatan paling baru karena lebih relevan
+            shortestScore = dist;
+          }
+        } else if(dist < shortestScore){
+          shortestSimilarity = [];
+          shortestSimilarity.push(ref); // gunakan angkatan paling baru karena lebih relevan
+          shortestScore = dist;
+        }
+      });
+    });
+  });
+  return shortestSimilarity;
+}
 
 export const setMapelTable = async (res) => {
   try {
@@ -138,6 +231,12 @@ export const setFreqTable = async (counter, subcounter, res) => {
             where: {
               jurusan_id: j.id,
             },
+            include: [
+              {
+                model: JurusanModel,
+                as: 'jurusan_key',
+              },
+            ]
           },
         ],
         raw: true,
@@ -233,10 +332,10 @@ export const setFreqTable = async (counter, subcounter, res) => {
 
 }
 
-export const naiveBayesClassifier = async (req, res) => {
+// Bagaimana cara agar naiveBayesClassifier dapat mengecualikan testSet dari dataSet?
+export const naiveBayesClassifier = async (requestBody) => {
   try {
-    
-    const { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = req.body;
+    const { id, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = requestBody;
 
     const jurusan = await JurusanModel.findAll({
       where: {
@@ -246,7 +345,6 @@ export const naiveBayesClassifier = async (req, res) => {
       }
     });
 
-    // Mengkonversi input nilai menjadi bentuk bobot
     const inputNilai = [
       convertToGrade(x1),
       convertToGrade(x2),
@@ -267,7 +365,6 @@ export const naiveBayesClassifier = async (req, res) => {
 
     const probData = [];
 
-    // Membuat perbandingan probabilitas untuk tiap-tiap jurusan berdasarkan nilai rapor yang diinput
     await Promise.all(jurusan.map(async (j) => {
       const probMapel = [];
       let p_yes = 1;
@@ -277,7 +374,7 @@ export const naiveBayesClassifier = async (req, res) => {
           where: { jurusan_id: j.id, x: x },
           include: [{
             model: EvalFreqModel,
-            as: 'dataset_freq_key',
+            as: 'eval_freq_key',
             where: { bobot: inputNilai[x-1] || "CDE" },
           }],
           raw: true
@@ -288,16 +385,21 @@ export const naiveBayesClassifier = async (req, res) => {
           p: {
             yes: mapel.total_p_yes,
             no: mapel.total_p_no,
-            total_yes: mapel['dataset_freq_key.p_yes'],
-            total_no: mapel['dataset_freq_key.p_no'],
+            total_yes: mapel['eval_freq_key.p_yes'],
+            total_no: mapel['eval_freq_key.p_no'],
           }
         });
-        p_yes *= (mapel['dataset_freq_key.p_yes'] / mapel.total_p_yes);
-        p_no *= (mapel['dataset_freq_key.p_no'] / mapel.total_p_no);
+        p_yes *= (mapel['eval_freq_key.p_yes'] / mapel.total_p_yes);
+        p_no *= (mapel['eval_freq_key.p_no'] / mapel.total_p_no);
       }
       const jurusanData = await JurusanModel.findOne({ where: { id: j.id } });
       const summaryData = await SiswaModel.findAll({
-        where: { jurusan_id: j.id },
+        where: { 
+          jurusan_id: j.id,
+          id: {
+            [Sequelize.Op.ne]: id
+          }
+        },
         include: [
           {
             model: JurusanModel,
@@ -317,7 +419,6 @@ export const naiveBayesClassifier = async (req, res) => {
         ],
       });
 
-      // Menambahkan nilai bobot huruf ke dalam summary_key
       let grade = [];
       summaryData.forEach((data) => {
         data.summary_key.forEach((summary) => {
@@ -350,10 +451,9 @@ export const naiveBayesClassifier = async (req, res) => {
     }));
     probData.sort((a, b) => a.jurusan.id - b.jurusan.id);
 
-    // Membuat output probabilitas final untuk tiap jurusan
-    res.status(200).json({ probData });
+    return probData;
 
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new Error(error.message);
   }
 };
