@@ -72,7 +72,6 @@ export const evalLOOCV = async (req, res) => {
         x12: Object.values(testSet[0])[13],
         x13: Object.values(testSet[0])[14],
         x14: Object.values(testSet[0])[15],
-        x15: Object.values(testSet[0])[16],
       };
 
       const response = await naiveBayesClassifier(requestBody);
@@ -125,7 +124,6 @@ async function eucDist(my_score, probData) {
           Object.values(my_score)[13], 
           Object.values(my_score)[14], 
           Object.values(my_score)[15], 
-          Object.values(my_score)[16], 
         ], [
           Object.values(Object.values(score)[0])[2], 
           Object.values(Object.values(score)[0])[3], 
@@ -141,7 +139,6 @@ async function eucDist(my_score, probData) {
           Object.values(Object.values(score)[0])[13], 
           Object.values(Object.values(score)[0])[14], 
           Object.values(Object.values(score)[0])[15], 
-          Object.values(Object.values(score)[0])[16], 
         ])
 
         // jika jarak euc dist sama dengan rekor shortestScore, maka cek tahun angkatan
@@ -179,7 +176,7 @@ export const setMapelTable = async (res) => {
     jurusan.forEach((d) => {
       const dataset_mapel = [];
     
-      for (let i = 1; i <= 15; i++) {
+      for (let i = 1; i <= 14; i++) {
         dataset_mapel.push({
           jurusan_id: d.id,
           x: i,
@@ -260,7 +257,7 @@ export const setFreqTable = async (counter, subcounter, res) => {
       trainingSet.push(sumNilai);
 
       // Melakukan iterasi untuk setiap mapel
-      for (let x_id = 1; x_id <= 15; x_id++) {
+      for (let x_id = 1; x_id <= 14; x_id++) {
         
         const bobotTemp = [1, 1, 1, 1, 1, 1];
 
@@ -335,7 +332,7 @@ export const setFreqTable = async (counter, subcounter, res) => {
 // Bagaimana cara agar naiveBayesClassifier dapat mengecualikan testSet dari dataSet?
 export const naiveBayesClassifier = async (requestBody) => {
   try {
-    const { id, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = requestBody;
+    const { id, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14 } = requestBody;
 
     const jurusan = await JurusanModel.findAll({
       where: {
@@ -360,7 +357,6 @@ export const naiveBayesClassifier = async (requestBody) => {
       convertToGrade(x12),
       convertToGrade(x13),
       convertToGrade(x14),
-      convertToGrade(x15)
     ];
 
     const probData = [];
@@ -369,7 +365,7 @@ export const naiveBayesClassifier = async (requestBody) => {
       const probMapel = [];
       let p_yes = 1;
       let p_no = 1;
-      for (let x = 1; x <= 15; x++) {
+      for (let x = 1; x <= 14; x++) {
         const mapel = await EvalMapelModel.findOne({
           where: { jurusan_id: j.id, x: x },
           include: [{
@@ -437,7 +433,6 @@ export const naiveBayesClassifier = async (requestBody) => {
             mean_FIS: convertToGrade(summary.mean_FIS),
             mean_KIM: convertToGrade(summary.mean_KIM),
             mean_EKO: convertToGrade(summary.mean_EKO),
-            mean_BING_T: convertToGrade(summary.mean_BING_T),
           });
         });
       });

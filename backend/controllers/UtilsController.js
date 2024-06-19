@@ -264,28 +264,6 @@ export const isDuplication = async (data, u_id, j_id, res) => {
         univ_id: u_id || 1,
         jurusan_id: j_id || 1,
       },
-      // include: [{ 
-      //   model: NilaiModel,
-      //   where: {
-      //     semester: 1,
-      //     PABP: data['SEMESTER_1']['PABP'],
-      //     PPKN: data['SEMESTER_1']['PPKN'],
-      //     B_IND: data['SEMESTER_1']['B_IND'],
-      //     MTK_W: data['SEMESTER_1']['MTK_W'],
-      //     S_IND: data['SEMESTER_1']['S_IND'],
-      //     BING_W: data['SEMESTER_1']['BING_W'],
-      //     S_BUD: data['SEMESTER_1']['S_BUD'],
-      //     PJOK: data['SEMESTER_1']['PJOK'],
-      //     PKWU: data['SEMESTER_1']['PKWU'],
-      //     MTK_T: data['SEMESTER_1']['MTK_T'],
-      //     BIO: data['SEMESTER_1']['BIO'],
-      //     FIS: data['SEMESTER_1']['FIS'],
-      //     KIM: data['SEMESTER_1']['KIM'],
-      //     EKO: data['SEMESTER_1']['EKO'],
-      //     BING_T: data['SEMESTER_1']['BING_T'],
-      //   },
-      //   as: 'nilai_key' 
-      // }],
       raw: true,
     })) return true
 

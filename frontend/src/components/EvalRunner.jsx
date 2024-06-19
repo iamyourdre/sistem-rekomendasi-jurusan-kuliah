@@ -80,7 +80,7 @@ const EvalRunner = () => {
                     <dialog id={`my_modal_${index}`} className="modal">
                       <div className="modal-box">
                         <form method="dialog">
-                          <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                         </form>
                         <h3 className="font-bold text-lg">Fold No.{index+1}</h3>
                         <div className='p-2 my-2 bg-slate-200 rounded-md text-xs'>

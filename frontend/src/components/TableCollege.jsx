@@ -37,7 +37,7 @@ const TableCollege = () => {
         {isLoading ? (
           <div role="alert" className="alert bg-t-light mb-3 inline-block">
             <span><b>Memuat Data</b></span>
-            <span class="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
+            <span className="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
           </div>
         ) : (
           <>
@@ -61,7 +61,7 @@ const TableCollege = () => {
                     <td>{(index+1)+(indexOfLastItem - itemsPerPage)}</td>
                     <td>{college.jurusan}</td>
                     <td>{college.jurusan_key.map((univ) => (
-                      <ul class="list-disc">
+                      <ul className="list-disc">
                         <li>{univ.univ_key.universitas}</li>
                       </ul>
                     ))}</td>

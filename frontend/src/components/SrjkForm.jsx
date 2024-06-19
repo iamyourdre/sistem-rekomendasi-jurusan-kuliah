@@ -4,7 +4,7 @@ import axios from 'axios';
 var distance = require('euclidean-distance');
 
 const SrjkForm = () => {
-  const mapels = ["PABP", "PPKN", "B.Indonesia", "MTK Wajib", "Sejarah Indonesia", "B.Inggris Wajib", "Seni Budaya", "PJOK", "PKWU", "MTK Peminatan", "Biologi", "Fisika", "Kimia", "Ekonomi", "B.Inggris Terapan"];
+  const mapels = ["PABP", "PPKN", "B.Indonesia", "MTK Wajib", "Sejarah Indonesia", "B.Inggris", "Seni Budaya", "PJOK", "PKWU", "MTK Peminatan", "Biologi", "Fisika", "Kimia", "Ekonomi"];
   const semesters = ["1", "2", "3", "4", "5"];
 
   const [formData, setFormData] = useState(getInitialFormData());
@@ -53,19 +53,12 @@ const SrjkForm = () => {
     let updatedFormData = { ...formData }; // Copy the current state
   
     let index = 0;
-    semesters.forEach((semester, semesterIndex) => {
-      mapels.forEach((mapel, mapelIndex) => {
+    semesters.forEach((semester) => {
+      mapels.forEach((mapel) => {
         if (scores[index] !== undefined) {
-          if(semester > 2 && mapelIndex === 14){
-            const key = formatKey(semester, mapel);
-            updatedFormData[key] = 0;
-            handleInputChange(semester, mapel, updatedFormData[key])
-            index--;
-          } else {
-            const key = formatKey(semester, mapel);
-            updatedFormData[key] = scores[index];
-            handleInputChange(semester, mapel, updatedFormData[key])
-          }
+          const key = formatKey(semester, mapel);
+          updatedFormData[key] = scores[index];
+          handleInputChange(semester, mapel, updatedFormData[key]);
         }
         index++;
       });
@@ -164,7 +157,6 @@ const SrjkForm = () => {
       x12: myAvgScores[11],
       x13: myAvgScores[12],
       x14: myAvgScores[13],
-      x15: myAvgScores[14]
     };
     
     const probData = await naiveBayes(requestBody);
@@ -212,8 +204,7 @@ const SrjkForm = () => {
             my_score[10], 
             my_score[11], 
             my_score[12], 
-            my_score[13], 
-            my_score[14], 
+            my_score[13],
           ], [
             Object.values(score)[2], 
             Object.values(score)[3], 
@@ -228,8 +219,7 @@ const SrjkForm = () => {
             Object.values(score)[12], 
             Object.values(score)[13], 
             Object.values(score)[14], 
-            Object.values(score)[15], 
-            Object.values(score)[16], 
+            Object.values(score)[15],
           ])
 
           // jika jarak euc dist sama dengan rekor shortestScore, maka cek tahun angkatan
@@ -273,7 +263,7 @@ const SrjkForm = () => {
                 <span className="label text-xl font-bold mb-2">NILAI SEMESTER {semester}</span>
                 <div className="grid grid-cols-2 gap-3">
                   {mapels.map((mapel) => (
-                    <label key={`semester-${semester}-mapel-${mapel}`} className={`form-control w-full ${semester > 2 && mapel === "B.Inggris Terapan" ? 'hidden' : ''}`}>
+                    <label key={`semester-${semester}-mapel-${mapel}`} className="form-control w-full">
                       <div className="label">
                         <span className="label-text">{mapel}</span>
                       </div>
@@ -282,11 +272,7 @@ const SrjkForm = () => {
                           type="number"
                           placeholder="Masukkan nilai anda"
                           className="input w-full bg-transparent max-w-xs focus-visible:outline-none border-0 p-0"
-                          value={
-                            semester > 2 && mapel === "B.Inggris Terapan"
-                              ? '0'
-                              : formData[formatKey(semester, mapel)] || ''
-                          }
+                          value={formData[formatKey(semester, mapel)] || ''}
                           onChange={(e) => handleInputChange(semester, mapel, e.target.value)}
                           onPaste={handlePaste}
                           id={formatKey(semester, mapel)}
@@ -323,7 +309,7 @@ const SrjkForm = () => {
                   <tr>
                     <th className="border border-gray-400 px-4 py-2" rowSpan='3'>Rekomendasi Jurusan</th>
                     <th className="border border-gray-400 px-4 py-2" rowSpan='2'>Nilai</th>
-                    <th className="border border-gray-400 px-4 py-2" colSpan='15'>Rata-Rata Bobot</th>
+                    <th className="border border-gray-400 px-4 py-2" colSpan='14'>Rata-Rata Bobot</th>
                     <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Rasio Kualifikasi</th>
                     <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Probabilitas Klasifikasi</th>
                   </tr>
@@ -365,7 +351,7 @@ const SrjkForm = () => {
                               </td>
                             );
                           })}
-                          <td className="border border-gray-400 px-4 py-2 font-bold">{(((count - 2) / 15) * 100).toFixed(2)}%</td>
+                          <td className="border border-gray-400 px-4 py-2 font-bold">{((count / 14) * 100).toFixed(2)}%</td>
                           {idx === 0 && (
                             <td className="border border-gray-400 px-4 py-2 font-bold" rowSpan={pData.ref[0].length}>
                               {pData.p_yes}
