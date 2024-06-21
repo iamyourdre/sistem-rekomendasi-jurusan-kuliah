@@ -116,13 +116,13 @@ const UpdateDataset = ({ title, subtitle }) => {
                 {progressStatus === 1 && (
                   <div role="alert" className="alert bg-t-light mb-3 inline-block">
                     <span><b>(0/2)</b> Mengupload dataset</span>
-                    <span class="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
+                    <span className="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
                   </div>
                 )}
                 {progressStatus === 2 && (
                   <div role="alert" className="alert bg-t-light mb-3 inline-block">
                     <span><b>(1/2)</b> Melakukan klasifikasi dataset</span>
-                    <span class="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
+                    <span className="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
                   </div>
                 )}
               </form>

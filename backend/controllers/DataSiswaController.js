@@ -45,76 +45,74 @@ export const uploadDataSiswa = async (req, res) => {
               FIS: rows[(rowIndex + 3)][13],
               KIM: rows[(rowIndex + 3)][14],
               EKO: rows[(rowIndex + 3)][15],
-              BING_T: rows[(rowIndex + 3)][16],
             },
             SEMESTER_2: {
-              PABP: rows[(rowIndex + 3)][2+15],
-              PPKN: rows[(rowIndex + 3)][3+15],
-              B_IND: rows[(rowIndex + 3)][4+15],
-              MTK_W: rows[(rowIndex + 3)][5+15],
-              S_IND: rows[(rowIndex + 3)][6+15],
-              BING_W: rows[(rowIndex + 3)][7+15],
-              S_BUD: rows[(rowIndex + 3)][8+15],
-              PJOK: rows[(rowIndex + 3)][9+15],
-              PKWU: rows[(rowIndex + 3)][10+15],
-              MTK_T: rows[(rowIndex + 3)][11+15],
-              BIO: rows[(rowIndex + 3)][12+15],
-              FIS: rows[(rowIndex + 3)][13+15],
-              KIM: rows[(rowIndex + 3)][14+15],
-              EKO: rows[(rowIndex + 3)][15+15],
-              BING_T: rows[(rowIndex + 3)][16+15],
+              PABP: rows[(rowIndex + 3)][16],
+              PPKN: rows[(rowIndex + 3)][17],
+              B_IND: rows[(rowIndex + 3)][18],
+              MTK_W: rows[(rowIndex + 3)][19],
+              S_IND: rows[(rowIndex + 3)][20],
+              BING_W: rows[(rowIndex + 3)][21],
+              S_BUD: rows[(rowIndex + 3)][22],
+              PJOK: rows[(rowIndex + 3)][23],
+              PKWU: rows[(rowIndex + 3)][24],
+              MTK_T: rows[(rowIndex + 3)][25],
+              BIO: rows[(rowIndex + 3)][26],
+              FIS: rows[(rowIndex + 3)][27],
+              KIM: rows[(rowIndex + 3)][28],
+              EKO: rows[(rowIndex + 3)][29],
             },
             SEMESTER_3: {
-              PABP: rows[(rowIndex + 3)][2+30],
-              PPKN: rows[(rowIndex + 3)][3+30],
-              B_IND: rows[(rowIndex + 3)][4+30],
-              MTK_W: rows[(rowIndex + 3)][5+30],
-              S_IND: rows[(rowIndex + 3)][6+30],
-              BING_W: rows[(rowIndex + 3)][7+30],
-              S_BUD: rows[(rowIndex + 3)][8+30],
-              PJOK: rows[(rowIndex + 3)][9+30],
-              PKWU: rows[(rowIndex + 3)][10+30],
-              MTK_T: rows[(rowIndex + 3)][11+30],
-              BIO: rows[(rowIndex + 3)][12+30],
-              FIS: rows[(rowIndex + 3)][13+30],
-              KIM: rows[(rowIndex + 3)][14+30],
-              EKO: rows[(rowIndex + 3)][15+30],
+              PABP: rows[(rowIndex + 3)][30],
+              PPKN: rows[(rowIndex + 3)][31],
+              B_IND: rows[(rowIndex + 3)][32],
+              MTK_W: rows[(rowIndex + 3)][33],
+              S_IND: rows[(rowIndex + 3)][34],
+              BING_W: rows[(rowIndex + 3)][35],
+              S_BUD: rows[(rowIndex + 3)][36],
+              PJOK: rows[(rowIndex + 3)][37],
+              PKWU: rows[(rowIndex + 3)][38],
+              MTK_T: rows[(rowIndex + 3)][39],
+              BIO: rows[(rowIndex + 3)][40],
+              FIS: rows[(rowIndex + 3)][41],
+              KIM: rows[(rowIndex + 3)][42],
+              EKO: rows[(rowIndex + 3)][43],
             },
             SEMESTER_4: {
-              PABP: rows[(rowIndex + 3)][2+44],
-              PPKN: rows[(rowIndex + 3)][3+44],
-              B_IND: rows[(rowIndex + 3)][4+44],
-              MTK_W: rows[(rowIndex + 3)][5+44],
-              S_IND: rows[(rowIndex + 3)][6+44],
-              BING_W: rows[(rowIndex + 3)][7+44],
-              S_BUD: rows[(rowIndex + 3)][8+44],
-              PJOK: rows[(rowIndex + 3)][9+44],
-              PKWU: rows[(rowIndex + 3)][10+44],
-              MTK_T: rows[(rowIndex + 3)][11+44],
-              BIO: rows[(rowIndex + 3)][12+44],
-              FIS: rows[(rowIndex + 3)][13+44],
-              KIM: rows[(rowIndex + 3)][14+44],
-              EKO: rows[(rowIndex + 3)][15+44],
+              PABP: rows[(rowIndex + 3)][44],
+              PPKN: rows[(rowIndex + 3)][45],
+              B_IND: rows[(rowIndex + 3)][46],
+              MTK_W: rows[(rowIndex + 3)][47],
+              S_IND: rows[(rowIndex + 3)][48],
+              BING_W: rows[(rowIndex + 3)][49],
+              S_BUD: rows[(rowIndex + 3)][50],
+              PJOK: rows[(rowIndex + 3)][51],
+              PKWU: rows[(rowIndex + 3)][52],
+              MTK_T: rows[(rowIndex + 3)][53],
+              BIO: rows[(rowIndex + 3)][54],
+              FIS: rows[(rowIndex + 3)][55],
+              KIM: rows[(rowIndex + 3)][56],
+              EKO: rows[(rowIndex + 3)][57],
             },
             SEMESTER_5: {
-              PABP: rows[(rowIndex + 3)][2+58],
-              PPKN: rows[(rowIndex + 3)][3+58],
-              B_IND: rows[(rowIndex + 3)][4+58],
-              MTK_W: rows[(rowIndex + 3)][5+58],
-              S_IND: rows[(rowIndex + 3)][6+58],
-              BING_W: rows[(rowIndex + 3)][7+58],
-              S_BUD: rows[(rowIndex + 3)][8+58],
-              PJOK: rows[(rowIndex + 3)][9+58],
-              PKWU: rows[(rowIndex + 3)][10+58],
-              MTK_T: rows[(rowIndex + 3)][11+58],
-              BIO: rows[(rowIndex + 3)][12+58],
-              FIS: rows[(rowIndex + 3)][13+58],
-              KIM: rows[(rowIndex + 3)][14+58],
-              EKO: rows[(rowIndex + 3)][15+58],
+              PABP: rows[(rowIndex + 3)][58],
+              PPKN: rows[(rowIndex + 3)][59],
+              B_IND: rows[(rowIndex + 3)][60],
+              MTK_W: rows[(rowIndex + 3)][61],
+              S_IND: rows[(rowIndex + 3)][62],
+              BING_W: rows[(rowIndex + 3)][63],
+              S_BUD: rows[(rowIndex + 3)][64],
+              PJOK: rows[(rowIndex + 3)][65],
+              PKWU: rows[(rowIndex + 3)][66],
+              MTK_T: rows[(rowIndex + 3)][67],
+              BIO: rows[(rowIndex + 3)][68],
+              FIS: rows[(rowIndex + 3)][69],
+              KIM: rows[(rowIndex + 3)][70],
+              EKO: rows[(rowIndex + 3)][71],
             },
-            TAHUN: rows[(rowIndex + 3)][74],
-            UNIV: rows[(rowIndex + 3)][75],
-            JRSN: rows[(rowIndex + 3)][76],
+            TAHUN: rows[(rowIndex + 3)][72],
+            UNIV: rows[(rowIndex + 3)][73],
+            JRSN: rows[(rowIndex + 3)][74],
           };
           dataset.push(datas);
         }
@@ -158,7 +156,6 @@ export const uploadDataSiswa = async (req, res) => {
               mean_FIS: 0,
               mean_KIM: 0,
               mean_EKO: 0,
-              mean_BING_T: 0
             };
       
             for (let i = 1; i <= 5; i++) {
@@ -183,7 +180,6 @@ export const uploadDataSiswa = async (req, res) => {
                 FIS: nilaiSemester.FIS || 0,
                 KIM: nilaiSemester.KIM || 0,
                 EKO: nilaiSemester.EKO || 0,
-                BING_T: (i === 1 || i === 2 ? nilaiSemester.BING_T : 0)
               };
               await NilaiModel.create(nilaiData);
 
@@ -202,7 +198,6 @@ export const uploadDataSiswa = async (req, res) => {
               summaryNilai.mean_FIS += nilaiSemester.FIS || 0;
               summaryNilai.mean_KIM += nilaiSemester.KIM || 0;
               summaryNilai.mean_EKO += nilaiSemester.EKO || 0;
-              summaryNilai.mean_BING_T += (i === 1 || i === 2 ? nilaiSemester.BING_T : 0);
             }
             
             // Menghitung rata-rata nilai mapel
@@ -211,8 +206,6 @@ export const uploadDataSiswa = async (req, res) => {
               totalNilai += summaryNilai[Object.keys(summaryNilai)[i]]; // Mengakses nilai mapel berdasarkan nama atribut
               summaryNilai[Object.keys(summaryNilai)[i]] /= 5; // Menghitung rata-rata nilai mapel
             }
-            totalNilai += summaryNilai[Object.keys(summaryNilai)[16]];
-            summaryNilai[Object.keys(summaryNilai)[16]] /= 2; // Menghitung rata-rata nilai BING_T
             summaryNilai.total = totalNilai; // Menyimpan total nilai ke dalam properti total
 
             // Memasukkan ringkasan rata-rata nilai ke database

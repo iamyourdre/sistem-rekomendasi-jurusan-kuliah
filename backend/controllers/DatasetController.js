@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { DatasetMapelModel, DatasetFreqModel } from "../models/DatasetModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
-import { convertToGrade, getDataset } from "./UtilsController.js";
+import { convertToGrade } from "./UtilsController.js";
 
 
 export const createTrainingData = async (req, res) => {
@@ -41,7 +41,7 @@ export const setMapelTable = async (res) => {
     jurusan.forEach((d) => {
       const dataset_mapel = [];
     
-      for (let i = 1; i <= 15; i++) {
+      for (let i = 1; i <= 14; i++) {
         dataset_mapel.push({
           jurusan_id: d.id,
           x: i,
@@ -94,7 +94,7 @@ export const setFreqTable = async (res) => {
       });
 
       // Melakukan iterasi untuk setiap mapel
-      for (let x_id = 1; x_id <= 15; x_id++) {
+      for (let x_id = 1; x_id <= 14; x_id++) {
         
         const bobotTemp = [1, 1, 1, 1, 1, 1];
 
@@ -163,7 +163,7 @@ export const setFreqTable = async (res) => {
 export const naiveBayesClassifier = async (req, res) => {
   try {
     
-    const { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15 } = req.body;
+    const { x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14 } = req.body;
 
     const jurusan = await JurusanModel.findAll({
       where: {
@@ -189,7 +189,6 @@ export const naiveBayesClassifier = async (req, res) => {
       convertToGrade(x12),
       convertToGrade(x13),
       convertToGrade(x14),
-      convertToGrade(x15)
     ];
 
     const probData = [];
@@ -199,7 +198,7 @@ export const naiveBayesClassifier = async (req, res) => {
       const probMapel = [];
       let p_yes = 1;
       let p_no = 1;
-      for (let x = 1; x <= 15; x++) {
+      for (let x = 1; x <= 14; x++) {
         const mapel = await DatasetMapelModel.findOne({
           where: { jurusan_id: j.id, x: x },
           include: [{
@@ -263,7 +262,6 @@ export const naiveBayesClassifier = async (req, res) => {
             mean_FIS: convertToGrade(summary.mean_FIS),
             mean_KIM: convertToGrade(summary.mean_KIM),
             mean_EKO: convertToGrade(summary.mean_EKO),
-            mean_BING_T: convertToGrade(summary.mean_BING_T),
           });
         });
       });

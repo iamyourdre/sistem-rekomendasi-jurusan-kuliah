@@ -38,7 +38,7 @@ const TableAllSiswa = () => {
         {isLoading ? (
           <div role="alert" className="alert bg-t-light mb-3 inline-block">
             <span><b>Memuat Data</b></span>
-            <span class="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
+            <span className="loading loading-dots loading-sm relative -bottom-2 ml-1"></span>
           </div>
         ) : (
           <>

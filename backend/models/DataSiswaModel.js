@@ -70,10 +70,6 @@ const NilaiModel = db.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    BING_T: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
   },
   {
     freezeTableName: true,
@@ -147,10 +143,6 @@ const SummaryModel = db.define(
       allowNull: false,
     },
     mean_EKO: {
-      type: DataTypes.DOUBLE,
-      allowNull: false,
-    },
-    mean_BING_T: {
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
