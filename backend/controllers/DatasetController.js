@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { DatasetMapelModel, DatasetFreqModel } from "../models/DatasetModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
-import { convertToGrade, getDataset } from "./UtilsController.js";
+import { convertToGrade } from "./UtilsController.js";
 
 
 export const createTrainingData = async (req, res) => {

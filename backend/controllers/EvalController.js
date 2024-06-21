@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { EvalMapelModel, EvalFreqModel } from "../models/EvalModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
-import { convertToGrade, getSiswaEligible } from "./UtilsController.js";
+import { convertToGrade } from "./UtilsController.js";
 import distance from 'euclidean-distance';
 
 let isProcessing = false;

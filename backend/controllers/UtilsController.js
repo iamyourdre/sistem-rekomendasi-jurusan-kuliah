@@ -1,73 +1,6 @@
 import { Sequelize } from "sequelize";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
-import { NilaiModel, SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
-import { DatasetFreqModel, DatasetMapelModel } from "../models/DatasetModel.js";
-import { EvalFreqModel, EvalMapelModel } from "../models/EvalModel.js";
-
-export const getDataset = async (req, res) => {
-  try {
-    const dataset = await DatasetMapelModel.findAll({
-      include: [
-        {
-          model: DatasetFreqModel,
-          as: 'dataset_freq_key'
-        },
-        {
-          model: JurusanModel,
-          as: 'dataset_mapel_key',
-          include: [
-            {
-              model: SiswaModel,
-              as: 'jurusan_key',
-            },
-          ],
-        },
-      ],
-      raw: true,
-    });
-    res.status(200).json({
-      data: dataset
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Gagal mengambil dataset!",
-      error: error.message,
-    });
-  }
-};
-
-
-export const getEval = async (req, res) => {
-  try {
-    const dataset = await EvalMapelModel.findAll({
-      include: [
-        {
-          model: EvalFreqModel,
-          as: 'eval_freq_key'
-        },
-        {
-          model: JurusanModel,
-          as: 'eval_mapel_key',
-          include: [
-            {
-              model: SiswaModel,
-              as: 'jurusan_key',
-            },
-          ],
-        },
-      ],
-      raw: true,
-    });
-    res.status(200).json({
-      data: dataset
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Gagal mengambil dataset!",
-      error: error.message,
-    });
-  }
-};
+import { SiswaModel } from "../models/DataSiswaModel.js";
 
 export const getDataLength = async (req, res) => {
   try {
@@ -277,7 +210,6 @@ export const isDuplication = async (data, u_id, j_id, res) => {
   }
 };
 
-// Function untuk mengkonversi nilai menjadi bentuk bobot
 export function convertToGrade(score) {
   const numericScore = parseFloat(score)
   if (numericScore >= 90) {
