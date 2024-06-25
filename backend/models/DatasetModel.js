@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
 import { JurusanModel } from "./CollegeModel.js";
 
+// Turunan dari JurusanModel yang menyimpan total probabilitas semua bobot dari mapel x
 const DatasetMapelModel = db.define(
   "dataset_mapel",
   {
@@ -49,6 +50,7 @@ DatasetMapelModel.belongsTo(JurusanModel, {
 });
 
 
+// Turunan dari DatasetMapelModel yang menyimpan frekuensi probabilitas masing-masing bobot dari mapel x
 const DatasetFreqModel = db.define(
   "dataset_freq",
   {

@@ -99,7 +99,7 @@ export const setFreqTable = async (res) => {
         const bobotTemp = [1, 1, 1, 1, 1, 1];
 
         // Mengambil parent dari tiap mapel dengan jurusan_id dan mapel (x) tertentu
-        const mapel = await DatasetMapelModel.findAll({
+        const mapel = await DatasetMapelModel.findOne({
           where: {
             jurusan_id: j.id,
             x: x_id
@@ -138,17 +138,15 @@ export const setFreqTable = async (res) => {
         );
         
         // Membuat frequency
-        for (const mpl of mapel) {
-          const freq = [
-            { mapel_id: mpl.id, bobot: "A", p_no: 1, p_yes: bobotTemp[0] },
-            { mapel_id: mpl.id, bobot: "A-", p_no: 1, p_yes: bobotTemp[1] },
-            { mapel_id: mpl.id, bobot: "B+", p_no: 1, p_yes: bobotTemp[2] },
-            { mapel_id: mpl.id, bobot: "B", p_no: 1, p_yes: bobotTemp[3] },
-            { mapel_id: mpl.id, bobot: "B-", p_no: 1, p_yes: bobotTemp[4] },
-            { mapel_id: mpl.id, bobot: "CDE", p_no: 1, p_yes: bobotTemp[5] }
-          ]
-          await DatasetFreqModel.bulkCreate(freq);
-        }
+        const freq = [
+          { mapel_id: mapel.id, bobot: "A", p_no: 1, p_yes: bobotTemp[0] },
+          { mapel_id: mapel.id, bobot: "A-", p_no: 1, p_yes: bobotTemp[1] },
+          { mapel_id: mapel.id, bobot: "B+", p_no: 1, p_yes: bobotTemp[2] },
+          { mapel_id: mapel.id, bobot: "B", p_no: 1, p_yes: bobotTemp[3] },
+          { mapel_id: mapel.id, bobot: "B-", p_no: 1, p_yes: bobotTemp[4] },
+          { mapel_id: mapel.id, bobot: "CDE", p_no: 1, p_yes: bobotTemp[5] }
+        ]
+        await DatasetFreqModel.bulkCreate(freq);
       
       }
 

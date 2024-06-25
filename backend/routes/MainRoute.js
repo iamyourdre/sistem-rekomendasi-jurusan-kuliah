@@ -7,8 +7,6 @@ import {
   getDataLength,
   getDataSiswa,
   getSiswaEligible,
-  getDataset,
-  getEval,
   getCollege,
   resetDataset
 } from "../controllers/UtilsController.js";
@@ -28,8 +26,6 @@ datasetRouter.post("/naiveBayesClassifier", formData.single(), naiveBayesClassif
 
 evalRouter.get("/evalLOOCV", evalLOOCV);
 
-utilsRouter.get("/getDataset", getDataset);
-utilsRouter.get("/getEval", getEval);
 utilsRouter.get("/getDataLength", getDataLength);
 utilsRouter.get("/getDataLength", getDataLength);
 utilsRouter.get("/resetDataset", resetDataset);

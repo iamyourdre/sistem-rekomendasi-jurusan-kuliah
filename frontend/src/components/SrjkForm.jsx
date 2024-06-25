@@ -140,27 +140,27 @@ const SrjkForm = () => {
   }
 
   async function handleSubmit() {
-    const myAvgScores = Object.values(calcAvgScores());
+    const avg = Object.values(calcAvgScores());
   
-    const requestBody = {
-      x1: myAvgScores[0],
-      x2: myAvgScores[1],
-      x3: myAvgScores[2],
-      x4: myAvgScores[3],
-      x5: myAvgScores[4],
-      x6: myAvgScores[5],
-      x7: myAvgScores[6],
-      x8: myAvgScores[7],
-      x9: myAvgScores[8],
-      x10: myAvgScores[9],
-      x11: myAvgScores[10],
-      x12: myAvgScores[11],
-      x13: myAvgScores[12],
-      x14: myAvgScores[13],
+    const myAvg = {
+      x1: avg[0],
+      x2: avg[1],
+      x3: avg[2],
+      x4: avg[3],
+      x5: avg[4],
+      x6: avg[5],
+      x7: avg[6],
+      x8: avg[7],
+      x9: avg[8],
+      x10: avg[9],
+      x11: avg[10],
+      x12: avg[11],
+      x13: avg[12],
+      x14: avg[13],
     };
     
-    const probData = await naiveBayes(requestBody);
-    const eucDistData = await eucDist(myAvgScores, probData);
+    const probData = await naiveBayes(myAvg);
+    const eucDistData = await eucDist(avg, probData);
     setEucDistResult(eucDistData);
     console.log(eucDistResult)
     
