@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import axios from 'axios';
 var distance = require('euclidean-distance');
@@ -12,6 +12,11 @@ const SrjkForm = () => {
   const [myAverageGrades, setMyAverageGrades] = useState({});
   const [probData, setProbData] = useState([]);
   const [eucDistResult, setEucDistResult] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(5);
+
+  const handleShowMore = () => {
+    setVisibleCount(prevCount => prevCount + 5);
+  };
 
   function getInitialFormData() {
     const cookieData = document.cookie.split(';').reduce((acc, cookie) => {
@@ -162,7 +167,6 @@ const SrjkForm = () => {
     const probData = await naiveBayes(myAvg);
     const eucDistData = await eucDist(avg, probData);
     setEucDistResult(eucDistData);
-    console.log(eucDistResult)
     
     const rekomendasiElement = document.getElementById('rekomendasi');
     if (rekomendasiElement) {
@@ -243,9 +247,12 @@ const SrjkForm = () => {
 
   return (
     <div>
+
+      {/* Form Input Nilai */}
       <div className="px-4 md:px-8">
         <div className="bg-p-light rounded-md p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="">
+
             <div>
               <div role="alert" className="alert text-left bg-green-500 mb-3 inline-block rounded-md text-white text-sm">
                 <span className="label text-xl font-bold mb-2">Cara Menggunakan:</span>
@@ -258,31 +265,40 @@ const SrjkForm = () => {
                 </ol>
               </div>
             </div>
-            {semesters.map((semester) => (
-              <div key={`semester-${semester}`} className='border-1 border-t-light rounded-md bg-s-light p-4'>
-                <span className="label text-xl font-bold mb-2">NILAI SEMESTER {semester}</span>
-                <div className="grid grid-cols-2 gap-3">
-                  {mapels.map((mapel) => (
-                    <label key={`semester-${semester}-mapel-${mapel}`} className="form-control w-full">
-                      <div className="label">
-                        <span className="label-text">{mapel}</span>
-                      </div>
-                      <div className="bg-p-light border-1 border-t-light rounded-md px-3 w-full">
+
+            <div class="overflow-x-auto">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Semester</th>
+                    {mapels.map((mapel) => (
+                      <th className="text-wrap">{mapel}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {semesters.map((semester) => (
+                    <tr>
+                      <th>{semester}</th>
+                    {mapels.map((mapel) => (
+                      <th>
                         <input
                           type="number"
                           placeholder="Masukkan nilai anda"
-                          className="input w-full bg-transparent max-w-xs focus-visible:outline-none border-0 p-0"
+                          className="input input-bordered w-16 focus-visible:outline-none text-sm"
                           value={formData[formatKey(semester, mapel)] || ''}
                           onChange={(e) => handleInputChange(semester, mapel, e.target.value)}
                           onPaste={handlePaste}
                           id={formatKey(semester, mapel)}
                         />
-                      </div>
-                    </label>
+                      </th>
+                    ))}
+                    </tr>
                   ))}
-                </div>
-              </div>
-            ))}
+                </tbody>
+              </table>
+            </div>
+
           </div>
           <div className="flex flex-row pt-4">
             <div className="basis-1/5">
@@ -325,7 +341,7 @@ const SrjkForm = () => {
                     ))}
                   </tr>
 
-                  {probData.map((pData, index) => (
+                  {probData.slice(0, visibleCount).map((pData, index) => (
                     pData.ref[0].map((rData, idx) => {
                       let count = 0;
                       return (
@@ -353,9 +369,11 @@ const SrjkForm = () => {
                           })}
                           <td className="border border-gray-400 px-4 py-2 font-bold">{((count / 14) * 100).toFixed(2)}%</td>
                           {idx === 0 && (
-                            <td className="border border-gray-400 px-4 py-2 font-bold" rowSpan={pData.ref[0].length}>
-                              {pData.p_yes}
-                            </td>
+                            <>
+                              <td className="border border-gray-400 px-4 py-2 font-bold" rowSpan={pData.ref[0].length}>
+                                {pData.p_yes}
+                              </td>
+                            </>
                           )}
                         </tr>
                       );
@@ -363,6 +381,11 @@ const SrjkForm = () => {
                   ))}
                 </tbody>
               </table>
+              {visibleCount < probData.length && (
+                <button onClick={handleShowMore} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+                  Tampilkan lainnya
+                </button>
+              )}
             </div>
           </div>
         </div>

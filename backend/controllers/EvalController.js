@@ -92,11 +92,11 @@ export const evalLOOCV = async (req, res) => {
     }
 
     isProcessing = false;
-    res.write('event: done\ndata: Selesai membuat data latih!\n\n');
+    res.write('event: done\ndata: Evaluasi selesai!\n\n');
     res.end();
 
   } catch (error) {
-    res.write(`event: error\ndata: ${JSON.stringify({ message: "Gagal membuat data latih!", error: error.message })}\n\n`);
+    res.write(`event: error\ndata: ${JSON.stringify({ message: "Evaluasi gagal!", error: error.message })}\n\n`);
     res.end();
   }
 };
@@ -275,14 +275,29 @@ export const setFreqTable = async (counter, subcounter, res) => {
           if (sn[Object.keys(sn)[x_id+1]] >= 90) {
             bobotTemp[0]++;
           } else if (sn[Object.keys(sn)[x_id+1]] >= 85) {
+            bobotTemp[0]++;
             bobotTemp[1]++;
           } else if (sn[Object.keys(sn)[x_id+1]] >= 80) {
+            bobotTemp[0]++;
+            bobotTemp[1]++;
             bobotTemp[2]++;
           } else if (sn[Object.keys(sn)[x_id+1]] >= 75) {
+            bobotTemp[0]++;
+            bobotTemp[1]++;
+            bobotTemp[2]++;
             bobotTemp[3]++;
           } else if (sn[Object.keys(sn)[x_id+1]] >= 70) {
+            bobotTemp[0]++;
+            bobotTemp[1]++;
+            bobotTemp[2]++;
+            bobotTemp[3]++;
             bobotTemp[4]++;
           } else {
+            bobotTemp[0]++;
+            bobotTemp[1]++;
+            bobotTemp[2]++;
+            bobotTemp[3]++;
+            bobotTemp[4]++;
             bobotTemp[5]++;
           }
         });
@@ -362,7 +377,7 @@ export const naiveBayesClassifier = async (requestBody) => {
     const probData = [];
 
     await Promise.all(jurusan.map(async (j) => {
-      const probMapel = [];
+      // const probMapel = [];
       let p_yes = 1;
       let p_no = 1;
       for (let x = 1; x <= 14; x++) {
@@ -375,16 +390,16 @@ export const naiveBayesClassifier = async (requestBody) => {
           }],
           raw: true
         });
-        probMapel.push({
-          x: x,
-          bobot: inputNilai[x-1],
-          p: {
-            yes: mapel.total_p_yes,
-            no: mapel.total_p_no,
-            total_yes: mapel['eval_freq_key.p_yes'],
-            total_no: mapel['eval_freq_key.p_no'],
-          }
-        });
+        // probMapel.push({
+        //   x: x,
+        //   bobot: inputNilai[x-1],
+        //   p: {
+        //     yes: mapel.total_p_yes,
+        //     no: mapel.total_p_no,
+        //     total_yes: mapel['eval_freq_key.p_yes'],
+        //     total_no: mapel['eval_freq_key.p_no'],
+        //   }
+        // });
         p_yes *= (mapel['eval_freq_key.p_yes'] / mapel.total_p_yes);
         p_no *= (mapel['eval_freq_key.p_no'] / mapel.total_p_no);
       }

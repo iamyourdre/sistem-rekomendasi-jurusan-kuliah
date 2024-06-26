@@ -112,14 +112,29 @@ export const setFreqTable = async (res) => {
           if (sn[Object.keys(sn)[x_id+1]] >= 90) {
             bobotTemp[0]++;
           } else if (sn[Object.keys(sn)[x_id+1]] >= 85) {
+            bobotTemp[0]++;
             bobotTemp[1]++;
           } else if (sn[Object.keys(sn)[x_id+1]] >= 80) {
+            bobotTemp[0]++;
+            bobotTemp[1]++;
             bobotTemp[2]++;
           } else if (sn[Object.keys(sn)[x_id+1]] >= 75) {
+            bobotTemp[0]++;
+            bobotTemp[1]++;
+            bobotTemp[2]++;
             bobotTemp[3]++;
           } else if (sn[Object.keys(sn)[x_id+1]] >= 70) {
+            bobotTemp[0]++;
+            bobotTemp[1]++;
+            bobotTemp[2]++;
+            bobotTemp[3]++;
             bobotTemp[4]++;
           } else {
+            bobotTemp[0]++;
+            bobotTemp[1]++;
+            bobotTemp[2]++;
+            bobotTemp[3]++;
+            bobotTemp[4]++;
             bobotTemp[5]++;
           }
         });
@@ -172,7 +187,7 @@ export const naiveBayesClassifier = async (req, res) => {
     });
 
     // Mengkonversi input nilai menjadi bentuk bobot
-    const inputNilai = [
+    const myNilai = [
       convertToGrade(x1),
       convertToGrade(x2),
       convertToGrade(x3),
@@ -190,34 +205,34 @@ export const naiveBayesClassifier = async (req, res) => {
     ];
 
     const probData = [];
+    // const probMapel = [];
 
     // Membuat perbandingan probabilitas untuk tiap-tiap jurusan berdasarkan nilai rapor yang diinput
     await Promise.all(jurusan.map(async (j) => {
-      const probMapel = [];
       let p_yes = 1;
       let p_no = 1;
       for (let x = 1; x <= 14; x++) {
-        const mapel = await DatasetMapelModel.findOne({
+        const dataset_mapel = await DatasetMapelModel.findOne({
           where: { jurusan_id: j.id, x: x },
           include: [{
             model: DatasetFreqModel,
             as: 'dataset_freq_key',
-            where: { bobot: inputNilai[x-1] || "CDE" },
+            where: { bobot: myNilai[x-1] || "CDE" },
           }],
           raw: true
         });
-        probMapel.push({
-          x: x,
-          bobot: inputNilai[x-1],
-          p: {
-            yes: mapel.total_p_yes,
-            no: mapel.total_p_no,
-            total_yes: mapel['dataset_freq_key.p_yes'],
-            total_no: mapel['dataset_freq_key.p_no'],
-          }
-        });
-        p_yes *= (mapel['dataset_freq_key.p_yes'] / mapel.total_p_yes);
-        p_no *= (mapel['dataset_freq_key.p_no'] / mapel.total_p_no);
+        // probMapel.push({
+        //   x: x,
+        //   bobot: myNilai[x-1],
+        //   p: {
+        //     yes: dataset_mapel.total_p_yes,
+        //     no: dataset_mapel.total_p_no,
+        //     total_yes: dataset_mapel['dataset_freq_key.p_yes'],
+        //     total_no: dataset_mapel['dataset_freq_key.p_no'],
+        //   }
+        // });
+        p_yes *= (dataset_mapel['dataset_freq_key.p_yes'] / dataset_mapel.total_p_yes);
+        p_no *= (dataset_mapel['dataset_freq_key.p_no'] / dataset_mapel.total_p_no);
       }
       const jurusanData = await JurusanModel.findOne({ where: { id: j.id } });
       const summaryData = await SiswaModel.findAll({

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { FaCircleInfo, FaEye } from 'react-icons/fa6';
+import { FaTimesCircle } from 'react-icons/fa';
+import { FaBullseye, FaCircleCheck, FaCircleInfo, FaEye } from 'react-icons/fa6';
 
 const EvalRunner = () => {
   const [logs, setLogs] = useState([]);
   const [message, setMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [truePos, setTruePos] = useState(0);
+  const [falsePos, setFalsePos] = useState(0);
 
   const initiateProcessing = async () => {
     setIsProcessing(true);
@@ -13,7 +16,26 @@ const EvalRunner = () => {
 
       eventSource.onmessage = (event) => {
         const newLog = JSON.parse(event.data);
-        setLogs((prevLogs) => [...prevLogs, newLog]);
+        setLogs((prevLogs) => {
+          const updatedLogs = [...prevLogs, newLog];
+          let newTruePos = 0;
+          let newFalsePos = 0;
+
+          updatedLogs.forEach((log) => {
+            if (log.testSet && log.eucDistResult) {
+              if (log.testSet[0]["summary_key.jurusan_id"] === log.eucDistResult[0].jurusan_id) {
+                newTruePos++;
+              } else {
+                newFalsePos++;
+              }
+            }
+          });
+
+          setTruePos(newTruePos);
+          setFalsePos(newFalsePos);
+
+          return updatedLogs;
+        });
       };
 
       eventSource.addEventListener('done', (event) => {
@@ -43,29 +65,58 @@ const EvalRunner = () => {
   return (
     <div className="px-4 md:px-8">
       <div className="bg-p-light rounded-md p-6">
-
         {message ? ( 
+          <>
             <div role="alert" className="alert text-left bg-green-500 mb-3 inline-block rounded-md text-white text-sm">
               <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2' />
               {message}
             </div>
-          ) : (isProcessing ? (
-              <div role="alert" className="alert text-left bg-t-light mb-3 inline-block rounded-md text-neutral-700 text-sm">
-                <span><b>Menjalankan Evaluasi</b></span>
-                <span className="loading loading-dots loading-sm relative -bottom-2 ml-2"></span>
+            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 pb-6">
+              <div className="bg-green-200 p-6 rounded-lg flex border-b-1">
+                <div className="flex-1">
+                  <span className="block font-semibold text-sm">True Positive</span>
+                  <p className="text-2xl pt-1 font-medium">{truePos}</p>
+                </div>
+                <div className="flex justify-center items-center w-14 h-14 bg-green-400 rounded-full">
+                  <FaCircleCheck className="text-xl text-white" />
+                </div>
               </div>
-            ) : (
-              <button 
-                className="btn btn-primary mb-4" 
-                onClick={handleStartProcessing}
-                disabled={isProcessing}
-              >
-                {isProcessing ? 'Processing...' : 'Start Processing'}
-              </button>
-            )
-          )
-        }
 
+              <div className="bg-red-200 p-6 rounded-lg flex border-b-1">
+                <div className="flex-1">
+                  <span className="block font-semibold text-sm">False Positive</span>
+                  <p className="text-2xl pt-1 font-medium">{falsePos}</p>
+                </div>
+                <div className="flex justify-center items-center w-14 h-14 bg-red-400 rounded-full">
+                  <FaTimesCircle className="text-xl" />
+                </div>
+              </div>
+
+              <div className="bg-teal-200 p-6 rounded-lg flex border-b-1">
+                <div className="flex-1">
+                  <span className="block text-sm font-medium">Precision</span>
+                  <p className="text-2xl pt-1 font-medium">{(truePos / (truePos + falsePos)).toFixed(3)}</p>
+                </div>
+                <div className="flex justify-center items-center w-14 h-14 bg-teal-400 rounded-full">
+                  <FaBullseye className="text-xl text-white" />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (isProcessing ? (
+          <div role="alert" className="alert text-left bg-t-light mb-3 inline-block rounded-md text-neutral-700 text-sm">
+            <span><b>Menjalankan Evaluasi</b></span>
+            <span className="loading loading-dots loading-sm relative -bottom-2 ml-2"></span>
+          </div>
+        ) : (
+          <button 
+            className="btn btn-primary mb-4" 
+            onClick={handleStartProcessing}
+            disabled={isProcessing}
+          >
+            {isProcessing ? 'Processing...' : 'Start Processing'}
+          </button>
+        ))}
         <div className="overflow-x-auto">
           <table className="table table-xs">
             <thead>
@@ -85,17 +136,27 @@ const EvalRunner = () => {
                   <td>{log.testSet && log.testSet[0].id}</td>
                   <td>{log.testSet && log.testSet[0]["summary_key.jurusan_key.jurusan"]}</td> 
                   <td>{log.testSet && log.eucDistResult && log.eucDistResult[0].jurusan_key.jurusan}</td>
-                  <td>{log.testSet && log.eucDistResult && (log.testSet[0]["summary_key.jurusan_id"] === log.eucDistResult[0].jurusan_id ? (
-                    <div className="badge badge-success gap-2 text-xs text-white">
-                      True
-                    </div>
-                  ) : (
-                    <div className="badge badge-error gap-2 text-xs text-white">
-                      False
-                    </div>
-                  ))}</td>
                   <td>
-                    <button className="my-2" onClick={()=>document.getElementById(`my_modal_${index}`).showModal()}><FaEye /></button>
+                    {(() => {
+                      if (log.testSet && log.eucDistResult) {
+                        if (log.testSet[0]["summary_key.jurusan_id"] === log.eucDistResult[0].jurusan_id) {
+                          return (
+                            <div className="badge badge-success gap-2 text-xs text-white">
+                              True
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div className="badge badge-error gap-2 text-xs text-white">
+                              False
+                            </div>
+                          );
+                        }
+                      }
+                    })()}
+                  </td>
+                  <td>
+                    <button className="my-2" onClick={() => document.getElementById(`my_modal_${index}`).showModal()}><FaEye /></button>
                     <dialog id={`my_modal_${index}`} className="modal">
                       <div className="modal-box">
                         <form method="dialog">
