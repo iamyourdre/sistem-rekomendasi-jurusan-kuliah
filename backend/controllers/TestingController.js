@@ -1,13 +1,13 @@
 import { Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
-import { EvalMapelModel, EvalFreqModel } from "../models/EvalModel.js";
+import { TestingMapelModel, TestingFreqModel } from "../models/TestingModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
 import { convertToGrade } from "./UtilsController.js";
 import distance from 'euclidean-distance';
 
 let isProcessing = false;
 
-export const evalLOOCV = async (req, res) => {
+export const testingByLOOCV = async (req, res) => {
 
   if (isProcessing) {
     res.status(400).json({ message: "Pemrosesan sudah berjalan." });
@@ -47,7 +47,7 @@ export const evalLOOCV = async (req, res) => {
       let testSet;
       let trainingSet;
 
-      await EvalMapelModel.destroy({ where: {} });
+      await TestingMapelModel.destroy({ where: {} });
       await setMapelTable(res);
       const dataset = await setFreqTable(counter, subcounter, res);
 
@@ -92,11 +92,11 @@ export const evalLOOCV = async (req, res) => {
     }
 
     isProcessing = false;
-    res.write('event: done\ndata: Evaluasi selesai!\n\n');
+    res.write('event: done\ndata: Pengujian selesai!\n\n');
     res.end();
 
   } catch (error) {
-    res.write(`event: error\ndata: ${JSON.stringify({ message: "Evaluasi gagal!", error: error.message })}\n\n`);
+    res.write(`event: error\ndata: ${JSON.stringify({ message: "Pengujian gagal!", error: error.message })}\n\n`);
     res.end();
   }
 };
@@ -188,9 +188,9 @@ export const setMapelTable = async (res) => {
       mapelTemp.push(dataset_mapel);
     });
     
-    // Menggunakan Promise.all untuk menambahkan baris-baris ke dalam tabel EvalMapelModel
+    // Menggunakan Promise.all untuk menambahkan baris-baris ke dalam tabel TestingMapelModel
     await Promise.all(mapelTemp.map(async (dataset_mapel) => {
-      await EvalMapelModel.bulkCreate(dataset_mapel);
+      await TestingMapelModel.bulkCreate(dataset_mapel);
     }));
 
   } catch (error) {
@@ -262,7 +262,7 @@ export const setFreqTable = async (counter, subcounter, res) => {
         const bobotTemp = [1, 1, 1, 1, 1, 1];
 
         // Mengambil parent dari tiap mapel dengan jurusan_id dan mapel (x) tertentu
-        const mapel = await EvalMapelModel.findAll({
+        const mapel = await TestingMapelModel.findAll({
           where: {
             jurusan_id: j.id,
             x: x_id
@@ -302,7 +302,7 @@ export const setFreqTable = async (counter, subcounter, res) => {
           }
         });
 
-        await EvalMapelModel.update(
+        await TestingMapelModel.update(
           {
             total_p_yes: bobotTemp[0]+bobotTemp[1]+bobotTemp[2]+bobotTemp[3]+bobotTemp[4]+bobotTemp[5],
             total_p_no: 6
@@ -325,7 +325,7 @@ export const setFreqTable = async (counter, subcounter, res) => {
             { mapel_id: mpl.id, bobot: "B-", p_no: 1, p_yes: bobotTemp[4] },
             { mapel_id: mpl.id, bobot: "CDE", p_no: 1, p_yes: bobotTemp[5] }
           ]
-          await EvalFreqModel.bulkCreate(freq);
+          await TestingFreqModel.bulkCreate(freq);
         }
       
       }
@@ -381,27 +381,17 @@ export const naiveBayesClassifier = async (requestBody) => {
       let p_yes = 1;
       let p_no = 1;
       for (let x = 1; x <= 14; x++) {
-        const mapel = await EvalMapelModel.findOne({
+        const mapel = await TestingMapelModel.findOne({
           where: { jurusan_id: j.id, x: x },
           include: [{
-            model: EvalFreqModel,
-            as: 'eval_freq_key',
+            model: TestingFreqModel,
+            as: 'testing_freq_key',
             where: { bobot: inputNilai[x-1] || "CDE" },
           }],
           raw: true
         });
-        // probMapel.push({
-        //   x: x,
-        //   bobot: inputNilai[x-1],
-        //   p: {
-        //     yes: mapel.total_p_yes,
-        //     no: mapel.total_p_no,
-        //     total_yes: mapel['eval_freq_key.p_yes'],
-        //     total_no: mapel['eval_freq_key.p_no'],
-        //   }
-        // });
-        p_yes *= (mapel['eval_freq_key.p_yes'] / mapel.total_p_yes);
-        p_no *= (mapel['eval_freq_key.p_no'] / mapel.total_p_no);
+        p_yes *= (mapel['testing_freq_key.p_yes'] / mapel.total_p_yes);
+        p_no *= (mapel['testing_freq_key.p_no'] / mapel.total_p_no);
       }
       const jurusanData = await JurusanModel.findOne({ where: { id: j.id } });
       const summaryData = await SiswaModel.findAll({

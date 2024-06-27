@@ -3,8 +3,8 @@ import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
 import { JurusanModel } from "./CollegeModel.js";
 
-const EvalMapelModel = db.define(
-  "eval_mapel",
+const TestingMapelModel = db.define(
+  "testing_mapel",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -31,26 +31,26 @@ const EvalMapelModel = db.define(
   }
 );
 
-JurusanModel.hasMany(EvalMapelModel, {
+JurusanModel.hasMany(TestingMapelModel, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key EvalMapelModel yang terhubung ke JurusanModel
+    name: "jurusan_id", // Nama kolom foreign key TestingMapelModel yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'eval_mapel_key',
-  onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di EvalMapelModel
+  as: 'testing_mapel_key',
+  onDelete: "CASCADE", // Jika data JurusanModel dihapus, hapus juga semua data terkait di TestingMapelModel
 });
 
-EvalMapelModel.belongsTo(JurusanModel, {
+TestingMapelModel.belongsTo(JurusanModel, {
   foreignKey: {
-    name: "jurusan_id", // Nama kolom foreign key EvalMapelModel yang terhubung ke JurusanModel
+    name: "jurusan_id", // Nama kolom foreign key TestingMapelModel yang terhubung ke JurusanModel
     allowNull: false,
   },
-  as: 'eval_mapel_key',
+  as: 'testing_mapel_key',
 });
 
 
-const EvalFreqModel = db.define(
-  "eval_freq",
+const TestingFreqModel = db.define(
+  "testing_freq",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -77,21 +77,21 @@ const EvalFreqModel = db.define(
   }
 );
 
-EvalMapelModel.hasMany(EvalFreqModel, {
+TestingMapelModel.hasMany(TestingFreqModel, {
   foreignKey: {
-    name: "mapel_id", // Nama kolom foreign key EvalFreqModel yang terhubung ke EvalMapelModel
+    name: "mapel_id", // Nama kolom foreign key TestingFreqModel yang terhubung ke TestingMapelModel
     allowNull: false,
   },
-  as: 'eval_freq_key',
-  onDelete: "CASCADE", // Jika data EvalMapelModel dihapus, hapus juga semua data terkait di EvalFreqModel
+  as: 'testing_freq_key',
+  onDelete: "CASCADE", // Jika data TestingMapelModel dihapus, hapus juga semua data terkait di TestingFreqModel
 });
 
-EvalFreqModel.belongsTo(EvalMapelModel, {
+TestingFreqModel.belongsTo(TestingMapelModel, {
   foreignKey: {
-    name: "mapel_id", // Nama kolom foreign key EvalFreqModel yang terhubung ke EvalMapelModel
+    name: "mapel_id", // Nama kolom foreign key TestingFreqModel yang terhubung ke TestingMapelModel
     allowNull: false,
   },
-  as: 'eval_freq_key',
+  as: 'testing_freq_key',
 });
 
-export {EvalMapelModel, EvalFreqModel};
+export {TestingMapelModel, TestingFreqModel};

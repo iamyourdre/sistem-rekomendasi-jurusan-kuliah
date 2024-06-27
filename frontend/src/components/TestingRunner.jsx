@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaTimesCircle } from 'react-icons/fa';
 import { FaBullseye, FaCircleCheck, FaCircleInfo, FaEye } from 'react-icons/fa6';
 
-const EvalRunner = () => {
+const TestingRunner = () => {
   const [logs, setLogs] = useState([]);
   const [message, setMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -12,7 +12,7 @@ const EvalRunner = () => {
   const initiateProcessing = async () => {
     setIsProcessing(true);
     try {
-      const eventSource = new EventSource('http://localhost:5000/api/evaluation/evalLOOCV');
+      const eventSource = new EventSource('http://localhost:5000/api/testing/testingByLOOCV');
 
       eventSource.onmessage = (event) => {
         const newLog = JSON.parse(event.data);
@@ -105,7 +105,7 @@ const EvalRunner = () => {
           </>
         ) : (isProcessing ? (
           <div role="alert" className="alert text-left bg-t-light mb-3 inline-block rounded-md text-neutral-700 text-sm">
-            <span><b>Menjalankan Evaluasi</b></span>
+            <span><b>Menjalankan Pengujian</b></span>
             <span className="loading loading-dots loading-sm relative -bottom-2 ml-2"></span>
           </div>
         ) : (
@@ -185,4 +185,4 @@ const EvalRunner = () => {
   );
 };
 
-export default EvalRunner;
+export default TestingRunner;

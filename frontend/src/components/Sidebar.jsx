@@ -5,7 +5,7 @@ import { FaXmark } from "react-icons/fa6";
 import { TooltipComponent } from '@syncfusion/ej2-react-popups'
 
 import { useStateContext } from '../contexts/ContextProvider'
-import { TbCategory, TbDatabasePlus, TbDatabaseSearch, TbDatabaseStar, TbFlower } from 'react-icons/tb';
+import { TbCategory, TbChartDots3, TbDatabaseSearch, TbDatabaseStar, TbFlower } from 'react-icons/tb';
 
 const Sidebar = () => {
   const { activeMenu, setActiveMenu, screenSize } = useStateContext();
@@ -60,6 +60,12 @@ const Sidebar = () => {
               Rekomendasi Jurusan
             </span>
           </NavLink>
+          <NavLink to='/dataset/testing' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
+            <TbChartDots3 className='text-lg'/>
+            <span>
+              Pengujian
+            </span>
+          </NavLink>
 
           <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 mb-1 uppercase ">
             Dataset
@@ -91,13 +97,6 @@ const Sidebar = () => {
               <NavLink to='/dataset/update' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Update Dataset</NavLink>
             </div>
           </div>
-          
-          <NavLink to='/dataset/evaluation' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
-            <TbFlower className='text-lg'/>
-            <span>
-              Evaluasi
-            </span>
-          </NavLink>
 
         </div>
       </>)}
