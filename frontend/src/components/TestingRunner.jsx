@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaTimesCircle } from 'react-icons/fa';
+import { FaPlay, FaTimesCircle } from 'react-icons/fa';
 import { FaBullseye, FaCircleCheck, FaCircleInfo, FaEye } from 'react-icons/fa6';
 
 const TestingRunner = () => {
@@ -110,11 +110,15 @@ const TestingRunner = () => {
           </div>
         ) : (
           <button 
-            className="btn btn-primary mb-4" 
+            className="btn bg-p-light border border-t-light mb-4" 
             onClick={handleStartProcessing}
             disabled={isProcessing}
           >
-            {isProcessing ? 'Processing...' : 'Start Processing'}
+            {isProcessing ? 'Memproses...' : (
+              <>
+                <FaPlay/>&nbsp; Jalankan Pengujian
+              </>
+              )}
           </button>
         ))}
         <div className="overflow-x-auto">
