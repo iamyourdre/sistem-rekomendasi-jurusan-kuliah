@@ -1,0 +1,82 @@
+###
+// Create a User from Admin Panel
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "name": "Admin",
+    "email": "admin@gmail.com",
+    "password": "123456",
+    "confPassword": "123456",
+    "role": "1"
+}
+
+# Role 1 for admin
+# Role 0 for user
+
+###
+// Create a User from Register
+POST http://localhost:5000/register/user
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john@gmail.com",
+    "password": "123456",
+    "confPassword": "123456"
+}
+
+###
+// Get All Users
+GET http://localhost:5000/users
+
+###
+// Get Single User
+GET http://localhost:5000/users/7c313c8b-9eec-4315-a5d5-a83457a7158e
+
+###
+// Update a User
+PATCH http://localhost:5000/users/a4a0faf5-9c88-4faa-ab3e-9d76b0adb04f
+Content-Type: application/json
+
+{
+    "name": "Adrian",
+    "email": "admin@gmail.com",
+    "password": "123456",
+    "confPassword": "123456",
+    "role": "1"
+}
+
+###
+// Delete a User
+DELETE http://localhost:5000/users/3ff03ae3-d474-4248-a9c5-7b13e88bbbd3
+Content-Type: application/json
+
+###
+// Login Admin
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "123456"
+}
+
+###
+// Login User
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "john@gmail.com",
+    "password": "123456"
+}
+
+###
+// Get Me
+GET http://localhost:5000/me
+
+
+###
+// Logout
+DELETE http://localhost:5000/logout

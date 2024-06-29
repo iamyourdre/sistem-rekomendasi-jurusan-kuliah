@@ -3,8 +3,11 @@ import { Breadcrumb } from '../components';
 import { FaCircleInfo, FaDownload } from 'react-icons/fa6';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 const UpdateDataset = ({ title, subtitle }) => {
+  useAuth();
+
   const [file, setFile] = useState(null);
   const [reset, setReset] = useState(false);
   const [progressStatus, setProgress] = useState(0);

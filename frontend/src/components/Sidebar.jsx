@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { SiShopware } from 'react-icons/si'
 import { FaXmark } from "react-icons/fa6";
 import { TooltipComponent } from '@syncfusion/ej2-react-popups'
+import { useSelector } from 'react-redux';
 
 import { useStateContext } from '../contexts/ContextProvider'
-import { TbCategory, TbChartDots3, TbDatabaseSearch, TbDatabaseStar, TbFlower } from 'react-icons/tb';
+import { TbCategory, TbChartDots3, TbDatabaseSearch, TbDatabaseStar, TbFlower, TbUser } from 'react-icons/tb';
 
 const Sidebar = () => {
+
+  const { user } = useSelector((state)=>state.auth);
+
   const { activeMenu, setActiveMenu, screenSize } = useStateContext();
   const handleCloseSideBar = () => {
     if(activeMenu && screenSize <=900){
@@ -41,62 +45,111 @@ const Sidebar = () => {
 
         <div className="mt-10 ">
 
-          <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
-            Halaman Utama
-          </p>
-          <NavLink to='' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
-            <TbCategory className='text-lg'/>
-            <span>
-              Dashboard
-            </span>
-          </NavLink>
 
-          <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
-            Fitur
-          </p>
-          <NavLink to='feature/srjk' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
-            <TbFlower className='text-lg'/>
-            <span>
-              Rekomendasi Jurusan
-            </span>
-          </NavLink>
-          <NavLink to='/dataset/testing' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
-            <TbChartDots3 className='text-lg'/>
-            <span>
-              Pengujian
-            </span>
-          </NavLink>
+        {user && user.role === 1 && (
+          <>{/* Admin Features */}
+            <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
+              Halaman Utama
+            </p>
+            <NavLink to='' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
+              <TbCategory className='text-lg'/>
+              <span>
+                Dashboard
+              </span>
+            </NavLink>
 
-          <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 mb-1 uppercase ">
-            Dataset
-          </p>
-          <div className="collapse collapse-arrow">
-            <input type="radio" name="my-accordion" className='p-0 m-0 min-h-0'/>
-            <div className="collapse-title gap-5 pl-3 pt-3 pb-2.5 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0 text-sm font-medium">
-              <TbDatabaseSearch className='inline mr-5 relative text-lg bottom-0.5'/>
+            <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
+              Fitur
+            </p>
+            <NavLink to='feature/srjk' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
+              <TbFlower className='text-lg'/>
               <span>
-                Lihat Data
+                Rekomendasi Jurusan
               </span>
-            </div>
-            <div className="collapse-content px-2 m-0 border-b-1 border-t-light">
-              <NavLink to='dataset/siswa_list' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Semua Siswa</NavLink>
-              <NavLink to='dataset/college_list' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Jurusan & Kampus</NavLink>
-              <NavLink to='dataset/siswa_eligible' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Siswa Eligible</NavLink>
-            </div>
-          </div>
-          
-          <div className="collapse collapse-arrow">
-            <input type="radio" name="my-accordion" className='p-0 m-0 min-h-0'/>
-            <div className="collapse-title gap-5 pl-3 pt-3 pb-2.5 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0 text-sm font-medium">
-              <TbDatabaseStar className='inline mr-5 relative text-lg bottom-0.5'/>
+            </NavLink>
+            <NavLink to='/dataset/testing' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
+              <TbChartDots3 className='text-lg'/>
               <span>
-                Pengaturan
+                Pengujian
               </span>
+            </NavLink>
+
+            <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 mb-1 uppercase ">
+              Dataset
+            </p>
+            <div className="collapse collapse-arrow">
+              <input type="radio" name="my-accordion" className='p-0 m-0 min-h-0'/>
+              <div className="collapse-title gap-5 pl-3 pt-3 pb-2.5 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0 text-sm font-medium">
+                <TbDatabaseSearch className='inline mr-5 relative text-lg bottom-0.5'/>
+                <span>
+                  Lihat Data
+                </span>
+              </div>
+              <div className="collapse-content px-2 m-0 border-b-1 border-t-light">
+                <NavLink to='dataset/siswa_list' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Semua Siswa</NavLink>
+                <NavLink to='dataset/college_list' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Jurusan & Kampus</NavLink>
+                <NavLink to='dataset/siswa_eligible' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Siswa Eligible</NavLink>
+              </div>
             </div>
-            <div className="collapse-content px-2 m-0 border-b-1 border-t-light">
-              <NavLink to='/dataset/update' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Update Dataset</NavLink>
+            
+            <div className="collapse collapse-arrow">
+              <input type="radio" name="my-accordion" className='p-0 m-0 min-h-0'/>
+              <div className="collapse-title gap-5 pl-3 pt-3 pb-2.5 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0 text-sm font-medium">
+                <TbDatabaseStar className='inline mr-5 relative text-lg bottom-0.5'/>
+                <span>
+                  Pengaturan
+                </span>
+              </div>
+              <div className="collapse-content px-2 m-0 border-b-1 border-t-light">
+                <NavLink to='/dataset/update' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Update Dataset</NavLink>
+              </div>
             </div>
-          </div>
+          </>
+        )}
+        
+        {!user && (
+          <>{/* Admin Features */}
+
+            <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
+              Fitur
+            </p>
+            <NavLink to='feature/srjk' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
+              <TbFlower className='text-lg'/>
+              <span>
+                Rekomendasi Jurusan
+              </span>
+            </NavLink>
+            
+            <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 mb-1 uppercase ">
+              Informasi
+            </p>
+            <div className="collapse collapse-arrow">
+              <input type="radio" name="my-accordion" className='p-0 m-0 min-h-0'/>
+              <div className="collapse-title gap-5 pl-3 pt-3 pb-2.5 rounded-lg hover:bg-s-light focus:rounded-b-none focus:bg-s-light cursor-pointer w-auto min-h-0 text-sm font-medium">
+                <TbDatabaseSearch className='inline mr-5 relative text-lg bottom-0.5'/>
+                <span>
+                  Siswa Alumni
+                </span>
+              </div>
+              <div className="collapse-content px-2 m-0 border-b-1 border-t-light">
+                <NavLink to='dataset/siswa_list' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Semua Siswa</NavLink>
+                <NavLink to='dataset/college_list' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Jurusan & Kampus</NavLink>
+                <NavLink to='dataset/siswa_eligible' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>Siswa Eligible</NavLink>
+              </div>
+            </div>
+            
+            <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 uppercase ">
+              Kontrol Admin
+            </p>
+            <NavLink to='/login' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
+              <TbUser className='text-lg'/>
+              <span>
+                Login
+              </span>
+            </NavLink>
+
+          </>
+        )}
 
         </div>
       </>)}
