@@ -20,10 +20,11 @@ POST http://localhost:5000/register/user
 Content-Type: application/json
 
 {
-    "name": "John Doe",
-    "email": "john@gmail.com",
+    "name": "Admin",
+    "email": "admin@gmail.com",
     "password": "123456",
-    "confPassword": "123456"
+    "confPassword": "123456",
+    "role": "1"
 }
 
 ###
@@ -36,7 +37,7 @@ GET http://localhost:5000/users/7c313c8b-9eec-4315-a5d5-a83457a7158e
 
 ###
 // Update a User
-PATCH http://localhost:5000/users/a4a0faf5-9c88-4faa-ab3e-9d76b0adb04f
+PATCH http://localhost:5000/users/a3267067-710a-42f9-9501-0568266fcc63
 Content-Type: application/json
 
 {
