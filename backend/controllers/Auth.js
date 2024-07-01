@@ -1,4 +1,4 @@
-import Users from "../models/UserModel.js";
+import UserModel from "../models/UserModel.js";
 import argon2 from "argon2";
 import { authMessage as msg } from "../constant/Message.js";
 
@@ -7,7 +7,7 @@ export const Me = async (req, res) =>{
     if(!req.session.userId){
         return res.status(403).json({msg: msg.loginRequired});
     }
-    const user = await Users.findOne({
+    const user = await UserModel.findOne({
         attributes: ['uuid','name','email','role'],
         where: {
             uuid: req.session.userId
@@ -22,7 +22,7 @@ export const Me = async (req, res) =>{
 
 export const Login = async (req, res) =>{
     try {
-        const userMatch = await Users.findOne({where: {email: req.body.email}});
+        const userMatch = await UserModel.findOne({where: {email: req.body.email}});
         if(!userMatch) return res.status(400).json({msg: msg.loginFailed});
         const passMatch = await argon2.verify(userMatch.password, req.body.password);
         if(!passMatch) return res.status(400).json({msg: msg.loginFailed});

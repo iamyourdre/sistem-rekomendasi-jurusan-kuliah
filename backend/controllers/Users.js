@@ -1,10 +1,10 @@
-import Users from "../models/UserModel.js";
+import UserModel from "../models/UserModel.js";
 import argon2 from "argon2";
 import { authMessage as msg } from "../constant/Message.js";
 
 export const getUsers = async(req, res) => {
     try {
-        const response = await Users.findAll({
+        const response = await UserModel.findAll({
             attributes:['uuid','name','email','role']
         });
         res.status(200).json(response);
@@ -14,7 +14,7 @@ export const getUsers = async(req, res) => {
 }
 export const getUserById = async(req, res) => {
     try {
-        const response = await Users.findOne({
+        const response = await UserModel.findOne({
             attributes:['uuid','name','email','role'],
             where: {
                 uuid: req.params.id
@@ -30,7 +30,7 @@ export const createUser = async(req, res) => {
     if(password !== confPassword) return res.status(400).json({msg: msg.registerPassConfFail});
     const hashPassword = await argon2.hash(password);
     try {
-        await Users.create({
+        await UserModel.create({
             name: name,
             email: email,
             password: hashPassword,
@@ -42,7 +42,7 @@ export const createUser = async(req, res) => {
     }
 }
 export const updateUser = async(req, res) => {
-    const user = await Users.findOne({
+    const user = await UserModel.findOne({
         where: {
             uuid: req.params.id
         }
@@ -57,7 +57,7 @@ export const updateUser = async(req, res) => {
     }
     if(password !== confPassword) return res.json({msg: msg.registerPassConfFail});
     try {
-        await Users.update({
+        await UserModel.update({
             name: name,
             email: email,
             password: hashPassword,
@@ -73,14 +73,14 @@ export const updateUser = async(req, res) => {
     }
 }
 export const deleteUser = async(req, res) => {
-    const user = await Users.findOne({
+    const user = await UserModel.findOne({
         where: {
             uuid: req.params.id
         }
     });
     if(!user) return res.json({msg: msg.userNotFound});
     try {
-        await Users.destroy({
+        await UserModel.destroy({
             where:{
                 id: user.id
             }
