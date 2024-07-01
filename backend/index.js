@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import db from "./config/Database.js";
 import { siswaRouter, datasetRouter, utilsRouter, testingRouter } from "./routes/MainRoute.js";
 import SequelizeStore from "connect-session-sequelize";
+import UserRoute from "./routes/UserRoute.js";
+import AuthRoute from "./routes/AuthRoute.js";
 dotenv.config();
 
 const sessionStore = SequelizeStore(session.Store);
@@ -36,6 +38,9 @@ app.use("/api/siswa", siswaRouter);
 app.use("/api/dataset", datasetRouter);
 app.use("/api/testing", testingRouter);
 app.use("/api/utils", utilsRouter);
+
+app.use(UserRoute);
+app.use(AuthRoute);
 
 app.listen(process.env.APP_PORT, ()=> {
   console.log('Server up and running...');

@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Breadcrumb, TableSiswaEligible } from '../components';
 import { FaCircleCheck, FaFlask, FaLandmark, FaUserGraduate } from 'react-icons/fa6';
 import axios from 'axios';
+import useAuth from '../hooks/useAuth';
 
 const Dashboard = ({ title, subtitle }) => {
+  useAuth();
+  
   const [dataLength, setDataLength] = useState({});
 
   useEffect(() => {

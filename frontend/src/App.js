@@ -6,6 +6,7 @@ import './App.css';
 
 import { useStateContext } from './contexts/ContextProvider';
 import { Dashboard, Dataset, Testing, Srjk, UpdateDataset } from './pages';
+import Login from './pages/Login';
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -30,6 +31,9 @@ const App = () => {
             </div>
             <div className='w-full'>
               <Routes>
+
+                <Route path='/login' element={<Login title="Auth" subtitle="Login"/>}/>
+                
                 {/* Dashboard */}
                 <Route path='/' element={<Dashboard title="Halaman Utama" subtitle="Dashboard"/>}/>
                 {/* Dashboard */}

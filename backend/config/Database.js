@@ -1,9 +1,11 @@
 import { Sequelize } from "sequelize";
+import dotenv from 'dotenv';
 
-// Initialize Sequelize object to connect with the database
-const db = new Sequelize('srjk_adrian', 'root', 'starxshop123', {
-    host: 'localhost', // Database server address
-    dialect: 'mysql' // Database dialect used (in this case, MySQL)
+dotenv.config();
+
+const db = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT
 });
 
-export default db; // Export the Sequelize object for use elsewhere
+export default db;

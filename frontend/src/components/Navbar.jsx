@@ -5,8 +5,12 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 import avatar from '../data/avatar.png';
 import { UserProfile } from '.';
 import { useStateContext } from '../contexts/ContextProvider';
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
+
+  const { user } = useSelector((state)=>state.auth);
+
   const { activeMenu, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize } = useStateContext();
 
   useEffect(() => {
@@ -39,6 +43,8 @@ const Navbar = () => {
       >
         <AiOutlineMenu/>
       </button>
+
+      {user && user.role === 1 && (
       <div className="flex justify-items-end">
         <div
           className="flex items-center gap-2 cursor-pointer py-1 px-2 hover:bg-t-light rounded-lg"
@@ -52,7 +58,7 @@ const Navbar = () => {
           <p>
             <span className="text-14">Hi,</span>
             <span className="font-bold ml-1 text-14">
-              Admin
+            {user.name}
             </span>
           </p>
           <MdKeyboardArrowDown className="text-s-dark opacity-50 text-14" />
@@ -60,6 +66,8 @@ const Navbar = () => {
 
         {isClicked.userProfile && (<UserProfile />)}
       </div>
+      )}
+
     </div>
   );
 };

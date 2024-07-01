@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import axios from 'axios';
 var distance = require('euclidean-distance');
@@ -13,6 +13,8 @@ const SrjkForm = () => {
   const [probData, setProbData] = useState([]);
   const [eucDistResult, setEucDistResult] = useState([]);
   const [visibleCount, setVisibleCount] = useState(5);
+  const [scrollDone, setScrollDone] = useState(false);
+
 
   const handleShowMore = () => {
     setVisibleCount(prevCount => prevCount + 5);
@@ -167,12 +169,8 @@ const SrjkForm = () => {
     const probData = await naiveBayes(myAvg);
     const eucDistData = await eucDist(avg, probData);
     setEucDistResult(eucDistData);
-    
-    const rekomendasiElement = document.getElementById('rekomendasi');
-    if (rekomendasiElement) {
-      rekomendasiElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
+    setScrollDone(false);
+  }  
   
   async function naiveBayes(req) {
     return axios.post('http://localhost:5000/api/dataset/naiveBayesClassifier', req).then(response => {
@@ -244,6 +242,22 @@ const SrjkForm = () => {
     setEucDistResult(shortestSimilarity);
     return shortestSimilarity;
   }
+
+  useEffect(() => {
+    if (scrollDone) {
+      const rekomendasiElement = document.getElementById('rekomendasi');
+      if (rekomendasiElement) {
+        rekomendasiElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [scrollDone]);
+  
+  useEffect(() => {
+    if (eucDistResult) {
+      setScrollDone(true);
+    }
+  }, [eucDistResult]);
+  
 
   return (
     <div>
@@ -382,7 +396,7 @@ const SrjkForm = () => {
                 </tbody>
               </table>
               {visibleCount < probData.length && (
-                <button onClick={handleShowMore} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+                <button onClick={handleShowMore} className="btn bg-p-light border border-t-light my-4" >
                   Tampilkan lainnya
                 </button>
               )}
