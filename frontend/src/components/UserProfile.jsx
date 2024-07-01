@@ -1,7 +1,6 @@
 import React from 'react';
 import { IoMdExit } from "react-icons/io";
-import { FaUserCog } from "react-icons/fa";
-import avatar from '../data/avatar.jpg';
+import avatar from '../data/avatar.png';
 
 const UserProfile = () => {
 

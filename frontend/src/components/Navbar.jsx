@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
-import avatar from '../data/avatar.jpg';
+import avatar from '../data/avatar.png';
 import { UserProfile } from '.';
 import { useStateContext } from '../contexts/ContextProvider';
 
@@ -52,7 +52,7 @@ const Navbar = () => {
           <p>
             <span className="text-14">Hi,</span>
             <span className="font-bold ml-1 text-14">
-              Adrian
+              Admin
             </span>
           </p>
           <MdKeyboardArrowDown className="text-s-dark opacity-50 text-14" />
