@@ -331,7 +331,7 @@ const SrjkForm = () => {
             <h2 className="text-xl font-bold mb-3">Rekomendasi Jurusan Untuk Anda</h2>
             <div role="alert" className="alert text-left bg-green-500 mb-3 inline-block rounded-md text-white text-sm">
               <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2' />
-              Berdasarkan hasil klasifikasi, <b>anda direkomendasikan untuk masuk ke jurusan <u>{eucDistResult.length > 0 && (eucDistResult[0].jurusan_key.jurusan)}</u></b>. Untuk dijadikan pertimbangan, silahkan cek detail dan rekomendasi lainnya pada tabel dibawah ini.
+              Berdasarkan hasil klasifikasi, <b>anda direkomendasikan untuk masuk ke jurusan <u>{eucDistResult && (eucDistResult[0].jurusan_key.jurusan)}</u></b>. Untuk dijadikan pertimbangan, silahkan cek detail dan rekomendasi lainnya pada tabel dibawah ini.
             </div>
             <div className="overflow-x-auto w-full">
               <table className="w-full table-xs border-collapse border border-gray-400">
@@ -362,7 +362,9 @@ const SrjkForm = () => {
                         <tr key={`${index}-${idx}`}>
                           {idx === 0 && (
                             <td className="border border-gray-400 px-4 py-2" rowSpan={pData.ref[0].length}>
-                              {pData.jurusan.jurusan}
+                              <span className={`${(eucDistResult[0].jurusan_key.jurusan == pData.jurusan.jurusan) ? 'tooltip tooltip-open tooltip-primary pt-1' : ''}`} data-tip="⭐">
+                                {pData.jurusan.jurusan}
+                              </span>
                             </td>
                           )}
                           <td className="border border-gray-400 px-4 py-2">
