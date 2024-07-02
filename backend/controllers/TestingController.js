@@ -45,14 +45,12 @@ export const testingByLOOCV = async (req, res) => {
 
     while (iter < dataLength) {
       let testSet;
-      let trainingSet;
 
       await TestingMapelModel.destroy({ where: {} });
       await setMapelTable(res);
       const dataset = await setFreqTable(counter, subcounter, res);
 
       testSet = dataset.testSet;
-      trainingSet = dataset.trainingSet;
       counter = dataset.counter;
       subcounter = dataset.subcounter;
 
@@ -82,7 +80,6 @@ export const testingByLOOCV = async (req, res) => {
       const logEntry = {
         iter: iter,
         testSet: testSet,
-        trainingSet: trainingSet,
         probData: sortedProbData,
         eucDistResult: eucDistResult
       };
@@ -201,7 +198,6 @@ export const setMapelTable = async (res) => {
 export const setFreqTable = async (counter, subcounter, res) => {
   
   let testSet = [];
-  let trainingSet = [];
 
   let indexJ = 0;
 
@@ -252,9 +248,6 @@ export const setFreqTable = async (counter, subcounter, res) => {
           subcounter = 0;
         }
       }
-
-      // menyimpan sisa data sumNilai sebagai data uji
-      trainingSet.push(sumNilai);
 
       // Melakukan iterasi untuk setiap mapel
       for (let x_id = 1; x_id <= 14; x_id++) {
@@ -336,7 +329,7 @@ export const setFreqTable = async (counter, subcounter, res) => {
     if(subcounter==0){
       counter++;
     }
-    return {testSet, trainingSet, counter, subcounter};
+    return {testSet, counter, subcounter};
 
   } catch (error) {
     throw new Error(error.message);
