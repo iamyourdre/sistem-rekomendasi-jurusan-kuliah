@@ -8,6 +8,8 @@ import distance from 'euclidean-distance';
 let isProcessing = false;
 
 export const testingByLOOCV = async (req, res) => {
+  
+  await TestingFreqModel.destroy({ where: {} });
 
   if (isProcessing) {
     res.status(400).json({ message: "Pemrosesan sudah berjalan." });
@@ -47,6 +49,7 @@ export const testingByLOOCV = async (req, res) => {
       let testSet;
 
       await TestingMapelModel.destroy({ where: {} });
+      await TestingFreqModel.destroy({ where: {} });
       await setMapelTable(res);
       const dataset = await setFreqTable(counter, subcounter, res);
 

@@ -125,7 +125,7 @@ const TestingRunner = () => {
           <table className="table table-xs">
             <thead>
               <tr>
-                <th>FOLD</th> 
+                <th>#</th> 
                 <th>ID SISWA</th> 
                 <th>EKSPEKTASI</th> 
                 <th>HASIL</th> 
@@ -166,7 +166,7 @@ const TestingRunner = () => {
                         <form method="dialog">
                           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                         </form>
-                        <h3 className="font-bold text-lg">Fold No.{index+1}</h3>
+                        <h3 className="font-bold text-lg">Iter {index+1}</h3>
                         <div className='p-2 my-2 bg-slate-200 rounded-md text-xs'>
                           <pre><span className='font-semibold'>Test Set:</span> {JSON.stringify(log.testSet[0], null, 2)}</pre>
                         </div>
