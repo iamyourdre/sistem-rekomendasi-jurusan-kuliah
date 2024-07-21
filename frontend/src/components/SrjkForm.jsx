@@ -340,7 +340,7 @@ const SrjkForm = () => {
                     <th className="border border-gray-400 px-4 py-2" rowSpan='3'>Rekomendasi Jurusan</th>
                     <th className="border border-gray-400 px-4 py-2" rowSpan='2'>Nilai</th>
                     <th className="border border-gray-400 px-4 py-2" colSpan='14'>Rata-Rata Bobot</th>
-                    <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Rasio Kualifikasi</th>
+                    {/* <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Rasio Kualifikasi</th> */}
                     <th className="border border-gray-400 bg-p-dark text-white px-4 py-2" rowSpan='3'>Probabilitas Klasifikasi</th>
                   </tr>
                   <tr>
@@ -357,7 +357,7 @@ const SrjkForm = () => {
 
                   {probData.slice(0, visibleCount).map((pData, index) => (
                     pData.ref[0].map((rData, idx) => {
-                      let count = 0;
+                      // let count = 0;
                       return (
                         <tr key={`${index}-${idx}`}>
                           {idx === 0 && (
@@ -375,7 +375,7 @@ const SrjkForm = () => {
                           </td>
                           {Object.keys(rData.summary_key[0]).map((key, id) => {
                             const status = isLowerSameBigger(convertToGrade(myAverageScores[mapels[id - 2]]), convertToGrade(rData.summary_key[0][key]));
-                            if (status !== -1) { count++; }
+                            // if (status !== -1) { count++; }
                             return (
                               key.startsWith('mean_') &&
                               <td key={id} className={`border border-gray-400 px-4 py-2 font-semibold ${status > -1 ? (status === 0 ? 'bg-green-300' : 'bg-teal-300') : 'bg-red-300'}`}>
@@ -383,7 +383,7 @@ const SrjkForm = () => {
                               </td>
                             );
                           })}
-                          <td className="border border-gray-400 px-4 py-2 font-bold">{((count / 14) * 100).toFixed(2)}%</td>
+                          {/* <td className="border border-gray-400 px-4 py-2 font-bold">{((count / 14) * 100).toFixed(2)}%</td> */}
                           {idx === 0 && (
                             <>
                               <td className="border border-gray-400 px-4 py-2 font-bold" rowSpan={pData.ref[0].length}>

@@ -150,7 +150,6 @@ export const getDataSiswa = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     res.status(500).json({
-      message: "Gagal mengambil dataset!",
       error: error.message,
     });
   }
@@ -182,7 +181,6 @@ export const getSiswaEligible = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     res.status(500).json({
-      message: "Gagal mengambil dataset!",
       error: error.message,
     });
   }
@@ -205,7 +203,7 @@ export const isDuplication = async (data, u_id, j_id, res) => {
   } catch (error) {
     console.log(error.message);
     res.status(500).json({
-      message: "Gagal melakukan operasi pengecekan duplikasi!",
+      error: error.message
     });
   }
 };

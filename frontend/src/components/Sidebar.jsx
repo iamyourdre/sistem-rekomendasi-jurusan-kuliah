@@ -73,6 +73,12 @@ const Sidebar = () => {
                 Pengujian
               </span>
             </NavLink>
+            <NavLink to='/dataset/test_history' className={({isActive}) => isActive ? activeLink : normalLink} onClick={() => handleCloseSideBar()}>
+              <TbChartDots3 className='text-lg'/>
+              <span>
+                Riwayat Pengujian
+              </span>
+            </NavLink>
 
             <p className="text-s-dark opacity-65 text-xs font-semibold ms-3 mt-4 mb-1 uppercase ">
               Dataset
