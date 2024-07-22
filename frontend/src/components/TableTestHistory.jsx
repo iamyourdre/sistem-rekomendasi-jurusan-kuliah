@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import axios from 'axios';
-import { FaCircleInfo, FaEye, FaXmark } from "react-icons/fa6";
+import { FaCircleInfo, FaEye } from "react-icons/fa6";
+import { FaTrash } from 'react-icons/fa';
 
 const TableTestHistory = () => {
   const [testHistoryData, setTestHistoryData] = useState([]);
@@ -131,10 +133,14 @@ const TableTestHistory = () => {
                         </div>
                       </td>
                       <td>{history.tp + history.fp}</td> 
-                      <td><FaEye /></td>
+                      <td>
+                        <NavLink to={`/dataset/test_log/${history.id}`}>
+                          <FaEye />
+                        </NavLink>
+                      </td>
                       <td>
                         <button onClick={() => deleteTestHistory(history.id)}>
-                          <FaXmark className='text-red-500'/>
+                          <FaTrash className='text-red-500'/>
                         </button>
                       </td>
                     </tr>

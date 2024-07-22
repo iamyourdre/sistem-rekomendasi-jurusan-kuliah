@@ -2,7 +2,7 @@ import express from "express";
 import formData from "../middlewares/ReqBodyHandler.cjs";
 import { uploadDataSiswa } from "../controllers/DataSiswaController.js";
 import { createTrainingData, naiveBayesClassifier  } from "../controllers/DatasetController.js";
-import { deleteTestHistory, getTestHistory, testingByLOOCV  } from "../controllers/TestingController.js";
+import { deleteTestHistory, getTestHistory, getTestLog, testingByLOOCV  } from "../controllers/TestingController.js";
 import {
   getDataLength,
   getDataSiswa,
@@ -26,6 +26,7 @@ datasetRouter.post("/naiveBayesClassifier", formData.single(), naiveBayesClassif
 
 testingRouter.get("/testingByLOOCV", testingByLOOCV);
 testingRouter.get("/getTestHistory", getTestHistory);
+testingRouter.get("/getTestLog/:id", getTestLog);
 testingRouter.delete("/deleteTestHistory", deleteTestHistory);
 
 utilsRouter.get("/getDataLength", getDataLength);
