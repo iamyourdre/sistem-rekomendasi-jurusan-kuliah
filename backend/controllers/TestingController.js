@@ -4,10 +4,13 @@ import { TestingMapelModel, TestingFreqModel } from "../models/TestingModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
 import { convertToGrade } from "./UtilsController.js";
 import distance from 'euclidean-distance';
+import { TestingHistoryModel, TestingLogModel } from "../models/TestingHistory.js";
 
 let isProcessing = false;
 
 export const testingByLOOCV = async (req, res) => {
+  
+  await TestingFreqModel.destroy({ where: {} });
 
   if (isProcessing) {
     res.status(400).json({ message: "Pemrosesan sudah berjalan." });
@@ -21,6 +24,7 @@ export const testingByLOOCV = async (req, res) => {
   res.flushHeaders(); // Memastikan header dikirimkan ke client
 
   try {
+    const testingHistory = await TestingHistoryModel.create({ fields: ['id'] });
     const dataLength = await SiswaModel.count({
       include: [
         {
@@ -42,11 +46,14 @@ export const testingByLOOCV = async (req, res) => {
     let iter = 0;
     let counter = 0;
     let subcounter = 0;
+    let count_tp = 0;
+    let count_fp = 0;
 
     while (iter < dataLength) {
       let testSet;
 
       await TestingMapelModel.destroy({ where: {} });
+      await TestingFreqModel.destroy({ where: {} });
       await setMapelTable(res);
       const dataset = await setFreqTable(counter, subcounter, res);
 
@@ -81,12 +88,35 @@ export const testingByLOOCV = async (req, res) => {
         iter: iter,
         testSet: testSet,
         probData: sortedProbData,
-        eucDistResult: eucDistResult
+        eucDistResult: eucDistResult,
       };
+
+      const precision = logEntry.testSet[0]["summary_key.jurusan_id"] === logEntry.eucDistResult[0].jurusan_id;
+      if(precision){
+        count_tp++
+      } else {
+        count_fp++
+      }
+      
+      await TestingLogModel.create({
+        t_hist_id: testingHistory.id,
+        id_siswa: logEntry.testSet[0].id,
+        expected: logEntry.testSet[0]["summary_key.jurusan_key.jurusan"],
+        result: logEntry.eucDistResult[0].jurusan_key.jurusan,
+        precision: precision,
+        log_testset: JSON.stringify(logEntry.testSet[0], null, 2),
+        log_recommendation: JSON.stringify(logEntry.eucDistResult[0], null, 2)
+      });
 
       res.write(`data: ${JSON.stringify(logEntry)}\n\n`);
       iter++;
     }
+
+    const precision = (count_tp / (count_tp + count_fp)).toFixed(3);
+    await TestingHistoryModel.update(
+      {tp: count_tp, fp: count_fp, precision: precision},
+      {where:{id: testingHistory.id}}
+    )
 
     isProcessing = false;
     res.write('event: done\ndata: Pengujian selesai!\n\n');
@@ -448,5 +478,37 @@ export const naiveBayesClassifier = async (requestBody) => {
 
   } catch (error) {
     throw new Error(error.message);
+  }
+};
+
+export const getTestHistory = async (req, res) => {
+  try {
+    const testHistory = await TestingHistoryModel.findAll({
+      order: [
+        ['updatedAt', 'DESC']
+      ]
+    });
+    res.status(200).json({
+      data: testHistory
+    });    
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
+export const deleteTestHistory = async (req, res) => {
+  try {
+    const testHistory = await TestingHistoryModel.destroy({
+      where: {id: req.body.id}
+    });
+    res.status(200).json({
+      message: `Riwayat pengujian no.${req.body.id} berhasil dihapus!`
+    });    
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };

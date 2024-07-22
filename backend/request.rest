@@ -1,4 +1,4 @@
-###
+  ###
 // Create a User from Admin Panel
 POST http://localhost:5000/users
 Content-Type: application/json
@@ -6,8 +6,8 @@ Content-Type: application/json
 {
     "name": "Admin",
     "email": "admin@gmail.com",
-    "password": "123456",
-    "confPassword": "123456",
+    "password": "12345678",
+    "confPassword": "12345678",
     "role": "1"
 }
 
@@ -22,8 +22,8 @@ Content-Type: application/json
 {
     "name": "Admin",
     "email": "admin@gmail.com",
-    "password": "123456",
-    "confPassword": "123456",
+    "password": "12345678",
+    "confPassword": "12345678",
     "role": "1"
 }
 
@@ -81,3 +81,7 @@ GET http://localhost:5000/me
 ###
 // Logout
 DELETE http://localhost:5000/logout
+
+###
+// Get Test History
+GET http://localhost:5000/api/testing/getTestHistory
