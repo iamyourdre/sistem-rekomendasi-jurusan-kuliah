@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FaArrowLeft, FaTimesCircle, FaTrash } from 'react-icons/fa';
-import { FaBullseye, FaCircleCheck, FaEye } from 'react-icons/fa6';
+import { FaTimesCircle, FaTrash } from 'react-icons/fa';
+import { FaBullseye, FaCircleCheck, FaEye, FaArrowLeft } from 'react-icons/fa6';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const TableTestLog = ({ id }) => {
@@ -48,21 +48,21 @@ const TableTestLog = ({ id }) => {
 
   return (
     <div className="px-4 md:px-8">
+      <div className=''>
+        <NavLink
+          to='/dataset/test_history' 
+          className="btn bg-p-light border border-t-light mb-4"
+        >
+          <FaArrowLeft />&nbsp; Kembali
+        </NavLink>
+        <button
+          onClick={() => deleteTestHistory(id)}
+          className="btn bg-red-500 border mb-4 float-end"
+        >
+          <FaTrash />
+        </button>
+      </div>
       <div className="bg-p-light rounded-md p-6">
-        <div className=''>
-          <NavLink
-            to='/dataset/test_history' 
-            className="btn bg-p-light border border-t-light mb-4"
-          >
-            <FaArrowLeft />&nbsp; Kembali
-          </NavLink>
-          <button
-            onClick={() => deleteTestHistory(id)}
-            className="btn bg-red-500 border mb-4 float-end"
-          >
-            <FaTrash />
-          </button>
-        </div>
         <div className="grid gap-4 grid-cols-2 md:grid-cols-3 pb-6">
           <div className="bg-green-200 p-6 rounded-lg flex border-b-1">
             <div className="flex-1">

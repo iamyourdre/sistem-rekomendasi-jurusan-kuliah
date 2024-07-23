@@ -9,7 +9,7 @@ const TestLog = ({ title, subtitle }) => {
 
   return (
     <div className="w-full">
-      <Breadcrumb menu={title} submenu={`${subtitle} ${id}`}/>
+      <Breadcrumb menu={title} submenu={subtitle}/>
       <TableTestLog id={id}/>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
-import { FaCircleInfo, FaEye } from "react-icons/fa6";
+import { FaArrowLeft, FaCircleInfo, FaEye } from "react-icons/fa6";
 import { FaTrash } from 'react-icons/fa';
 
 const TableTestHistory = () => {
@@ -75,6 +75,12 @@ const TableTestHistory = () => {
 
   return (
     <div className="px-4 md:px-8">
+      <NavLink
+        to='/dataset/testing' 
+        className="btn bg-p-light border border-t-light mb-4 shadow-none"
+      >
+        <FaArrowLeft />&nbsp; Kembali
+      </NavLink>
       <div className="bg-p-light rounded-md p-6">
         {isLoading ? (
           <div role="alert" className="alert bg-t-light mb-3 inline-block">
