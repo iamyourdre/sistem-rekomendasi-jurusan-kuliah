@@ -333,6 +333,29 @@ const SrjkForm = () => {
               <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2' />
               Berdasarkan hasil klasifikasi, <b>anda direkomendasikan untuk masuk ke jurusan <u>{eucDistResult && (eucDistResult[0].jurusan_key.jurusan)}</u></b>. Untuk dijadikan pertimbangan, silahkan cek detail dan rekomendasi lainnya pada tabel dibawah ini.
             </div>
+            <div>               
+              <button 
+                className="btn bg-p-light border border-t-light mb-4" 
+                onClick={() => document.getElementById(`color_modal`).showModal()}
+              >
+                <FaCircleInfo/>&nbsp; Keterangan Warna Tabel
+              </button>
+              <dialog id="color_modal" className="modal">
+                <div className="modal-box">
+                  <form method="dialog">
+                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                  </form>
+                  <h3 className="font-bold text-lg">Keterangan Warna Tabel</h3>
+                  <hr className="my-4"/>
+                  <p className="mb-2"><span class="inline-flex items-center rounded-md bg-teal-300 px-2 py-1 font-medium text-p-dark ring-1 ring-inset ring-teal-600/20"> Tabel Biru </span> <span className="text-sm">: Nilai anda lebih tinggi dari syarat lolos.</span></p>
+                  <p className="mb-2"><span class="inline-flex items-center rounded-md bg-green-300 px-2 py-1 font-medium text-p-dark ring-1 ring-inset ring-green-600/20"> Tabel Hijau </span> <span className="text-sm">: Nilai anda sama dengan syarat lolos.</span></p>
+                  <p className="mb-2"><span class="inline-flex items-center rounded-md bg-red-300 px-2 py-1 font-medium text-p-dark ring-1 ring-inset ring-red-600/20"> Tabel Merah </span> <span className="text-sm">: Nilai anda tidak memenuhi syarat lolos.</span></p>
+                </div>
+                <form method="dialog" className="modal-backdrop">
+                  <button>close</button>
+                </form>
+              </dialog>
+            </div>
             <div className="overflow-x-auto w-full">
               <table className="w-full table-xs border-collapse border border-gray-400">
                 <tbody>

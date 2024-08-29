@@ -1,2 +1,0 @@
-USE srjk_adrian;
-SELECT * FROM summary_nilai;

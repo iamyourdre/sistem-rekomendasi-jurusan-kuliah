@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import axios from 'axios';
-import { FaCircleInfo, FaEye, FaXmark } from "react-icons/fa6";
+import { FaArrowLeft, FaCircleInfo, FaEye } from "react-icons/fa6";
+import { FaTrash } from 'react-icons/fa';
 
 const TableTestHistory = () => {
   const [testHistoryData, setTestHistoryData] = useState([]);
@@ -73,6 +75,12 @@ const TableTestHistory = () => {
 
   return (
     <div className="px-4 md:px-8">
+      <NavLink
+        to='/dataset/testing' 
+        className="btn bg-p-light border border-t-light mb-4 shadow-none"
+      >
+        <FaArrowLeft />&nbsp; Kembali
+      </NavLink>
       <div className="bg-p-light rounded-md p-6">
         {isLoading ? (
           <div role="alert" className="alert bg-t-light mb-3 inline-block">
@@ -131,10 +139,14 @@ const TableTestHistory = () => {
                         </div>
                       </td>
                       <td>{history.tp + history.fp}</td> 
-                      <td><FaEye /></td>
+                      <td>
+                        <NavLink to={`/dataset/test_log/${history.id}`}>
+                          <FaEye />
+                        </NavLink>
+                      </td>
                       <td>
                         <button onClick={() => deleteTestHistory(history.id)}>
-                          <FaXmark className='text-red-500'/>
+                          <FaTrash className='text-red-500'/>
                         </button>
                       </td>
                     </tr>

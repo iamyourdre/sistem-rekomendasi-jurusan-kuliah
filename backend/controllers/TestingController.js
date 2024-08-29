@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import { SiswaModel, SummaryModel } from "../models/DataSiswaModel.js";
 import { TestingMapelModel, TestingFreqModel } from "../models/TestingModel.js";
 import { JurusanModel, UniversitasModel } from "../models/CollegeModel.js";
@@ -486,7 +486,10 @@ export const getTestHistory = async (req, res) => {
     const testHistory = await TestingHistoryModel.findAll({
       order: [
         ['updatedAt', 'DESC']
-      ]
+      ],
+      where: {
+        tp: {[Op.ne]: -1}
+      }
     });
     res.status(200).json({
       data: testHistory
@@ -498,10 +501,36 @@ export const getTestHistory = async (req, res) => {
   }
 };
 
+export const getTestLog = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const testHistory = await TestingHistoryModel.findOne({
+      where: {
+        id: id
+      }
+    });
+    const testLog = await TestingLogModel.findAll({
+      where: {
+        t_hist_id: id
+      }
+    });
+    res.status(200).json({
+      testHistory,
+      testLog
+    });    
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
 export const deleteTestHistory = async (req, res) => {
   try {
     const testHistory = await TestingHistoryModel.destroy({
-      where: {id: req.body.id}
+      where: {
+        id: req.body.id
+      }
     });
     res.status(200).json({
       message: `Riwayat pengujian no.${req.body.id} berhasil dihapus!`

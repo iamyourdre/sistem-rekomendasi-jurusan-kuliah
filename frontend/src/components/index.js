@@ -9,4 +9,5 @@ export { default as TableCollege } from './TableCollege';
 export { default as SrjkForm } from './SrjkForm';
 export { default as TestingRunner } from './TestingRunner';
 export { default as TableTestHistory } from './TableTestHistory';
+export { default as TableTestLog } from './TableTestLog';
 export { default as Footer } from './Footer';

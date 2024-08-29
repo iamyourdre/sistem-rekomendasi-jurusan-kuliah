@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { FaPlay, FaTimesCircle } from 'react-icons/fa';
+import { FaHistory, FaPlay, FaTimesCircle } from 'react-icons/fa';
 import { FaBullseye, FaCircleCheck, FaCircleInfo, FaEye } from 'react-icons/fa6';
+import { NavLink } from 'react-router-dom';
 
 const TestingRunner = () => {
   const [logs, setLogs] = useState([]);
@@ -65,7 +66,35 @@ const TestingRunner = () => {
   return (
     <div className="px-4 md:px-8">
       <div className="bg-p-light rounded-md p-6">
-        {message ? ( 
+        <NavLink to='/dataset/test_history' 
+          className="btn bg-p-light border border-t-light mb-4 float-end" 
+        >
+          <FaHistory/>&nbsp; Riwayat Pengujian
+        </NavLink>
+        {!message ? (
+          isProcessing ? (
+            <>
+              <div role="alert" className="alert text-left bg-t-light mb-3 inline-block rounded-md text-neutral-700 text-sm">
+                <span><b>Menjalankan Pengujian</b></span>
+                <span className="loading loading-dots loading-sm relative -bottom-2 ml-2"></span>
+              </div>
+            </>
+          ) : (
+            <>
+              <button 
+                className="btn bg-p-light border border-t-light mb-4" 
+                onClick={handleStartProcessing}
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Memproses...' : (
+                  <>
+                    <FaPlay/>&nbsp; Jalankan Pengujian
+                  </>
+                  )}
+              </button>
+            </>
+          )
+        ) : ( 
           <>
             <div role="alert" className="alert text-left bg-green-500 mb-3 inline-block rounded-md text-white text-sm">
               <FaCircleInfo className='inline text-md relative bottom-0.5 mr-2' />
@@ -103,24 +132,7 @@ const TestingRunner = () => {
               </div>
             </div>
           </>
-        ) : (isProcessing ? (
-          <div role="alert" className="alert text-left bg-t-light mb-3 inline-block rounded-md text-neutral-700 text-sm">
-            <span><b>Menjalankan Pengujian</b></span>
-            <span className="loading loading-dots loading-sm relative -bottom-2 ml-2"></span>
-          </div>
-        ) : (
-          <button 
-            className="btn bg-p-light border border-t-light mb-4" 
-            onClick={handleStartProcessing}
-            disabled={isProcessing}
-          >
-            {isProcessing ? 'Memproses...' : (
-              <>
-                <FaPlay/>&nbsp; Jalankan Pengujian
-              </>
-              )}
-          </button>
-        ))}
+        )}
         <div className="overflow-x-auto">
           <table className="table table-xs">
             <thead>

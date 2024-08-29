@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
 const {DataTypes} = Sequelize;
+import argon2 from "argon2";
 
 const UserModel = db.define('users',{
     uuid:{
@@ -49,5 +50,23 @@ const UserModel = db.define('users',{
 },{
     freezeTableName: true
 });
+
+(async () => {
+  await db.sync();
+
+  // Uncomment line 60 - 68 to create admin account for the first time
+  // Please change the name, email, and password for better security
+
+  // if (!await UserModel.findOne({ where: { email: "admin@gmail.com" } })) {
+  //   const hashPassword = await argon2.hash("12345678");
+  //   await UserModel.create({
+  //     name: "Admin",
+  //     email: "admin@gmail.com",
+  //     password: hashPassword,
+  //     role: 1
+  //   });
+  // }
+
+})();
 
 export default UserModel;
