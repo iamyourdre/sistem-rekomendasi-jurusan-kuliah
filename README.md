@@ -2,7 +2,8 @@
 
 In the project directory, prepare for backend prerequisites:
 
-Open `backend/models/UserModel.js` and then check line 60 - 68.
+Open `backend/models/UserModel.js` and then check line 60 - 68.\
+Don't forget to update the `.env` values on `backend/models/.env`.
 
 After that, install the backend package:
 
