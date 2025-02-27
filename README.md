@@ -1,4 +1,5 @@
 # Sistem Rekomendasi Jurusan Kuliah Siswa SMA
+![Preview](https://github.com/iamyourdre/sistem-rekomendasi-jurusan-kuliah/blob/main/preview-srjk.png?raw=true)
 
 Repositori ini berisi implementasi sistem rekomendasi jurusan kuliah untuk siswa SMA berdasarkan nilai rapor, menggunakan algoritma **Naive Bayes** dan **Euclidean Distance**. Sistem ini dikembangkan sebagai bagian dari penelitian yang bertujuan untuk membantu siswa dalam memilih jurusan yang sesuai dengan kemampuan akademik mereka, sehingga meningkatkan peluang diterima di perguruan tinggi melalui jalur seleksi tanpa tes.
 
