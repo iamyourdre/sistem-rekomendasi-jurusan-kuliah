@@ -13,16 +13,16 @@ Banyak siswa SMA mengalami kesulitan dalam memilih jurusan kuliah yang sesuai de
 
 ## ⚙️ Teknologi yang Digunakan
 - **Backend**: Node.js dengan Express.js
-- **Frontend**: React.js dengan Tailwind CSS dan ShadCN
+- **Frontend**: React.js dengan Tailwind CSS
 - **Database**: MySQL
 - **Authentication**: NextAuth.js dengan JWT dan CSRF Token
-- **Notifikasi**: `react-hot-toast` untuk memberikan feedback kepada pengguna
 
 ## 📌 Fitur Utama
-- Input nilai rapor siswa
-- Rekomendasi jurusan berbasis probabilitas dan kesamaan pola
-- Informasi tentang mata pelajaran yang perlu ditingkatkan
-- Riwayat pengujian dan rekomendasi jurusan sebelumnya
+- Meminta input berupa nilai rapor siswa
+- Memberi informasi tentang mata pelajaran yang perlu ditingkatkan dari siswa
+- Mengembangkan model klasifikasi dengan data sampel yang sangat minim melalui pertimbangan variabel-variabel kinerja akademik siswa, seperti nilai matematika, bahasa Inggris, sains, dan lainnya, untuk merumuskan rekomendasi jurusan kuliah
+- Memberikan informasi tentang mata pelajaran mana saja yang perlu
+dimaksimalkan oleh siswa
 
 ## 📖 Referensi
 Penelitian ini merupakan bagian dari skripsi saya yang berjudul **"Sistem Rekomendasi Jurusan Kuliah Siswa SMA Berdasarkan Nilai Rapor dengan Algoritma Naive Bayes"**, yang dapat diakses melalui [repository Universitas Sriwijaya](https://repository.unsri.ac.id/156310/3/RAMA_55201_09021382025164_0009019002_0021128905_01_front_ref.pdf).
